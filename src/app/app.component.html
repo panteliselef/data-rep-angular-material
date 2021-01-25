@@ -1,23 +1,33 @@
-<h4>Basic mat-select</h4>
-
-<mat-form-field appearance="outline">
-  <mat-label>Network</mat-label>
-  <mat-select (selectionChange)="getNetworkData($event)">
-    <mat-option *ngFor="let food of networks" [value]="food">
-      {{food}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
 
 
-<mat-slider min="1" max="5" step="0.5" value="1.5" thumbLabel tickInterval="1"></mat-slider>
-<mat-form-field appearance="standard">
-  <mat-label>Standard form field</mat-label>
-  <input matInput placeholder="Placeholder">
-  <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
-  <mat-hint>Hint</mat-hint>
-</mat-form-field>
+<section class="container">
+
+  <h1>Graph Demo</h1>
+
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Network</mat-label>
+      <mat-select (selectionChange)="getNetworkData($event)">
+        <mat-option *ngFor="let food of networks" [value]="food">
+          {{food}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <mat-slider min="20" [max]="maxSliderValue" step="1" [(value)]="currSliderValue" thumbLabel
+              tickInterval="1" (change)="handleSliderChange($event)"></mat-slider>
+  <mat-form-field appearance="standard">
+    <!--  <mat-label>Standard form field</mat-label>-->
+    <input matInput [min]="20" [max]="maxSliderValue" type="number" (ngModelChange)="handleSliderChange($event)" [(ngModel)]="currSliderValue">
+    <!--  <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>-->
+    <!--  <mat-hint>Hint</mat-hint>-->
+  </mat-form-field>
 
 
 
-<div echarts [options]="chartOption" [initOpts]="myInitOpts" class="demo-chart"></div>
+</section>
+
+
+
+<div echarts [options]="chartOption" (chartDataZoom)="onChartRendered($event)" [initOpts]="myInitOpts" class="demo-chart"></div>
