@@ -12,7 +12,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {FormsModule} from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
+import { FormsModule } from '@angular/forms';
+import { VisModule } from "ngx-vis";
 
 @NgModule({
   declarations: [
@@ -24,7 +26,7 @@ import {FormsModule} from '@angular/forms';
     MatSliderModule,
     BrowserModule,
     MatInputModule,
-
+    MatTabsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -37,6 +39,7 @@ import {FormsModule} from '@angular/forms';
       echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
     }),
     FormsModule,
+    VisModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

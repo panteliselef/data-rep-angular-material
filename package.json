@@ -23,6 +23,7 @@
     "@angular/router": "~10.2.0",
     "echarts": "^5.0.0",
     "ngx-echarts": "^6.0.0",
+    "ngx-vis": "^3.0.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
