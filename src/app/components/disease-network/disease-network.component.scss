@@ -1,0 +1,117 @@
+.category-container {
+  padding: 2rem;
+  background-color: #ccc;
+
+  h1 {
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    color: #fff;
+  }
+}
+
+.network-canvas {
+  height: calc(100vh - 54px);
+}
+
+//mat-slider {
+//  width: 500px;
+//}
+
+
+.inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+
+  .input-item {
+    margin: 1rem 1rem 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+
+.graph-area {
+  position: relative;
+  overflow-x: hidden;
+
+  .side-info {
+    z-index: 99;
+    position: absolute;
+    padding: 1.5rem 1rem;
+    right: 0;
+    top: 2.5%;
+    width: 500px;
+    height: 95%;
+    box-shadow: 0 2px 2px rgb(10 16 20 / 24%), 0 0 2px rgb(10 16 20 / 12%);
+    background-color: #fff;
+    transform: translateX(500px);
+    transition: all .2s ease-in-out;
+    overflow-y: auto;
+
+
+    ul {
+      padding: 0;
+      overflow-y: auto;
+      list-style: none;
+      height: auto;
+    }
+  }
+
+  .side-info.open {
+    transform: translateX(0);
+  }
+}
+
+
+//.mat-column-Samples {
+//  padding: 0 1rem;
+//}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  position: relative;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.info_text {
+  span {
+    color: rgba(0, 0, 0, .54);
+    font-weight: 500;
+  }
+
+  p {
+    margin-top: .3rem;
+    font-size: 17px;
+  }
+}
+
+tr {
+  .gmail_like {
+    position: absolute;
+    background: linear-gradient(270deg, #FFFFFF 40.72%, rgba(255, 255, 255, 0) 130%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    visibility: hidden;
+  }
+
+  .gmail_like_solid {
+    width: 50%;
+    left: 50%;
+    background: #FFFFFF;
+  }
+
+  &:hover {
+    .gmail_like {
+      visibility: visible;
+    }
+  }
+
+}

@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "data-rep-angular-material"
+  "defaultProject": "data-rep-angular-material",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -1,0 +1,34 @@
+<!--<div class="category-container">-->
+
+<!--  <h1>Choose category</h1>-->
+
+<!--</div>-->
+
+<div class="inputs">
+  <div>
+
+  </div>
+
+  <div class="input-item" [style.width]=" '35%'">
+    <mat-form-field [style.width]=" '30%'" appearance="standard">
+      <mat-label>Edges</mat-label>
+      <input matInput [min]="10" [max]="maxSliderValue" type="number" (ngModelChange)="handleSliderChange($event)"
+             [(ngModel)]="currSliderValue">
+    </mat-form-field>
+
+
+    <mat-slider [style.width]=" '65%'" min="10" [max]="maxSliderValue" step="1" [(value)]="currSliderValue" thumbLabel
+                tickInterval="1" (change)="handleSliderChange($event)"></mat-slider>
+
+  </div>
+
+</div>
+
+<!--<h4 *ngIf="lastSelectedNode">Last Selected Node: {{lastSelectedNode}}</h4>-->
+<div
+  class="network-canvas"
+  [visNetwork]="visNetwork"
+  [visNetworkData]="visNetworkData"
+  [visNetworkOptions]="visNetworkOptions"
+  (initialized)="networkInitialized()"
+></div>

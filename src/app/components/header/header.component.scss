@@ -1,0 +1,32 @@
+header ul {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+
+  li {
+    list-style: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: border-bottom-color .2s ease;
+    font-weight: 500;
+    padding: 1rem;
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    &:hover {
+      border-bottom-color: #000;
+    }
+    &.disabled {
+      color: #ccc;
+      &:hover {
+        border-bottom-color: transparent;
+      }
+    }
+  }
+
+}

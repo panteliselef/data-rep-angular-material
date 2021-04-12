@@ -1,11 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {EChartsOption} from 'echarts';
 import {HttpClient} from '@angular/common/http';
-import {MatSelectChange} from '@angular/material/select';
+import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
+import {environment} from '../../../environments/environment';
 import {MatSliderChange} from '@angular/material/slider';
-import {environment} from '../environments/environment';
-import {VisNetworkService, Data, DataSet, Node, Options, Edge} from 'ngx-vis';
-import {MatTabChangeEvent} from '@angular/material/tabs';
+import {MatSelectChange} from '@angular/material/select';
 
 interface DATA {
   type?: string;
@@ -15,12 +13,13 @@ interface DATA {
   categories: [any];
 }
 
+
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-visualizations',
+  templateUrl: './visualizations.component.html',
+  styleUrls: ['./visualizations.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class VisualizationsComponent implements  OnInit, OnDestroy {
 
   currentTab = 0;
   networks: string[];
@@ -29,55 +28,6 @@ export class AppComponent implements OnInit, OnDestroy {
   currNetData: DATA;
 
   lastSelectedNode: string;
-  chartOption: EChartsOption = {
-    legend: [{
-      // selectedMode: 'single',
-      data: []
-    }],
-    tooltip: {},
-    series: [{
-      type: 'graph',
-      layout: 'force',
-      draggable: true,
-      symbolSize: 40,
-      focusNodeAdjacency: true,
-      roam: true,
-      itemStyle: {
-        borderColor: '#fff',
-        borderWidth: 1,
-        shadowBlur: 10,
-        shadowColor: 'rgba(0, 0, 0, 0.3)'
-      },
-      label: {
-        position: 'right',
-      },
-      lineStyle: {
-        color: 'source',
-        // curveness: 0.3,
-        width: 5
-      },
-      emphasis: {
-        itemStyle: {
-          borderWidth: 5,
-        },
-        lineStyle: {
-          width: 10
-        }
-      },
-      force: {
-        edgeLength: [100, 1000],
-        repulsion: 100 * 100,
-        gravity: 0.2
-      },
-    }]
-  };
-
-  title = 'data-rep-angular-material';
-  myInitOpts = {
-    height: '700'
-  };
-
-
   public visNetwork = 'networkId1';
   public visNetworkData: Data;
   public nodes: DataSet<Node>;
@@ -89,6 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
   }
+
 
   public networkInitialized(): void {
     // now we can use the service to register on events
@@ -107,17 +58,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.visNetworkService.dragStart.subscribe((eventData: any[]) => {
       if (eventData[0] === this.visNetwork) {
-        this.visNetworkService.setOptions(this.visNetwork, { physics: {enabled: true}});
+        this.visNetworkService.setOptions(this.visNetwork, {physics: {enabled: true}});
       }
     });
 
     this.visNetworkService.dragEnd.subscribe((eventData: any[]) => {
       if (eventData[0] === this.visNetwork) {
-        this.visNetworkService.setOptions(this.visNetwork, { physics: {enabled: false}});
+        this.visNetworkService.setOptions(this.visNetwork, {physics: {enabled: false}});
       }
     });
 
-    this.visNetworkService.stabilizationIterationsDone.subscribe( (eventData: any[]) => {
+    this.visNetworkService.stabilizationIterationsDone.subscribe((eventData: any[]) => {
 
       // this.visNetworkService.setOptions(this.visNetwork,{physics: false});
 
@@ -161,7 +112,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
 
     this.visNetworkOptions = {
-      height: '500px',
+      height: '600px',
       width: '100%',
       nodes: {
         shape: 'dot',
@@ -177,43 +128,11 @@ export class AppComponent implements OnInit, OnDestroy {
         // selectConnectedEdges:true,
       },
     };
+
+    await this.getVisNetworkData({value: 'GPL96'});
   }
 
-  async getEchartsNetworkData($event: MatSelectChange): Promise<void> {
-    const selectedNetwork = $event.value;
-    const webkitDep: DATA = await this.httpService.get<DATA>(`${environment.apiUrl}echarts/${selectedNetwork}`).toPromise();
-    this.currNetData = webkitDep;
-    this.maxSliderValue = webkitDep.links.length;
-
-    const finalEdges = webkitDep.links.slice(0, this.currSliderValue);
-
-    const finalNodesSet = new Set();
-
-    for (const edge of finalEdges) {
-      finalNodesSet.add(edge.source);
-      finalNodesSet.add(edge.target);
-    }
-
-    const finalNodes = Array.from(finalNodesSet).map(nodeId => {
-      return webkitDep.nodes.find(node => node.name === nodeId);
-    });
-    this.chartOption.series[0] = {
-      ...this.chartOption.series[0],
-
-      data: finalNodes,
-      categories: webkitDep.categories,
-      edges: finalEdges
-    };
-
-    this.chartOption = {
-      ...this.chartOption
-    };
-
-    console.log(this.chartOption);
-  }
-
-
-  async getVisNetworkData($event: MatSelectChange): Promise<void> {
+  async getVisNetworkData($event: MatSelectChange | {value: string}): Promise<void> {
     const selectedNetwork = $event.value;
     const webkitDep: DATA = await this.httpService.get<DATA>(`${environment.apiUrl}visjs/${selectedNetwork}`).toPromise();
     this.currNetData = webkitDep;
@@ -242,6 +161,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.visNetworkService.fit(this.visNetwork);
   }
 
+
   handleSliderChange($event: MatSliderChange | number): void {
     let maxNum: number;
     if ($event instanceof MatSliderChange) {
@@ -251,64 +171,26 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
 
-
     const finalNodesSet = new Set();
-    if (this.currentTab === 1) {
 
-      const finalEdges = this.currNetData.links.slice(0, maxNum);
-      for (const edge of finalEdges) {
-        finalNodesSet.add(edge.source);
-        finalNodesSet.add(edge.target);
-      }
-
-      const finalNodes = Array.from(finalNodesSet).map(nodeId => {
-        return this.currNetData.nodes.find(node => node.name === nodeId);
-      });
-      this.chartOption.series[0] = {
-        ...this.chartOption.series[0],
-        // zoom: 0,
-        data: finalNodes,
-        categories: this.currNetData.categories,
-        edges: finalEdges
-      };
-
-      this.chartOption = {
-        ...this.chartOption
-      };
-
-      console.log(this.chartOption);
-    }else {
-      const finalEdges = this.currNetData.edges.slice(0, maxNum);
-      for (const edge of finalEdges) {
-        finalNodesSet.add(edge.from);
-        finalNodesSet.add(edge.to);
-      }
-
-      const finalNodes = Array.from(finalNodesSet).map(nodeId => {
-        return this.currNetData.nodes.find(node => node.id === nodeId);
-      });
-
-      this.nodes.clear();
-      this.nodes.add(finalNodes);
-      this.edges.clear();
-      this.edges.add(finalEdges);
-      this.visNetworkService.fit(this.visNetwork);
+    const finalEdges = this.currNetData.edges.slice(0, maxNum);
+    for (const edge of finalEdges) {
+      finalNodesSet.add(edge.from);
+      finalNodesSet.add(edge.to);
     }
 
+    const finalNodes = Array.from(finalNodesSet).map(nodeId => {
+      return this.currNetData.nodes.find(node => node.id === nodeId);
+    });
 
+    this.nodes.clear();
+    this.nodes.add(finalNodes);
+    this.edges.clear();
+    this.edges.add(finalEdges);
+    this.visNetworkService.fit(this.visNetwork);
   }
-
-  onChartRendered($event: unknown): void {
-    console.log($event);
-  }
-
 
   public ngOnDestroy(): void {
     this.visNetworkService.off(this.visNetwork, 'click');
   }
-
-  public changeTab($event: MatTabChangeEvent): void {
-    this.currentTab = $event.index;
-  }
 }
-
