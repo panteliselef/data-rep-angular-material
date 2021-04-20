@@ -10,8 +10,18 @@
   }
 }
 
+.mat-tab-header {
+  position: sticky !important;
+  top: -25px !important;
+}
+
 .network-canvas {
   height: calc(100vh - 54px);
+}
+
+h2 span:hover{
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 //mat-slider {
@@ -40,7 +50,7 @@
   .side-info {
     z-index: 99;
     position: absolute;
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 0;
     right: 0;
     top: 2.5%;
     width: 500px;
@@ -75,6 +85,15 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   padding-left: 5px;
   padding-right: 5px;
 }
+#neighbors td.mat-cell {
+  cursor: pointer;
+  &:hover {
+    * {
+      text-decoration: underline;
+    }
+    text-decoration: underline;
+  }
+}
 
 .info_text {
   span {
@@ -88,7 +107,11 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   }
 }
 
+
 tr {
+  &.mat-row:hover {
+    background: whitesmoke;
+  }
   .gmail_like {
     position: absolute;
     background: linear-gradient(270deg, #FFFFFF 40.72%, rgba(255, 255, 255, 0) 130%);

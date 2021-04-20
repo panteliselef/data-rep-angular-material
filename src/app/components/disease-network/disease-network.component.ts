@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {environment} from '../../../environments/environment';
 import {MatSelectChange} from '@angular/material/select';
+import {IdType} from 'vis';
 
 
 export interface PeriodicElement {
@@ -96,7 +97,9 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     datasets: undefined,
     datasetPairs: undefined,
     connectedNodes: undefined,
-    edgeWeight: undefined
+    edgeWeight: undefined,
+    edgeFrom: undefined,
+    edgeTo: undefined,
   };
 
   private lastSelectedEdge = undefined;
@@ -324,6 +327,8 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       // network.setOptions( { physics: false } );
     });
 
+
+
     // open your console/dev tools to see the click params
     this.visNetworkService.click.subscribe((eventData: any[]) => {
 
@@ -338,17 +343,23 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
           datasets: undefined,
           datasetPairs: undefined,
           connectedNodes: undefined,
-          edgeWeight:undefined
+          edgeWeight: undefined,
+          edgeFrom: undefined,
+          edgeTo: undefined,
         };
         this.lastSelectedNode = eventData[1].nodes[0];
         if (eventData[1].nodes.length > 0 || eventData[1].edges.length > 0) {
           this.showDetails = true;
 
           if (eventData[1].nodes[0]) {
-            this.detailsInfo.name = eventData[1].nodes[0];
+            const name = eventData[1].nodes[0];
+            this.focusNode(name);
+            this.detailsInfo.name = name;
             this.detailsInfo.type = 'node';
             this.detailsInfo.edges = eventData[1].edges;
-            this.detailsInfo.connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, this.detailsInfo.name);
+            // this.detailsInfo.connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, this.detailsInfo.name);
+            this.detailsInfo.connectedNodes = this.getConnectedNodesAndTheirEdges(this.detailsInfo.name);
+            // console.log(this.detailsInfo.connectedNodes);
             this.detailsInfo.datasets = Array
               .from<TableEntry>((this.nodes.get({returnType: 'Object'})[this.detailsInfo.name] as any).datasets)
               .map(({GSE, Samples, Entity, Type}) => {
@@ -363,7 +374,8 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
           } else if (eventData[1].edges[0]) {
             const allEdges = this.edges.get({returnType: 'Object'}) as any;
             const selectedEdge = allEdges[eventData[1].edges[0]];
-            this.detailsInfo.name = `${selectedEdge.from} - ${selectedEdge.to}`;
+            this.detailsInfo.edgeFrom = selectedEdge.from;
+            this.detailsInfo.edgeTo = selectedEdge.to;
             console.log(selectedEdge);
             this.detailsInfo.edgeWeight = selectedEdge.weight;
             this.detailsInfo.datasetPairs = selectedEdge.datasetPairs;
@@ -374,6 +386,48 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  private getConnectedNodesAndTheirEdges(nodeId: IdType): any[] {
+    const edgesInfo = this.visNetworkService.getConnectedEdges(this.visNetwork, nodeId).map(edgeId => {
+      return this.edges.get({returnType: 'Object'})[edgeId];
+    });
+    return (this.visNetworkService.getConnectedNodes(this.visNetwork, nodeId)as IdType[]).map((node: IdType, i) => {
+      return {
+        node,
+        ...edgesInfo[i]
+      };
+    });
+  }
+
+  focusNode(nodeId: IdType): void {
+    console.log(this.visNetworkService.getScale(this.visNetwork));
+    const nodePos = this.visNetworkService.getPositions(this.visNetwork, [nodeId])[nodeId];
+    this.visNetworkService.selectNodes(this.visNetwork, [nodeId], false);
+    this.visNetworkService.moveTo(this.visNetwork, {
+      position: nodePos,
+      scale: 1,
+      offset: {
+        x: -150,
+        y: 0
+      },
+      animation: {
+        easingFunction: 'easeInOutCubic',
+        duration: 500
+      }
+    });
+  }
+
+  focusEdge({id: edgeId, node}: {id: string, node: IdType}): void  {
+    this.focusNode(node);
+    this.visNetworkService.setSelection(this.visNetwork, {
+      nodes: [],
+      edges: [edgeId]
+    }, {
+      unselectAll: true,
+      highlightEdges: true
+    });
+    console.log({edgeId, node});
   }
 
 
