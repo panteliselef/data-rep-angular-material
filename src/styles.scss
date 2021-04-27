@@ -5,6 +5,17 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
+app-root {
+  display: grid;
+  grid-template-rows: 52px 1fr;
+}
+
 .network-canvas .vis-network {
   outline: none;
+}
+
+
+.logo span.mat-button-wrapper {
+  display: flex;
+  align-items: center;
 }

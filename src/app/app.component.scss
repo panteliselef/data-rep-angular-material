@@ -3,6 +3,19 @@
 .demo-chart {
   //height: 500px;
 }
+
+app-navbar {
+  color: #fff;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+//main {
+//  margin-top: 52px;
+//}
 section.container {
   width: 90%;
   margin: auto;

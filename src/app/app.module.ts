@@ -15,21 +15,26 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSliderModule} from '@angular/material/slider';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTabsModule} from '@angular/material/tabs';
-import {FormsModule} from '@angular/forms';
+import {MatTooltipModule} from "@angular/material/tooltip";
+
+
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
 import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
-import {MatTooltipModule} from "@angular/material/tooltip";
+import {NavbarComponent} from "./components/navbar/navbar.component";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    DiseaseNetworkComponent,
-    VisualizationsComponent
-  ],
+    declarations: [
+        AppComponent,
+        HeaderComponent,
+        DiseaseNetworkComponent,
+        VisualizationsComponent,
+        NavbarComponent
+    ],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -41,6 +46,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
     MatTableModule,
     MatTabsModule,
     MatIconModule,
+    MatAutocompleteModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -52,6 +58,7 @@ import {MatTooltipModule} from "@angular/material/tooltip";
        */
       echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
     }),
+    ReactiveFormsModule,
     FormsModule,
     VisModule,
     MatTooltipModule,

@@ -1,0 +1,23 @@
+.navbar-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #1e352f;
+
+  .logo {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+
+
+  /*Overiding Material Design*/
+  .mat-button-disabled {
+    color: #b9b9b9;
+  }
+}
+
+
+
+

@@ -4,6 +4,11 @@ import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {environment} from '../../../environments/environment';
 import {MatSelectChange} from '@angular/material/select';
 import {IdType} from 'vis';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
 
 
 export interface PeriodicElement {
@@ -51,18 +56,28 @@ interface DATA {
 @Component({
   selector: 'app-disease-network',
   templateUrl: './disease-network.component.html',
-  styleUrls: ['./disease-network.component.scss']
+  styleUrls: ['./disease-network.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   currentTab = 0;
   networks: string[];
-  maxSliderValue = 10;
+  // maxSliderValue = 10;
   currSliderValue = 10;
   currNetData: DATA;
   // displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   displayedColumns: string[] = ['GSE', 'Samples', 'Entity', 'Type'];
-  dataSource = ELEMENT_DATA;
+  // dataSource = ELEMENT_DATA;
+  myControl = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
+  filteredOptions: Observable<string[]>;
 
   @ViewChild('details') details: ElementRef;
 
@@ -103,6 +118,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
   };
 
   private lastSelectedEdge = undefined;
+  expandedElement: any;
 
   public constructor(private httpService: HttpClient, private visNetworkService: VisNetworkService
   ) {
@@ -299,7 +315,17 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     // this.visNetworkService.on(this.visNetwork, 'dragStart');
     // this.visNetworkService.on(this.visNetwork, 'dragEnd');
     //
-    // this.visNetworkService.on(this.visNetwork, 'stabilizationIterationsDone');
+    this.visNetworkService.on(this.visNetwork, 'stabilizationIterationsDone');
+    this.visNetworkService.on(this.visNetwork, 'stabilized');
+    this.visNetworkService.stabilized.subscribe(() => {
+      this.visNetworkService.fit(this.visNetwork, {
+        animation: {
+          easingFunction: 'easeInOutCubic',
+          duration: 500
+        }
+      });
+    })
+
     //
     // this.visNetworkService.hoverNode.subscribe((eventData: any[]) => {
     //   if (eventData[0] === this.visNetwork) {
@@ -326,7 +352,6 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
       // network.setOptions( { physics: false } );
     });
-
 
 
     // open your console/dev tools to see the click params
@@ -359,7 +384,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
             this.detailsInfo.edges = eventData[1].edges;
             // this.detailsInfo.connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, this.detailsInfo.name);
             this.detailsInfo.connectedNodes = this.getConnectedNodesAndTheirEdges(this.detailsInfo.name);
-            // console.log(this.detailsInfo.connectedNodes);
+            console.log(this.detailsInfo.connectedNodes);
             this.detailsInfo.datasets = Array
               .from<TableEntry>((this.nodes.get({returnType: 'Object'})[this.detailsInfo.name] as any).datasets)
               .map(({GSE, Samples, Entity, Type}) => {
@@ -389,13 +414,16 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
   }
 
   private getConnectedNodesAndTheirEdges(nodeId: IdType): any[] {
+    const allEdges = this.edges.get({returnType: 'Object'}) as any;
     const edgesInfo = this.visNetworkService.getConnectedEdges(this.visNetwork, nodeId).map(edgeId => {
       return this.edges.get({returnType: 'Object'})[edgeId];
     });
-    return (this.visNetworkService.getConnectedNodes(this.visNetwork, nodeId)as IdType[]).map((node: IdType, i) => {
+    return (this.visNetworkService.getConnectedNodes(this.visNetwork, nodeId) as IdType[]).map((node: IdType, i) => {
+      const selectedEdge = allEdges[edgesInfo[i].id];
       return {
         node,
-        ...edgesInfo[i]
+        ...edgesInfo[i],
+        ...selectedEdge
       };
     });
   }
@@ -418,7 +446,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     });
   }
 
-  focusEdge({id: edgeId, node}: {id: string, node: IdType}): void  {
+  focusEdge({id: edgeId, node}: { id: string, node: IdType }): void {
     this.focusNode(node);
     this.visNetworkService.setSelection(this.visNetwork, {
       nodes: [],
@@ -430,8 +458,16 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     console.log({edgeId, node});
   }
 
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.options.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
 
   async ngOnInit(): Promise<void> {
+
+
     try {
       this.networks = (await this.httpService.get<{ networks: string[] }>(environment.apiUrl).toPromise()).networks;
     } catch (e) {
@@ -503,6 +539,12 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     };
 
     await this.getVisNetworkData({value: 'GPL96'});
+    this.options = this.nodes.getIds() as string[];
+    this.filteredOptions = this.myControl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filter(value))
+      );
   }
 
   async getVisNetworkData($event: MatSelectChange | { value: string }): Promise<void> {
@@ -515,16 +557,19 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     if (webkitDep.nodes) {
       this.nodes.add(webkitDep.nodes);
     }
-    // this.nodes.add(finalNodes);
     this.edges.clear();
     if (webkitDep.edges) {
       this.edges.add(webkitDep.edges);
     }
-    // this.edges.add(finalEdges);
-    this.visNetworkService.fit(this.visNetwork);
+
   }
 
   public ngOnDestroy(): void {
     this.visNetworkService.off(this.visNetwork, 'click');
+  }
+
+  selectNode($event: MatAutocompleteSelectedEvent) {
+
+    const nodeId = $event.option.value;
   }
 }
