@@ -9,6 +9,8 @@ import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {MatSidenav} from "@angular/material/sidenav";
+import {MatTableDataSource} from "@angular/material/table";
 
 
 export interface PeriodicElement {
@@ -76,30 +78,38 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['GSE', 'Samples', 'Entity', 'Type'];
   // dataSource = ELEMENT_DATA;
   myControl = new FormControl();
+
+  searchInputControl = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
   filteredOptions: Observable<string[]>;
 
   @ViewChild('details') details: ElementRef;
 
-  lastSelectedNode: string;
+  @ViewChild('sidenav') sidenav: MatSidenav;
+
   public visNetwork = 'networkId1';
   public visNetworkData: Data;
   public nodes: DataSet<Node>;
   public edges: DataSet<Edge>;
   public visNetworkOptions: Options;
   private nodeDefaultColor = {
-    background: '#483D8B',
-    border: '#FFB90F',
+    background: '#1E352F',
+    border: '#A6C36F',
+    hover: {
+      border: '#5EB1BF',
+      background: '#483D8B',
+    },
     highlight: {
-      border: '#000',
-      background: '#fff',
+      border: '#5EB1BF',
+      background: '#483D8B',
     }
   };
 
   private edgeDefaultColor = {
-    highlight: '#FFB90F',
-    color: '#FFB90F',
-    hover: '#FFB90F'
+    highlight: '#1E352F',
+    color: '#A6C36F',
+    hover: '#FFB90F',
+    opacity: .5,
   };
 
   public highlightActive = false;
@@ -119,11 +129,84 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   private lastSelectedEdge = undefined;
   expandedElement: any;
+  events: string[] = [];
+  opened: boolean;
 
   public constructor(private httpService: HttpClient, private visNetworkService: VisNetworkService
   ) {
 
 
+  }
+
+  private highlightConnectedNodes(selectedNode: string|IdType) {
+    console.log('Node selected');
+    const allNodes = this.nodes.get({returnType: 'Object'}) as any;
+    this.highlightActive = true;
+    let i,j;
+
+
+    const degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (const nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
+        if (allNodes[nodeId].hiddenLabel === undefined) {
+          allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+          allNodes[nodeId].label = undefined;
+        }
+      }
+    }
+
+
+    const connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, selectedNode) as any[];
+    let allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          this.visNetworkService.getConnectedNodes(this.visNetwork, connectedNodes[j] as string)
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.5)';
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      allNodes[connectedNodes[i]].color = this.nodeDefaultColor;
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    allNodes[selectedNode].color = this.nodeDefaultColor;
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+
+    const updateArray = [];
+    for (const nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+
+    this.nodes.update(updateArray);
   }
 
   private neighbourhoodHighlight(params: any): void {
@@ -132,7 +215,6 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     // Code from https://visjs.github.io/vis-network/examples/static/jsfiddle.a6eacda850dfe6c88d8ea581887b67b263eb310301cdd593e76f7cabd6df4800.html
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     const allEdges = this.edges.get({returnType: 'Object'}) as any;
-    // if something is selected:
 
     if (this.highlightActive === true) {
       console.log('Nothing selected');
@@ -163,7 +245,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       this.highlightActive = false;
     }
 
-    if (params.nodes.length === 0 && params.edges.length === 1) {
+    if (params?.nodes?.length === 0 && params?.edges?.length === 1) {
       console.log('Edge selected');
       // console.log(allEdges);
       this.highlightActive = true;
@@ -199,89 +281,8 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         allNodes[nodeId].hiddenLabel = undefined;
       });
 
-      // for (const edgeId in allEdges) {
-      //   if (allEdges.hasOwnProperty(edgeId)) {
-      //     // console.log(allEdges[edgeId]);
-      //
-      //     // if (allEdges[edgeId].hiddenLabel === undefined) {
-      //     //   allEdges[edgeId].hiddenLabel = allNodes[edgeId].label;
-      //     //   allEdges[edgeId].label = undefined;
-      //     // }
-      //   }
-      // }
-
-
-      // transform the object into an array
-      // updateArray = [];
-      // for (const nodeId in allNodes) {
-      //   if (allNodes.hasOwnProperty(nodeId)) {
-      //     updateArray.push(allNodes[nodeId]);
-      //   }
-      // }
-      // this.nodes.update(updateArray);
-
-    } else if (params.nodes.length > 0) {
-      console.log('Node selected');
-      this.highlightActive = true;
-      // tslint:disable-next-line:prefer-const
-      let i;
-      let j;
-      const selectedNode = params.nodes[0];
-
-
-      const degrees = 2;
-
-      // mark all nodes as hard to read.
-      for (const nodeId in allNodes) {
-        if (allNodes.hasOwnProperty(nodeId)) {
-          // console.log(allNodes[nodeId]);
-          allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-          if (allNodes[nodeId].hiddenLabel === undefined) {
-            allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-            allNodes[nodeId].label = undefined;
-          }
-        }
-      }
-
-
-      const connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, selectedNode) as any[];
-      let allConnectedNodes = [];
-
-      // get the second degree nodes
-      for (i = 1; i < degrees; i++) {
-        for (j = 0; j < connectedNodes.length; j++) {
-          allConnectedNodes = allConnectedNodes.concat(
-            this.visNetworkService.getConnectedNodes(this.visNetwork, connectedNodes[j] as string)
-          );
-        }
-      }
-
-      // all second degree nodes get a different color and their label back
-      for (i = 0; i < allConnectedNodes.length; i++) {
-        allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.75)';
-        if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
-          allNodes[allConnectedNodes[i]].label =
-            allNodes[allConnectedNodes[i]].hiddenLabel;
-          allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
-        }
-      }
-
-      // all first degree nodes get their own color and their label back
-      for (i = 0; i < connectedNodes.length; i++) {
-        allNodes[connectedNodes[i]].color = this.nodeDefaultColor;
-        if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
-          allNodes[connectedNodes[i]].label =
-            allNodes[connectedNodes[i]].hiddenLabel;
-          allNodes[connectedNodes[i]].hiddenLabel = undefined;
-        }
-      }
-
-      // the main node gets its own color and its label back.
-      allNodes[selectedNode].color = this.nodeDefaultColor;
-      if (allNodes[selectedNode].hiddenLabel !== undefined) {
-        allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
-        allNodes[selectedNode].hiddenLabel = undefined;
-      }
+    } else if (params?.nodes?.length > 0) {
+      this.highlightConnectedNodes(params.nodes[0]);
     }
 
     let updateArray = [];
@@ -290,6 +291,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         updateArray.push(allEdges[edgeId]);
       }
     }
+
     this.edges.update(updateArray);
 
     // transform the object into an array
@@ -300,13 +302,18 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       }
     }
 
-    // nodesDataset.update(updateArray);
-    // this.nodes.clear()
     this.nodes.update(updateArray);
-    // this.nodes = updateArray;
 
   }
 
+  private resetCanvasZoomLevel(){
+    this.visNetworkService.fit(this.visNetwork, {
+      animation: {
+        easingFunction: 'easeInOutCubic',
+        duration: 500
+      }
+    });
+  }
 
   public networkInitialized(): void {
     // now we can use the service to register on events
@@ -318,12 +325,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkService.on(this.visNetwork, 'stabilizationIterationsDone');
     this.visNetworkService.on(this.visNetwork, 'stabilized');
     this.visNetworkService.stabilized.subscribe(() => {
-      this.visNetworkService.fit(this.visNetwork, {
-        animation: {
-          easingFunction: 'easeInOutCubic',
-          duration: 500
-        }
-      });
+      this.resetCanvasZoomLevel()
     })
 
     //
@@ -356,6 +358,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
     // open your console/dev tools to see the click params
     this.visNetworkService.click.subscribe((eventData: any[]) => {
+      console.log(eventData);
 
       // console.log(eventData[1].nodes[0]);
       this.neighbourhoodHighlight(eventData[1]);
@@ -372,31 +375,21 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
           edgeFrom: undefined,
           edgeTo: undefined,
         };
-        this.lastSelectedNode = eventData[1].nodes[0];
+
+        if(eventData[1].nodes.length == 0) {
+          this.myControl.setValue('');
+        }
+
         if (eventData[1].nodes.length > 0 || eventData[1].edges.length > 0) {
-          this.showDetails = true;
+
 
           if (eventData[1].nodes[0]) {
             const name = eventData[1].nodes[0];
-            this.focusNode(name);
-            this.detailsInfo.name = name;
-            this.detailsInfo.type = 'node';
-            this.detailsInfo.edges = eventData[1].edges;
-            // this.detailsInfo.connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, this.detailsInfo.name);
-            this.detailsInfo.connectedNodes = this.getConnectedNodesAndTheirEdges(this.detailsInfo.name);
-            console.log(this.detailsInfo.connectedNodes);
-            this.detailsInfo.datasets = Array
-              .from<TableEntry>((this.nodes.get({returnType: 'Object'})[this.detailsInfo.name] as any).datasets)
-              .map(({GSE, Samples, Entity, Type}) => {
-                return {
-                  GSE,
-                  Samples,
-                  Entity,
-                  Type,
-                };
-              });
-            console.log(this.detailsInfo.datasets);
+            this.selectNode(name);
+
           } else if (eventData[1].edges[0]) {
+            // this.showDetails = true;
+            this.sidenav.open()
             const allEdges = this.edges.get({returnType: 'Object'}) as any;
             const selectedEdge = allEdges[eventData[1].edges[0]];
             this.detailsInfo.edgeFrom = selectedEdge.from;
@@ -408,6 +401,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
           }
         } else {
           this.showDetails = false;
+          this.sidenav.close()
         }
       }
     });
@@ -436,7 +430,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       position: nodePos,
       scale: 1,
       offset: {
-        x: -150,
+        x: 0,
         y: 0
       },
       animation: {
@@ -493,15 +487,21 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkOptions = {
       height: '100%',
       width: '100%',
+      autoResize: true,
       nodes: {
         shape: 'dot',
-        color: this.nodeDefaultColor
+        color: this.nodeDefaultColor,
+        font: {
+          face: 'roboto',
+        }
       },
       edges: {
-        // color: this.edgeDefaultColor,
+        color: this.edgeDefaultColor,
+        hoverWidth: 7,
+        selectionWidth: 17,
         scaling: {
-          min: 1,
-          max: 5,
+          min: 2,
+          max: 17,
         },
         smooth: false,
       },
@@ -513,7 +513,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         }
       },
       interaction: {
-        // hover: false,
+        hover: true,
         // tooltipDelay: 200,
         hideEdgesOnDrag: true,
         hideEdgesOnZoom: true,
@@ -545,6 +545,10 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         startWith(''),
         map(value => this._filter(value))
       );
+
+    setTimeout(()=>{
+      this.selectNode('sepsis');
+    },1000)
   }
 
   async getVisNetworkData($event: MatSelectChange | { value: string }): Promise<void> {
@@ -564,12 +568,50 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   }
 
+  applyNodeFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.detailsInfo.connectedNodes.filter = filterValue.trim().toLowerCase();
+  }
+
+  clearNodeFilter() {
+    (this.detailsInfo.connectedNodes as MatTableDataSource<any>).filter = '';
+  }
+
   public ngOnDestroy(): void {
     this.visNetworkService.off(this.visNetwork, 'click');
   }
 
-  selectNode($event: MatAutocompleteSelectedEvent) {
+  selectNode($event: MatAutocompleteSelectedEvent| string ) {
 
-    const nodeId = $event.option.value;
+    const nodeId = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
+
+    this.sidenav.open()
+    this.myControl.setValue(nodeId);
+    this.highlightConnectedNodes(nodeId);
+    this.showDetails = true;
+    this.focusNode(nodeId);
+    this.detailsInfo.name = nodeId;
+    this.detailsInfo.type = 'node';
+    this.detailsInfo.connectedNodes = new MatTableDataSource(this.getConnectedNodesAndTheirEdges(nodeId));
+    // console.log(this.detailsInfo.connectedNodes);
+    this.detailsInfo.datasets = Array
+      .from<TableEntry>((this.nodes.get({returnType: 'Object'})[this.detailsInfo.name] as any).datasets)
+      .map(({GSE, Samples, Entity, Type}) => {
+        return {
+          GSE,
+          Samples,
+          Entity,
+          Type,
+        };
+      });
+    // console.log(this.detailsInfo.datasets);
+  }
+
+  async closeSidenav() {
+    await this.sidenav.close()
+    this.neighbourhoodHighlight(null);
+    this.visNetworkService.unselectAll(this.visNetwork);
+    this.myControl.setValue('');
+    this.resetCanvasZoomLevel();
   }
 }

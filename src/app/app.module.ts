@@ -7,8 +7,9 @@ import {HttpClientModule} from '@angular/common/http';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatIconModule} from '@angular/material/icon';
 
+
+import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
@@ -18,6 +19,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -47,6 +49,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
     MatTabsModule,
     MatIconModule,
     MatAutocompleteModule,
+    MatSidenavModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,

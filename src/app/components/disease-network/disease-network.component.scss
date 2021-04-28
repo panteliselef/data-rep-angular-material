@@ -21,6 +21,7 @@ h1 {
 }
 
 .network-canvas {
+  border-top: 1px solid rgba(0,0,0,.1);
   //height: calc(100vh - 54px);
   height: 100%;
 }
@@ -46,6 +47,10 @@ h2 span:hover{
     justify-content: space-between;
     align-items: center;
   }
+}
+
+mat-sidenav {
+  width: 500px;
 }
 
 
