@@ -546,9 +546,9 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         map(value => this._filter(value))
       );
 
-    setTimeout(()=>{
-      this.selectNode('sepsis');
-    },1000)
+    // setTimeout(()=>{
+    //   this.selectNode('sepsis');
+    // },1000)
   }
 
   async getVisNetworkData($event: MatSelectChange | { value: string }): Promise<void> {

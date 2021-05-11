@@ -20,7 +20,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatSidenavModule} from '@angular/material/sidenav';
-
+import { MAT_TABS_CONFIG } from '@angular/material/tabs';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
@@ -66,8 +66,14 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
     VisModule,
     MatTooltipModule,
   ],
-  providers: [],
+  providers: [
+    // {
+    //   provide: MAT_TABS_CONFIG,
+    //   useValue: { animationDuration: 1000, fitInkBarToContent: true }
+    // }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
+
 }
