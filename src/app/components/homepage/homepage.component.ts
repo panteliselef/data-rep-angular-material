@@ -11,6 +11,7 @@ export class HomepageComponent implements OnInit {
   searchSuggestions: string[];
 
   @ViewChild('toolbarSearch') toolbarSearch;
+  isToolbarSearchFocused = false;
 
   constructor(private httpService: HttpClient) { }
 
@@ -19,7 +20,6 @@ export class HomepageComponent implements OnInit {
   }
 
   async searchDiseases($event: KeyboardEvent): Promise<void> {
-
     this.searchSuggestions = await this.httpService
       .get<string[]>(`${environment.apiUrl}search?q=${($event.target as HTMLInputElement).value}`)
       .toPromise();

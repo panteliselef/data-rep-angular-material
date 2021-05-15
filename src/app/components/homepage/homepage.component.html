@@ -42,13 +42,13 @@
   </div>
 
   <div class="search_components"  style="margin: 2rem 0 4rem 0;">
-    <div class="toolbar-search" [ngClass]="{'has_results':searchSuggestions.length && toolbarSearch.value}">
+    <div class="toolbar-search" [ngClass]="{'has_results':searchSuggestions.length && toolbarSearch.value && isToolbarSearchFocused}">
       <!--    <mat-icon aria-hidden="false" aria-label="Example home icon">search</mat-icon>-->
       <span style="padding:0 .8rem; color: #9aa0a6;" class="material-icons-round">search</span>
-      <input #toolbarSearch autocomplete="off" (keyup)="searchDiseases($event)" style="height: 100%; border: none; appearance: none; outline: none; font-size: 1rem; flex: 1 1 100%" matInput type="text" aria-label="Search"/>
+      <input #toolbarSearch autofocus (focus)="isToolbarSearchFocused = true" (blur)="isToolbarSearchFocused = false" autocomplete="off" (keyup)="searchDiseases($event)" style="height: 100%; border: none; appearance: none; outline: none; font-size: 1rem; flex: 1 1 100%" matInput type="text" aria-label="Search"/>
     </div>
 
-    <div class="search_suggestions" *ngIf="searchSuggestions.length && toolbarSearch.value">
+    <div class="search_suggestions" *ngIf="searchSuggestions.length && toolbarSearch.value && isToolbarSearchFocused">
 
       <div class="divider"></div>
 

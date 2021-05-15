@@ -59,6 +59,8 @@ h1 {
   font-family: "Source Sans Pro", sans-serif;
   position: relative;
   .search_suggestions {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: auto;
     max-height: 400px;
@@ -84,6 +86,8 @@ h1 {
       list-style: none;
       padding: 0 5px;
       margin: 0;
+      height: inherit;
+      overflow-y: auto;
       li.search_suggestion {
         border-radius: 5px;
         min-height: 30px;
@@ -139,6 +143,7 @@ h1 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
+  margin: 3rem 0;
   .feature {
     width: 100%;
     display: grid;
