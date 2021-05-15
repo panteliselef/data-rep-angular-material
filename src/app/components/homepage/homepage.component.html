@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="homepage.component.scss">
+<nav class="navbar-header">
+
+  <div style="flex-grow: 1"></div>
+  <a mat-button href="/phenonet" routerLink="phenonet">Phenonet</a>
+  <a mat-button href="/vis" routerLink="vis">Visualisation</a>
+  <a mat-button disabled>Search</a>
+  <a mat-button disabled>Download</a>
+  <a mat-button disabled>Help</a>
+</nav>
+
+<div style="min-height:calc(100vh - 52px);display: flex;flex-direction: column; justify-content: center; align-items: center">
+
+  <h1>
+    <span style="font-size: inherit" class="material-icons-round">bar_chart</span>
+    Data Repurposing
+  </h1>
+
+  <div class="example_searches" style="font-family: 'Source Sans Pro', sans-serif">
+    Example searches:
+
+    <mat-chip-list aria-label="Fish selection">
+      <a href="">
+        <mat-chip color="primary" selected>
+          <span class="material-icons-round">search</span>
+          sepsis</mat-chip>
+      </a>
+      <a href="">
+        <mat-chip color="primary" selected>
+          <span class="material-icons-round">search</span>
+          asthma</mat-chip>
+      </a>
+      <a href="">
+        <mat-chip color="primary" selected>
+          <span class="material-icons-round">search</span>
+          breast cancer</mat-chip>
+      </a>
+    </mat-chip-list>
+<!--    <a href="">sepsis</a>-->
+<!--    <a href="">asthma</a>-->
+<!--    <a href="">breast cancer</a>-->
+  </div>
+
+  <div class="search_components"  style="margin: 2rem 0 4rem 0;">
+    <div class="toolbar-search" [ngClass]="{'has_results':searchSuggestions.length && toolbarSearch.value}">
+      <!--    <mat-icon aria-hidden="false" aria-label="Example home icon">search</mat-icon>-->
+      <span style="padding:0 .8rem; color: #9aa0a6;" class="material-icons-round">search</span>
+      <input #toolbarSearch autocomplete="off" (keyup)="searchDiseases($event)" style="height: 100%; border: none; appearance: none; outline: none; font-size: 1rem; flex: 1 1 100%" matInput type="text" aria-label="Search"/>
+    </div>
+
+    <div class="search_suggestions" *ngIf="searchSuggestions.length && toolbarSearch.value">
+
+      <div class="divider"></div>
+
+      <ul>
+        <li class="search_suggestion" *ngFor="let suggestion of searchSuggestions">
+          <a href="/phenonet" routerLink="phenonet">
+            {{suggestion}}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="features" style="margin-top: 3rem;">
+    <div class="feature">
+      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+      <div class="details">
+        <h2 class="title">Phenonet</h2>
+        <p class="info">This is the network of disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+      <div class="details">
+        <h2 class="title">Phenonet</h2>
+        <p class="info">This is the network of disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

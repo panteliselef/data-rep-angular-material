@@ -18,8 +18,9 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatTabsModule} from '@angular/material/tabs';
-import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatChipsModule} from '@angular/material/chips';
 import { MAT_TABS_CONFIG } from '@angular/material/tabs';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -27,16 +28,21 @@ import {VisModule} from 'ngx-vis';
 import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
-import {NavbarComponent} from "./components/navbar/navbar.component";
+import {NavbarComponent} from './components/navbar/navbar.component';
+import {HomepageComponent} from './components/homepage/homepage.component';
 
+export function importingEchart(): void {
+  import('echarts');
+}
 @NgModule({
-    declarations: [
-        AppComponent,
-        HeaderComponent,
-        DiseaseNetworkComponent,
-        VisualizationsComponent,
-        NavbarComponent
-    ],
+  declarations: [
+    AppComponent,
+    HomepageComponent,
+    HeaderComponent,
+    DiseaseNetworkComponent,
+    VisualizationsComponent,
+    NavbarComponent
+  ],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -48,6 +54,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
     MatTableModule,
     MatTabsModule,
     MatIconModule,
+    MatChipsModule,
     MatAutocompleteModule,
     MatSidenavModule,
     AppRoutingModule,
@@ -59,7 +66,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
        * If you only need custom modules,
        * please refer to [Custom Build] section.
        */
-      echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
+      echarts: importingEchart, // or import('./path-to-my-custom-echarts')
     }),
     ReactiveFormsModule,
     FormsModule,
@@ -74,6 +81,7 @@ import {NavbarComponent} from "./components/navbar/navbar.component";
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 
 }

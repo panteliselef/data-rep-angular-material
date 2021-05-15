@@ -1,7 +1,7 @@
 //.category-container {
 //  padding: 2rem;
 //  background-color: #ccc;
-//
+//w
 //  h1 {
 //    width: 100%;
 //    text-align: center;
@@ -9,6 +9,21 @@
 //    color: #fff;
 //  }
 //}
+
+//app-disease-network {
+//  display: grid;
+//  grid-template-rows: 52px 1fr;
+//}
+
+app-navbar {
+  color: #fff;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
 
 h1 {
   font-family: 'Source Sans Pro', sans-serif;

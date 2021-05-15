@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {environment} from '../../../environments/environment';
@@ -8,9 +8,9 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
-import {MatSidenav} from "@angular/material/sidenav";
-import {MatTableDataSource} from "@angular/material/table";
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import {MatSidenav} from '@angular/material/sidenav';
+import {MatTableDataSource} from '@angular/material/table';
 
 
 export interface PeriodicElement {
@@ -58,7 +58,7 @@ interface DATA {
 @Component({
   selector: 'app-disease-network',
   templateUrl: './disease-network.component.html',
-  styleUrls: ['./disease-network.component.scss'],
+  styleUrls: ['./disease-network.component.scss', '../navbar/navbar.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -138,11 +138,11 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   }
 
-  private highlightConnectedNodes(selectedNode: string|IdType) {
+  private highlightConnectedNodes(selectedNode: string|IdType): void {
     console.log('Node selected');
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     this.highlightActive = true;
-    let i,j;
+    let i, j;
 
 
     const degrees = 2;
@@ -306,7 +306,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   }
 
-  private resetCanvasZoomLevel(){
+  private resetCanvasZoomLevel(): void{
     this.visNetworkService.fit(this.visNetwork, {
       animation: {
         easingFunction: 'easeInOutCubic',
@@ -325,8 +325,8 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkService.on(this.visNetwork, 'stabilizationIterationsDone');
     this.visNetworkService.on(this.visNetwork, 'stabilized');
     this.visNetworkService.stabilized.subscribe(() => {
-      this.resetCanvasZoomLevel()
-    })
+      this.resetCanvasZoomLevel();
+    });
 
     //
     // this.visNetworkService.hoverNode.subscribe((eventData: any[]) => {
@@ -376,7 +376,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
           edgeTo: undefined,
         };
 
-        if(eventData[1].nodes.length == 0) {
+        if (eventData[1].nodes.length === 0) {
           this.myControl.setValue('');
         }
 
@@ -389,7 +389,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
           } else if (eventData[1].edges[0]) {
             // this.showDetails = true;
-            this.sidenav.open()
+            this.sidenav.open();
             const allEdges = this.edges.get({returnType: 'Object'}) as any;
             const selectedEdge = allEdges[eventData[1].edges[0]];
             this.detailsInfo.edgeFrom = selectedEdge.from;
@@ -401,7 +401,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
           }
         } else {
           this.showDetails = false;
-          this.sidenav.close()
+          this.sidenav.close();
         }
       }
     });
@@ -568,12 +568,12 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   }
 
-  applyNodeFilter(event: Event) {
+  applyNodeFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.detailsInfo.connectedNodes.filter = filterValue.trim().toLowerCase();
   }
 
-  clearNodeFilter() {
+  clearNodeFilter(): void {
     (this.detailsInfo.connectedNodes as MatTableDataSource<any>).filter = '';
   }
 
@@ -581,11 +581,11 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkService.off(this.visNetwork, 'click');
   }
 
-  selectNode($event: MatAutocompleteSelectedEvent| string ) {
+  selectNode($event: MatAutocompleteSelectedEvent| string ): void {
 
     const nodeId = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
 
-    this.sidenav.open()
+    this.sidenav.open();
     this.myControl.setValue(nodeId);
     this.highlightConnectedNodes(nodeId);
     this.showDetails = true;
@@ -607,8 +607,8 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     // console.log(this.detailsInfo.datasets);
   }
 
-  async closeSidenav() {
-    await this.sidenav.close()
+  async closeSidenav(): Promise<void> {
+    await this.sidenav.close();
     this.neighbourhoodHighlight(null);
     this.visNetworkService.unselectAll(this.visNetwork);
     this.myControl.setValue('');
