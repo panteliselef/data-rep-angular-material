@@ -1,0 +1,67 @@
+<link rel="stylesheet" href="homepage.component.scss">
+<nav class="navbar-header">
+
+  <div style="flex-grow: 1"></div>
+  <a mat-button href="/phenonet" routerLink="phenonet">Phenonet</a>
+  <a mat-button href="/vis" routerLink="vis">Visualisation</a>
+  <a mat-button disabled>Search</a>
+  <a mat-button disabled>Download</a>
+  <a mat-button disabled>Help</a>
+</nav>
+
+<div style="min-height:calc(100vh - 52px);display: flex;flex-direction: column; justify-content: center; align-items: center">
+
+  <h1>
+    <span style="font-size: inherit" class="material-icons-round">bar_chart</span>
+    Data Repurposing
+  </h1>
+
+  <div class="example_searches" style="font-family: 'Source Sans Pro', sans-serif">
+    Example searches:
+
+    <mat-chip-list aria-label="Fish selection">
+      <a href="/disease/sepsis" routerLink="/disease/sepsis">
+        <mat-chip color="primary" selected>
+          <span class="material-icons-round">search</span>
+          sepsis</mat-chip>
+      </a>
+      <a href="/disease/asthma" routerLink="/disease/asthma">
+        <mat-chip color="primary" selected>
+          <span class="material-icons-round">search</span>
+          asthma</mat-chip>
+      </a>
+      <a href="/disease/breast cancer" routerLink="/disease/breast cancer">
+        <mat-chip color="primary" selected>
+          <span class="material-icons-round">search</span>
+          breast cancer</mat-chip>
+      </a>
+    </mat-chip-list>
+    <!--    <a href="">sepsis</a>-->
+    <!--    <a href="">asthma</a>-->
+    <!--    <a href="">breast cancer</a>-->
+  </div>
+
+  <app-toolbar-search></app-toolbar-search>
+
+
+  <div class="features" style="margin-top: 3rem;">
+    <div class="feature">
+      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+      <div class="details">
+        <h2 class="title">Phenonet</h2>
+        <p class="info">This is the network of disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+      <div class="details">
+        <h2 class="title">Phenonet</h2>
+        <p class="info">This is the network of disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

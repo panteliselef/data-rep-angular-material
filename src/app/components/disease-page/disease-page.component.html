@@ -1,0 +1,36 @@
+<app-navbar class="mat-elevation-z6"></app-navbar>
+<main>
+
+  <div
+    style="flex: 0 0 auto; width: 100%; display:flex; align-items: center; justify-content: center; flex-direction: column; padding: 1.8rem 0;">
+
+    <div style="display:flex; flex-direction: column; align-items: center">
+      <h1 style="margin: 0;">Phenonet</h1>
+      <h4 style="text-align: center; line-height: 1.2; margin:1rem 0;width: 100%; max-width: 500px; color: #A9A9A9">This
+        is the network
+        of
+        disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</h4>
+    </div>
+    <app-toolbar-search [value]="diseaseId"></app-toolbar-search>
+  </div>
+
+  <div
+    style="display: grid; grid-template-columns: 2fr 1fr; width: 100%; max-width: 1440px; margin: 0 auto;min-height: 500px">
+
+    <div style="width: 100%; border: 1px solid #dfe1e5; border-radius: 5px">
+      <div class="graph-area">
+        <div
+          class="network-canvas"
+          [visNetwork]="visNetwork"
+          [visNetworkData]="visNetworkData"
+          [visNetworkOptions]="visNetworkOptions"
+          (initialized)="networkInitialized()"
+        ></div>
+      </div>
+    </div>
+
+    <div style="height: 600px; overflow: auto">
+      <app-node-details *ngIf="selectedItem.type === 'node'" [nodeDetails]="selectedItem.value"></app-node-details>
+    </div>
+  </div>
+</main>

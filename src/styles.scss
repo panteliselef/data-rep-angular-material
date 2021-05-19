@@ -4,8 +4,17 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+app-navbar {
+  color: #fff;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
 
-app-root {
+app-disease-network,
+app-disease-page{
   display: grid;
   grid-template-rows: 52px 1fr;
 }
