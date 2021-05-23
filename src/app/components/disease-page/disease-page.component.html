@@ -31,6 +31,7 @@
 
     <div style="height: 600px; overflow: auto">
       <app-node-details *ngIf="selectedItem.type === 'node'" [nodeDetails]="selectedItem.value"></app-node-details>
+      <app-edge-details *ngIf="selectedItem.type === 'edge'" [edgeDetails]="selectedItem.value"></app-edge-details>
     </div>
   </div>
 </main>

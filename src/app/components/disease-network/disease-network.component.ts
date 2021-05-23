@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {environment} from '../../../environments/environment';
@@ -58,7 +58,7 @@ interface DATA {
 @Component({
   selector: 'app-disease-network',
   templateUrl: './disease-network.component.html',
-  styleUrls: ['./disease-network.component.scss'],
+  styleUrls: ['./disease-network.component.scss', '../navbar/navbar.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -138,7 +138,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
 
   }
 
-  private highlightConnectedNodes(selectedNode: string|IdType): void{
+  private highlightConnectedNodes(selectedNode: string|IdType): void {
     console.log('Node selected');
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     this.highlightActive = true;
@@ -585,7 +585,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkService.off(this.visNetwork, 'click');
   }
 
-  selectNode($event: MatAutocompleteSelectedEvent| string ) {
+  selectNode($event: MatAutocompleteSelectedEvent| string ): void {
 
     const nodeId = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
 
@@ -610,8 +610,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       });
     // console.log(this.detailsInfo.datasets);
   }
-
-  async closeSidenav() {
+  async closeSidenav(): Promise<void> {
     await this.sidenav.close();
     this.neighbourhoodHighlight(null);
     this.visNetworkService.unselectAll(this.visNetwork);

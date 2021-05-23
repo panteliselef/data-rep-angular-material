@@ -34,7 +34,7 @@ export class NodeDetailsComponent implements OnInit, OnChanges{
 
   ngOnChanges(changes: SimpleChanges): void {
     const data: SelectedItemNodeInfo  = (changes.data.currentValue as SelectedItemNodeInfo);
-    this.connectedNodes = new MatTableDataSource<any>(data.connectedNodes.slice());
+    this.connectedNodes = new MatTableDataSource<any>(data.connectedNodes);
     this.datasets = Array
       .from<TableEntry>(data.selectedNode.datasets as any)
       .map(({GSE, Samples, Entity, Type}) => {

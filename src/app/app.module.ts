@@ -33,6 +33,7 @@ import {HomepageComponent} from './components/homepage/homepage.component';
 import { ToolbarSearchComponent } from './components/toolbar-search/toolbar-search.component';
 import { DiseasePageComponent } from './components/disease-page/disease-page.component';
 import { NodeDetailsComponent } from './components/disease-page/node-details/node-details.component';
+import { EdgeDetailsComponent } from './components/disease-page/edge-details/edge-details.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -47,7 +48,8 @@ export function importingEchart(): void {
     NavbarComponent,
     ToolbarSearchComponent,
     DiseasePageComponent,
-    NodeDetailsComponent
+    NodeDetailsComponent,
+    EdgeDetailsComponent
   ],
   imports: [
     CommonModule,

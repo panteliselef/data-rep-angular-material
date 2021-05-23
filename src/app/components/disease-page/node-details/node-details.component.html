@@ -18,11 +18,11 @@
 <!--  </div>-->
 </div>
 
-<mat-tab-group animationDuration="100ms" dynamicHeight>
+<mat-tab-group animationDuration="100ms">
   <mat-tab label="Neighbors">
     <div style="height:50px;border-bottom: 1px solid rgba(0,0,0,.12);gap:.3rem;display: flex;padding: 0 1rem;align-items: center">
       <mat-icon aria-hidden="false" aria-label="Example home icon">search</mat-icon>
-      <input #nodeSearchInput (keyup)="applyNodeFilter($event)" style="outline: none; border: none; flex: 1 1 auto; color: rgb(60, 64, 67); font-size: 1rem; line-height: 2" [formControl]="searchInputControl" matInput type="text" placeholder="Filter Nodes" aria-label="Search for neighbor nodes"/>
+      <input #nodeSearchInput autocomplete="off" (keyup)="applyNodeFilter($event)" style="outline: none; border: none; flex: 1 1 auto; color: rgb(60, 64, 67); font-size: 1rem; line-height: 2" [formControl]="searchInputControl" matInput type="text" placeholder="Filter Nodes" aria-label="Search for neighbor nodes"/>
       <button  *ngIf="searchInputControl.value" mat-icon-button
                (click)="searchInputControl.setValue('')"
                aria-label="Reset Search" >
@@ -76,16 +76,16 @@
                     {{el.dA}}
                   </a>
 
-                  <div class="gmail_like gmail_like_solid" style="background: transparent">
-                    <button mat-icon-button matTooltip="Download Data"
-                            aria-label="Example icon button with a vertical three dot icon">
-                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Download Annotation"
-                            aria-label="Example icon button with a vertical three dot icon">
-                      <mat-icon fontSet="material-icons-round">description</mat-icon>
-                    </button>
-                  </div>
+<!--                  <div class="gmail_like gmail_like_solid" style="background: transparent">-->
+<!--                    <button mat-icon-button matTooltip="Download Data"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>-->
+<!--                    </button>-->
+<!--                    <button mat-icon-button matTooltip="Download Annotation"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">description</mat-icon>-->
+<!--                    </button>-->
+<!--                  </div>-->
                 </td>
               </ng-container>
 
@@ -100,16 +100,16 @@
                     {{el.dB}}
                   </a>
 
-                  <div class="gmail_like gmail_like_solid" style="background: transparent">
-                    <button mat-icon-button matTooltip="Download Data"
-                            aria-label="Example icon button with a vertical three dot icon">
-                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Download Annotation"
-                            aria-label="Example icon button with a vertical three dot icon">
-                      <mat-icon fontSet="material-icons-round">description</mat-icon>
-                    </button>
-                  </div>
+<!--                  <div class="gmail_like gmail_like_solid" style="background: transparent">-->
+<!--                    <button mat-icon-button matTooltip="Download Data"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>-->
+<!--                    </button>-->
+<!--                    <button mat-icon-button matTooltip="Download Annotation"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">description</mat-icon>-->
+<!--                    </button>-->
+<!--                  </div>-->
                 </td>
               </ng-container>
 

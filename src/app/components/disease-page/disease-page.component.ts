@@ -207,17 +207,18 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
       if (clickData.nodes[0]) {
         this.selectNode(clickData.nodes[0]);
 
-      } else if (eventData[1].edges[0]) {
+      } else if (clickData.edges[0]) {
+        this.selectEdge(clickData.edges[0]);
         // this.showDetails = true;
         // this.sidenav.open();
-        const allEdges = this.edges.get({returnType: 'Object'}) as any;
-        const selectedEdge = allEdges[eventData[1].edges[0]];
-        this.detailsInfo.edgeFrom = selectedEdge.from;
-        this.detailsInfo.edgeTo = selectedEdge.to;
-        console.log(selectedEdge);
-        this.detailsInfo.edgeWeight = selectedEdge.weight;
-        this.detailsInfo.datasetPairs = selectedEdge.datasetPairs;
-        this.detailsInfo.type = 'edge';
+        // const allEdges = this.edges.get({returnType: 'Object'}) as any;
+        // const selectedEdge = allEdges[eventData[1].edges[0]];
+        // this.detailsInfo.edgeFrom = selectedEdge.from;
+        // this.detailsInfo.edgeTo = selectedEdge.to;
+        // console.log(selectedEdge);
+        // this.detailsInfo.edgeWeight = selectedEdge.weight;
+        // this.detailsInfo.datasetPairs = selectedEdge.datasetPairs;
+        // this.detailsInfo.type = 'edge';
       }
     } else {
       // this.showDetails = false;
@@ -250,40 +251,22 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
     });
   }
 
+  selectEdge(edgeId: string): void  {
+    const edge: EDGE = this.edges.get({returnType: 'Object'})[edgeId] as any;
+    this.selectedItem.type = 'edge';
+    this.selectedItem.value = edge;
+  }
+
   selectNode($event: MatAutocompleteSelectedEvent| string ): void {
 
     const nodeId = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
-
-    // this.sidenav.open();
-    // this.myControl.setValue(nodeId);
-    // this.highlightConnectedNodes(nodeId);
     this.showDetails = true;
-
     const node: NODE = this.nodes.get({returnType: 'Object'})[nodeId] as NODE;
     this.selectedItem.type = 'node';
     this.selectedItem.value = {
       selectedNode: node,
       connectedNodes:  this.getConnectedNodesAndTheirEdges(nodeId)
     };
-
-
-
-    // this.selectedItem.value = ;
     this.focusNode(nodeId);
-    // this.detailsInfo.name = nodeId;
-    // this.detailsInfo.type = 'node';
-    // this.detailsInfo.connectedNodes = new MatTableDataSource(this.getConnectedNodesAndTheirEdges(nodeId));
-    // // console.log(this.detailsInfo.connectedNodes);
-    // this.detailsInfo.datasets = Array
-    //   .from<TableEntry>((this.nodes.get({returnType: 'Object'})[this.detailsInfo.name] as any).datasets)
-    //   .map(({GSE, Samples, Entity, Type}) => {
-    //     return {
-    //       GSE,
-    //       Samples,
-    //       Entity,
-    //       Type,
-    //     };
-    //   });
-    // console.log(this.detailsInfo.datasets);
   }
 }
