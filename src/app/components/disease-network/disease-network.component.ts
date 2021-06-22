@@ -58,7 +58,7 @@ interface DATA {
 @Component({
   selector: 'app-disease-network',
   templateUrl: './disease-network.component.html',
-  styleUrls: ['./disease-network.component.scss', '../navbar/navbar.component.scss'],
+  styleUrls: ['./disease-network.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -142,7 +142,8 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     console.log('Node selected');
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     this.highlightActive = true;
-    let i, j;
+    let i;
+    let j;
 
 
     const degrees = 2;

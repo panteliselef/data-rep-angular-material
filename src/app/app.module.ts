@@ -29,7 +29,6 @@ import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
-import {HomepageComponent} from './components/homepage/homepage.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -37,7 +36,6 @@ export function importingEchart(): void {
 @NgModule({
   declarations: [
     AppComponent,
-    HomepageComponent,
     HeaderComponent,
     DiseaseNetworkComponent,
     VisualizationsComponent,
