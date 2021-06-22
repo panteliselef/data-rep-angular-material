@@ -29,6 +29,14 @@ import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
+<<<<<<< HEAD
+=======
+import {HomepageComponent} from './components/homepage/homepage.component';
+import { ToolbarSearchComponent } from './components/toolbar-search/toolbar-search.component';
+import { DiseasePageComponent } from './components/disease-page/disease-page.component';
+import { NodeDetailsComponent } from './components/disease-page/node-details/node-details.component';
+import { EdgeDetailsComponent } from './components/disease-page/edge-details/edge-details.component';
+>>>>>>> aa3a6c6bd2b4efdb883e0d255c9663b5ad6dc5cb
 
 export function importingEchart(): void {
   import('echarts');
@@ -39,7 +47,11 @@ export function importingEchart(): void {
     HeaderComponent,
     DiseaseNetworkComponent,
     VisualizationsComponent,
-    NavbarComponent
+    NavbarComponent,
+    ToolbarSearchComponent,
+    DiseasePageComponent,
+    NodeDetailsComponent,
+    EdgeDetailsComponent
   ],
   imports: [
     CommonModule,

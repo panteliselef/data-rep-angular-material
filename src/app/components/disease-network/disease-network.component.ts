@@ -484,7 +484,6 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       {from: '2', to: '5'}
     ]);
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
-
     this.visNetworkOptions = {
       height: '100%',
       width: '100%',
@@ -494,6 +493,11 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         color: this.nodeDefaultColor,
         font: {
           face: 'roboto',
+        },
+        scaling: {
+          label: {
+            enabled: true,
+          }
         }
       },
       edges: {
@@ -607,7 +611,6 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
       });
     // console.log(this.detailsInfo.datasets);
   }
-
   async closeSidenav(): Promise<void> {
     await this.sidenav.close();
     this.neighbourhoodHighlight(null);
