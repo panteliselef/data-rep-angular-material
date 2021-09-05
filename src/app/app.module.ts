@@ -29,6 +29,18 @@ import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
+import {HomepageComponent} from './components/homepage/homepage.component';
+import { ToolbarSearchComponent } from './components/toolbar-search/toolbar-search.component';
+import { DiseasePageComponent } from './components/disease-page/disease-page.component';
+import { NodeDetailsComponent } from './components/disease-page/node-details/node-details.component';
+import { EdgeDetailsComponent } from './components/disease-page/edge-details/edge-details.component';
+import { DatasetNetworkComponent } from './components/dataset-network/dataset-network.component';
+import { ToolbarSearchDatasetComponent } from './components/toolbar-search-dataset/toolbar-search-dataset.component';
+import {PhenonetNetworkComponent} from './components/v2/phenonet-network/phenonet-network.component';
+import {StudyPairsListComponent} from './components/v2/phenonet-network/study-pairs-list/study-pairs-list.component';
+import {NeighborsTableComponent} from './components/v2/phenonet-network/neighbors-table/neighbors-table.component';
+import {StudiesTableComponent} from './components/v2/phenonet-network/studies-table/studies-table.component';
+import {GraphFilterBarComponent} from './components/v2/phenonet-network/graph-filter-bar/graph-filter-bar.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -37,9 +49,22 @@ export function importingEchart(): void {
   declarations: [
     AppComponent,
     HeaderComponent,
+    HomepageComponent,
     DiseaseNetworkComponent,
     VisualizationsComponent,
-    NavbarComponent
+    NavbarComponent,
+    NavbarComponent,
+    ToolbarSearchComponent,
+    DiseasePageComponent,
+    NodeDetailsComponent,
+    EdgeDetailsComponent,
+    DatasetNetworkComponent,
+    ToolbarSearchDatasetComponent,
+    PhenonetNetworkComponent,
+    StudyPairsListComponent,
+    NeighborsTableComponent,
+    StudiesTableComponent,
+    GraphFilterBarComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,65 @@
+<div style="margin-top:1.5rem;padding: 0 1rem">
+
+  <h2>
+    <span (click)="focusNode(edgeDetails.from)">{{edgeDetails.from}}</span>
+    -
+    <span (click)="focusNode(edgeDetails.to)">{{edgeDetails.to}}</span>
+  </h2>
+
+  <div class="info_text">
+    <span>Edge Frequency</span>
+    <p>{{edgeDetails.weight}}</p>
+  </div>
+
+  <div class="info_text" style="margin-top: 2rem">
+    <span>Similarities found between</span>
+  </div>
+</div>
+
+<table *ngIf="edgeDetails?.datasetPairs" mat-table [dataSource]="edgeDetails.datasetPairs"
+       style="width: 100%">
+  <ng-container matColumnDef="Dataset A">
+    <th mat-header-cell *matHeaderCellDef> Study A</th>
+    <td mat-cell *matCellDef="let element">
+      <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.dA}}" target="_blank"
+         rel="noopener">
+        {{element.dA}}
+      </a>
+
+      <div class="gmail_like gmail_like_solid" style="background: transparent">
+        <button mat-icon-button matTooltip="Download Data"
+                aria-label="Example icon button with a vertical three dot icon">
+          <mat-icon fontSet="material-icons-round">file_download</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Download Annotation"
+                aria-label="Example icon button with a vertical three dot icon">
+          <mat-icon fontSet="material-icons-round">description</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Dataset B">
+    <th mat-header-cell *matHeaderCellDef> Study B</th>
+    <td mat-cell *matCellDef="let element">
+      <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.dB}}" target="_blank"
+         rel="noopener">
+        {{element.dB}}
+      </a>
+
+      <div class="gmail_like gmail_like_solid" style="background: transparent">
+        <button mat-icon-button matTooltip="Download Data"
+                aria-label="Example icon button with a vertical three dot icon">
+          <mat-icon fontSet="material-icons-round">file_download</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Download Annotation"
+                aria-label="Example icon button with a vertical three dot icon">
+          <mat-icon fontSet="material-icons-round">description</mat-icon>
+        </button>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="['Dataset A','Dataset B']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['Dataset A','Dataset B'];"></tr>
+</table>

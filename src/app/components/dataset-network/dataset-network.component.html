@@ -1,0 +1,104 @@
+<app-navbar class="mat-elevation-z6"></app-navbar>
+<main>
+  <div
+    style="flex: 0 0 auto; width: 100%; display:flex; align-items: center; justify-content: center; flex-direction: column; padding: 1.8rem 0;">
+
+    <div style="display:flex; flex-direction: column; align-items: center">
+      <h1 style="">Dataset Networks</h1>
+      <div class="example_searches" style="font-family: 'Source Sans Pro', sans-serif">
+        Example searches:
+      <mat-chip-list aria-label="Search examples">
+        <a routerLink="/dataset-network/GPL96">
+          <mat-chip color="primary" selected>GPL96</mat-chip>
+        </a>
+        <a routerLink="/dataset-network/GPL570">
+          <mat-chip color="primary" selected>GPL570</mat-chip>
+        </a>
+        <a routerLink="/dataset-network/GPL6244">
+          <mat-chip color="primary" selected>GPL6244</mat-chip>
+        </a>
+      </mat-chip-list></div>
+    </div>
+
+    <app-toolbar-search-dataset mode="dataset" [value]="networkId"></app-toolbar-search-dataset>
+  </div>
+
+  <div style="position:relative; overflow: hidden; display: flex; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 5px; width: 100%; max-width: 920px; margin: auto">
+
+    <div style="flex: 1 1 auto" class="graph-area">
+      <div
+        class="network-canvas"
+        [visNetwork]="visNetwork"
+        [visNetworkData]="visNetworkData"
+        [visNetworkOptions]="visNetworkOptions"
+        (initialized)="networkInitialized()"
+      ></div>
+    </div>
+
+    <div class="disease_dropdown">
+      <mat-form-field style="width: 100%;" appearance="outline" class="example-full-width">
+        <mat-label>Disease</mat-label>
+        <input type="text"
+               placeholder="Pick disease"
+               aria-label="Disease"
+               matInput
+               [formControl]="myControl"
+               [matAutocomplete]="auto">
+        <mat-autocomplete (optionSelected)="selectNodesByDisease($event)" #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+            {{option}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <div style="display: flex;flex-direction: column; width: 100%;">
+        <div style="display: flex; align-items: center; width: 100%;">
+          <img src="assets/Group%20116.svg">
+          <mat-slider style="width: 100%" [min]="10" [max]="maxSliderValue" step="1" color="primary" [value]="currSliderValue"
+                      tickInterval="1" thumbLabel (change)="handleSliderChange($event)"></mat-slider>
+          <img src="assets/Union.svg">
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+
+    <div class="info_panel" [class.open]="lastSelectedItem">
+      <div *ngIf="this.lastSelectedItem">
+        <p style=" font-size: .9em; font-weight: 500; color: rgba(0, 0, 0, 0.54)">{{this.lastSelectedItem.type.toUpperCase()}}</p>
+        <div *ngIf="this.lastSelectedItem.type === 'node'" style="margin-top:.5rem;display: flex">
+          <div>
+            <p style="font-weight: 600; font-size: 2rem;">
+              <a [href]="'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc='+this.lastSelectedItem.value.id">{{this.lastSelectedItem.value.id}}</a>
+            </p>
+            <p style="font-weight: 500; color: #3d5e54">{{this.lastSelectedItem.value.label}}</p>
+          </div>
+          <span></span>
+          <div></div>
+        </div>
+
+        <div *ngIf="this.lastSelectedItem.type === 'edge'" style="margin-top:.5rem;display: flex">
+          <div>
+            <p style="font-weight: 600; font-size: 1.8rem;">
+              <a [href]="'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc='+this.lastSelectedItem.value[0].id">{{this.lastSelectedItem.value[0].id}}</a>
+            </p>
+            <p style="font-weight: 500; color: #3d5e54">{{this.lastSelectedItem.value[0].label}}</p>
+          </div>
+          <span style="font-weight: 600; font-size: 1.8rem;"> - </span>
+          <div>
+            <p style="font-weight: 600; font-size: 1.8rem;">
+              <a [href]="'https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc='+this.lastSelectedItem.value[1].id">{{this.lastSelectedItem.value[1].id}}</a>
+            </p>
+            <p style="font-weight: 500; color: #3d5e54">{{this.lastSelectedItem.value[1].label}}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>

@@ -11,6 +11,7 @@ import {map, startWith} from 'rxjs/operators';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {MatSidenav} from '@angular/material/sidenav';
 import {MatTableDataSource} from '@angular/material/table';
+import {ActivatedRoute, Params} from '@angular/router';
 
 
 export interface PeriodicElement {
@@ -131,8 +132,9 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
   expandedElement: any;
   events: string[] = [];
   opened: boolean;
+  private diseaseId = '';
 
-  public constructor(private httpService: HttpClient, private visNetworkService: VisNetworkService
+  public constructor(private httpService: HttpClient, private route: ActivatedRoute, private visNetworkService: VisNetworkService
   ) {
 
 
@@ -317,6 +319,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
   }
 
   public networkInitialized(): void {
+    let counter = 0;
     // now we can use the service to register on events
     this.visNetworkService.on(this.visNetwork, 'click');
     this.visNetworkService.on(this.visNetwork, 'hoverNode');
@@ -326,7 +329,20 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkService.on(this.visNetwork, 'stabilizationIterationsDone');
     this.visNetworkService.on(this.visNetwork, 'stabilized');
     this.visNetworkService.stabilized.subscribe(() => {
+      // this.resetCanvasZoomLevel();
+      // console.log('dwad')
+      // console.log(counter)
+      // this.resetCanvasZoomLevel();
       this.resetCanvasZoomLevel();
+      if (counter !== 0) { return; }
+      if (this.diseaseId !== '') {
+        setTimeout(() => this.selectNode(this.diseaseId), 1000);
+      }
+      // else {
+      //   this.resetCanvasZoomLevel();
+      //   setTimeout(() => this.selectNode(this.diseaseId), 1000);
+      // }
+      counter++;
     });
 
     //
@@ -459,10 +475,13 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     return this.options.filter(option => option.toLowerCase().includes(filterValue));
   }
 
+  async onQParamsChange(params: Params): Promise<void> {
+    this.diseaseId = params.q || '';
+  }
 
   async ngOnInit(): Promise<void> {
 
-
+    this.route.queryParams.subscribe(this.onQParamsChange.bind(this));
     try {
       this.networks = (await this.httpService.get<{ networks: string[] }>(environment.apiUrl).toPromise()).networks;
     } catch (e) {
@@ -488,7 +507,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     this.visNetworkOptions = {
       height: '100%',
       width: '100%',
-      autoResize: true,
+      // autoResize: true,
       nodes: {
         shape: 'dot',
         color: this.nodeDefaultColor,
@@ -519,7 +538,7 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
         hideEdgesOnDrag: true,
         hideEdgesOnZoom: true,
         // multiselect: true,
-        navigationButtons: true,
+        // navigationButtons: true,
         // selectable: true,
         // selectConnectedEdges:true,
       },
@@ -566,6 +585,11 @@ export class DiseaseNetworkComponent implements OnInit, OnDestroy {
     if (webkitDep.edges) {
       this.edges.add(webkitDep.edges);
     }
+
+    // if (this.diseaseId) {
+    //   this.selectNode(this.diseaseId);
+    //
+    // }
 
   }
 

@@ -1,0 +1,44 @@
+<app-navbar class="mat-elevation-z6"></app-navbar>
+<main>
+
+  <div
+    style="flex: 0 0 auto; width: 100%; display:flex; align-items: center; justify-content: center; flex-direction: column; padding: 1.8rem 0;">
+
+    <div style="display:flex; flex-direction: column; align-items: center">
+      <h1 style="margin: 0;">Phenonet</h1>
+      <h4 style="text-align: center; line-height: 1.2; margin:1rem 0;width: 100%; max-width: 500px; color: #A9A9A9">This
+        is the network
+        of
+        disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</h4>
+    </div>
+    <app-toolbar-search mode="disease" [value]="diseaseId"></app-toolbar-search>
+  </div>
+
+  <div
+    style="display: grid; gap: 1rem; grid-template-columns: 1.5fr 1fr; width: 100%; max-width: 1120px; margin: 0 auto 2rem auto;min-height: 500px">
+
+    <div style="width: 100%; position:relative; overflow: hidden;">
+      <div class="graph-area">
+        <div
+          class="network-canvas"
+          [visNetwork]="visNetwork"
+          [visNetworkData]="visNetworkData"
+          [visNetworkOptions]="visNetworkOptions"
+          (initialized)="networkInitialized()"
+        ></div>
+      </div>
+
+      <div class="disease_dropdown">
+        <img src="assets/Union.svg">
+        <mat-slider [style.width]=" '540px'" [min]="minGraphEdgeFreq" [max]="maxGraphEdgeFreq" step="1" color="primary" [value]="currSliderValue"
+                    tickInterval="1" thumbLabel   (input)="handleSliderInput($event)" (change)="handleSliderChange($event)"></mat-slider>
+        <img src="assets/Group%20116.svg">
+      </div>
+    </div>
+
+    <div  class="mat-elevation-z2" style="height: 800px; overflow: hidden;  border-radius: 5px">
+      <app-node-details *ngIf="selectedItem.type === 'node'" [nodesInGraph]="nodesInGraph || selectedItem.value.connectedNodes.length" [nodeDetails]="selectedItem.value" (edgeFocused)="focusEdge($event)" (nodeFocused)="focusNode($event)"></app-node-details>
+      <app-edge-details *ngIf="selectedItem.type === 'edge'" [edgeDetails]="selectedItem.value"></app-edge-details>
+    </div>
+  </div>
+</main>

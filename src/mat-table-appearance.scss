@@ -1,0 +1,163 @@
+@import "variables";
+@import "util";
+/* Material Table Override */
+/* TODO: make this global */
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+tr {
+
+  /*TODO: Add onhover bg color & underline with icon */
+
+  td.mat-cell, td.mat-footer-cell {
+    position: relative;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .mat-header-cell {
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  &.mat-header-row {
+    height: 48px;
+  }
+  &.mat-row:hover {
+    //background: whitesmoke;
+    background-color: $green-transparent-2;
+
+    a {
+      text-decoration: underline;
+    }
+  }
+
+  &:last-of-type {
+    td {
+      border-bottom: none;
+    }
+  }
+
+
+  /* @Used at table in Studies tab, a gmail-like effect when hovering upon a table row*/
+  td > .gmail_like {
+    position: absolute;
+    background: linear-gradient(270deg, #F5F8F7 45.25%, rgba(245, 248, 247, 0) 77.97%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    visibility: hidden;
+  }
+  &:hover {
+    > td > .gmail_like {
+      visibility: visible;
+    }
+  }
+}
+
+/* @Used at table in Studies Tab */
+.mat-column-id  {
+  min-width: 120px;
+}
+.mat-column-samples  {
+  min-width: 70px;
+}
+.mat-column-entity  {
+  min-width: 125px;
+}
+
+
+.in_graph_indicator::before {
+  content: '';
+  top: calc(48px / 2 - 5px);
+  left: calc(29px / 2);
+  height: 10px;
+  width: 10px;
+  background: $green-dark;
+  border-radius: 50%;
+  position: absolute;
+}
+
+
+/* For nested table */
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-detail-row:hover {
+  background: transparent;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  @extend .v-flex;
+  overflow: hidden;
+  display: flex;
+
+  &.expanded {
+    width: 100%;
+    border-top: 1px solid $grey-light-1;
+  }
+}
+
+.example-element-detail-header {
+  @extend .h-flex, .space-between, .align-center;
+  border-bottom: 1px solid $grey-light-1;
+  height: 48px;
+  span{
+    font-family: 'Roboto', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+}
+
+
+ul.example-element-detail-body{
+  padding: 5px 10px;
+  margin: 0;
+  list-style: none;
+
+  li {
+    @extend .h-flex, .align-center;
+    border-radius: 11px;
+    height: 44px;
+    font-family: Roboto, sans-serif;
+    &:hover {
+      background-color: $green-transparent-2;
+    }
+
+    span {
+      flex: 0 0 80px;
+    }
+
+    &>:first-child {
+      padding-left: 27px;
+    }
+  }
+}
+
+/*END:For nested table */

@@ -1,0 +1,258 @@
+<div style="padding: 1.5rem 1rem 0 1rem;">
+
+  <div style="display: flex;justify-content: space-between;">
+    <h2><a routerLink="/phenonet" [queryParams]="{q:data.selectedNode.disease}">{{data.selectedNode.disease}}</a></h2>
+<!--    <button mat-icon-button aria-label="Close Sidenav and unselect a node">-->
+<!--      <mat-icon class="material-icons-round" aria-hidden="false" aria-label="Example home icon">close</mat-icon>-->
+<!--    </button>-->
+  </div>
+  <!--    <span>{{detailsInfo.type}}</span>-->
+
+  <div style="display: flex; gap: 2rem; width: 100%">
+    <div class="info_text">
+      <p>{{ data.connectedNodes.length}}</p>
+      <span>Neighbors</span>
+    </div>
+
+    <div class="info_text">
+      <p>{{datasets.length}}</p>
+      <span>Studies</span>
+    </div>
+  </div>
+
+
+
+<!--  <div class="info_text" style="margin-top: 2rem">-->
+<!--    <span>Studies</span>-->
+<!--  </div>-->
+</div>
+
+<mat-tab-group mat-stretch-tabs style="height: 100%" animationDuration="100ms">
+  <mat-tab label="Neighbors">
+    <div style="height:50px;border-bottom: 1px solid rgba(0,0,0,.12);gap:.3rem;display: flex;padding: 0 1rem;align-items: center">
+      <mat-icon aria-hidden="false" aria-label="Example home icon">search</mat-icon>
+      <input #nodeSearchInput autocomplete="off" (keyup)="applyNodeFilter($event)" style="outline: none; border: none; flex: 1 1 auto; color: rgb(60, 64, 67); font-size: 1rem; line-height: 2" [formControl]="searchInputControl" matInput type="text" placeholder="Filter Nodes" aria-label="Search for neighbor nodes"/>
+      <button  *ngIf="searchInputControl.value" mat-icon-button
+               (click)="searchInputControl.setValue('')"
+               aria-label="Reset Search" >
+        <mat-icon (click)="clearNodeFilter()" aria-label="Reset Search" fontSet="material-icons-round">close</mat-icon>
+      </button>
+    </div>
+    <table mat-table multiTemplateDataRows id="neighbors" [dataSource]="connectedNodes"
+           style="width: 100%">
+
+      <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+      <!-- Name Column -->
+      <ng-container matColumnDef="node_in_graph">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element; let index = dataIndex ;">
+          <div *ngIf="index < nodesInGraph" class="in_graph_indicator"></div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="connected_node">
+        <th mat-header-cell *matHeaderCellDef> Neighbors</th>
+        <td mat-cell (click)="focusNode(element.node)" *matCellDef="let element"> {{element.node}} </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="edge_freq">
+        <th mat-header-cell *matHeaderCellDef> Edge Frequency</th>
+        <td mat-cell (click)="focusEdge(element)" *matCellDef="let element">{{element.weight}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="icon">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <!--              <span style="text-decoration: none" class="material-icons-round">expand_more</span>-->
+          <button mat-icon-button
+                  (click)="expandedElement = expandedElement === element ? null : element"
+                  aria-label="See more details">
+            <mat-icon *ngIf="element == expandedElement" fontSet="material-icons-round">expand_less</mat-icon>
+            <mat-icon *ngIf="element !== expandedElement" fontSet="material-icons-round">expand_more</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="4" style="padding: 0">
+          <div class="example-element-detail"
+               [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+
+            <div style="width: 100%;padding: .5rem 0; border-top: 1px solid rgba(0, 0, 0, 0.12);">
+              <div style="font-weight: 500; display: flex;align-items: center;padding: 0 24px; justify-content: space-between">
+<!--                {{data.selectedNode.disease}} <img src="assets/double-arrow.svg"/> {{element.node}}-->
+                <span>
+                  Studies with similarities
+                </span>
+                 <mat-icon [matTooltip]="'Between '+data.selectedNode.disease+' and ' + element.node" fontSet="material-icons-round">help_outline</mat-icon>
+              </div>
+              <ul style="list-style: none; padding: 0 24px;">
+                <li  *ngFor="let el of element.datasetPairs" style="border-radius: 5px;height:45px;display: grid;grid-template-columns: 1fr 48px 1fr; justify-items: center; align-items: center">
+                                                    <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{el.dA}}" target="_blank"
+                                                       rel="noopener">
+                                                      {{el.dA}}
+                                                                          <button mat-icon-button matTooltip="Download Data"
+                                                                                  aria-label="Example icon button with a vertical three dot icon">
+                                                                            <mat-icon fontSet="material-icons-round">file_download</mat-icon>
+                                                                          </button>
+                                                                          <button mat-icon-button matTooltip="Download Annotation"
+                                                                                  aria-label="Example icon button with a vertical three dot icon">
+                                                                            <mat-icon fontSet="material-icons-round">description</mat-icon>
+                                                                          </button>
+                                                    </a>
+                  <img style="flex-basis: 48px" src="assets/double-arrow.svg"/>
+                  <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{el.dB}}" target="_blank"
+                     rel="noopener">
+                    {{el.dB}}
+                    <button mat-icon-button matTooltip="Download Data"
+                            aria-label="Example icon button with a vertical three dot icon">
+                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Download Annotation"
+                            aria-label="Example icon button with a vertical three dot icon">
+                      <mat-icon fontSet="material-icons-round">description</mat-icon>
+                    </button>
+                  </a>
+                </li>
+                <!--                                  <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.datasetPairs.dA}}" target="_blank"-->
+                <!--                                     rel="noopener">-->
+                <!--                                    {{element.datasetPairs.dA}}-->
+                <!--                                  </a>-->
+              </ul>
+            </div>
+
+
+
+
+<!--            {{element.datasetPairs}}-->
+
+
+<!--            <table mat-table [dataSource]="element.datasetPairs" style="width: 100%">-->
+
+<!--              <ng-container matColumnDef="Dataset A">-->
+<!--                <th mat-header-cell-->
+<!--                    style="border-top-width: 1px;border-top-color: rgba(0,0,0,.05);border-top-style: solid;"-->
+<!--                    *matHeaderCellDef> Study A-->
+<!--                </th>-->
+<!--                <td mat-cell *matCellDef="let el">-->
+<!--                  <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{el.dA}}" target="_blank"-->
+<!--                     rel="noopener">-->
+<!--                    {{el.dA}}-->
+<!--                  </a>-->
+
+<!--                  <div class="gmail_like gmail_like_solid" style="background: transparent">-->
+<!--                    <button mat-icon-button matTooltip="Download Data"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>-->
+<!--                    </button>-->
+<!--                    <button mat-icon-button matTooltip="Download Annotation"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">description</mat-icon>-->
+<!--                    </button>-->
+<!--                  </div>-->
+<!--                </td>-->
+<!--              </ng-container>-->
+
+<!--              <ng-container matColumnDef="Dataset B">-->
+<!--                <th mat-header-cell-->
+<!--                    style="border-top-width: 1px;border-top-color: rgba(0,0,0,.05);border-top-style: solid;"-->
+<!--                    *matHeaderCellDef> Study B-->
+<!--                </th>-->
+<!--                <td mat-cell *matCellDef="let el">-->
+<!--                  <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{el.dB}}" target="_blank"-->
+<!--                     rel="noopener">-->
+<!--                    {{el.dB}}-->
+<!--                  </a>-->
+
+<!--                  <div class="gmail_like gmail_like_solid" style="background: transparent">-->
+<!--                    <button mat-icon-button matTooltip="Download Data"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">file_download</mat-icon>-->
+<!--                    </button>-->
+<!--                    <button mat-icon-button matTooltip="Download Annotation"-->
+<!--                            aria-label="Example icon button with a vertical three dot icon">-->
+<!--                      <mat-icon fontSet="material-icons-round">description</mat-icon>-->
+<!--                    </button>-->
+<!--                  </div>-->
+<!--                </td>-->
+<!--              </ng-container>-->
+
+<!--              <tr mat-header-row *matHeaderRowDef="['Dataset A','Dataset B']"></tr>-->
+<!--              <tr mat-row *matRowDef="let row; columns: ['Dataset A','Dataset B'];"></tr>-->
+<!--            </table>-->
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['node_in_graph','connected_node','edge_freq','icon'];sticky:true"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['node_in_graph','connected_node','edge_freq','icon'];"
+          class="example-element-row"
+          [class.example-expanded-row]="expandedElement === row"
+      ></tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+
+<!--       Row shown when there is no matching data.-->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">No data matching the filter "{{nodeSearchInput.value}}"</td>
+      </tr>
+    </table>
+
+  </mat-tab>
+  <mat-tab label="Studies">
+
+    <table mat-table [dataSource]="datasets" style="width: 100%">
+
+      <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="GSE">
+        <th mat-header-cell *matHeaderCellDef> GSE</th>
+        <td mat-cell *matCellDef="let element">
+          <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.GSE}}" target="_blank"
+             rel="noopener">
+            {{element.GSE}}
+          </a></td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="Samples">
+        <th mat-header-cell *matHeaderCellDef> Samples</th>
+        <td mat-cell *matCellDef="let element"> {{element.Samples}} </td>:w
+      </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="Entity">
+        <th mat-header-cell *matHeaderCellDef> Entity</th>
+        <td mat-cell *matCellDef="let element"> {{element.Entity}} </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="Type">
+        <th mat-header-cell *matHeaderCellDef> Type</th>
+        <td mat-cell *matCellDef="let element">
+          <span> {{element.Type}}</span>
+          <!--          <span class="gmail_like"></span>-->
+
+          <div class="gmail_like">
+            <button mat-icon-button matTooltip="Download Data"
+                    aria-label="Example icon button with a vertical three dot icon">
+              <mat-icon fontSet="material-icons-round">file_download</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Download Annotation"
+                    aria-label="Example icon button with a vertical three dot icon">
+              <mat-icon fontSet="material-icons-round">description</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+  </mat-tab>
+</mat-tab-group>

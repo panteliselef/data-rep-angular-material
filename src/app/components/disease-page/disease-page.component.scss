@@ -1,0 +1,51 @@
+@import '../../../../src/variables';
+h1 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: $green-dark;
+}
+
+.disease_dropdown {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  padding: 0 .5rem;
+  align-items: center;
+  width: 300px;
+  gap:.5rem;
+  //height: 75px;
+  top: 17px;
+  left: 10px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px rgb(10 16 20 / 24%), 0 0 2px rgb(10 16 20 / 12%);
+}
+
+
+
+.info_text {
+  span {
+    color: rgba(0, 0, 0, .54);
+    font-weight: 500;
+  }
+
+  p {
+    margin-top: .3rem;
+    font-size: 17px;
+  }
+}
+
+.graph-area {
+  height: 600px;
+  flex: 1 1 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+
+.network-canvas {
+  //border-top: 1px solid rgba(0,0,0,.1);
+  //height: calc(100vh - 54px);
+  height: 100%;
+}

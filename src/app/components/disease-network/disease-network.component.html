@@ -26,7 +26,6 @@
 
 <!--<h4 *ngIf="lastSelectedNode">Last Selected Node: {{lastSelectedNode}}</h4>-->
 
-<link rel="stylesheet" href="../homepage/homepage.component.scss">
 <app-navbar class="mat-elevation-z6"></app-navbar>
 <main>
   <mat-sidenav-container class="example-container">
@@ -35,7 +34,7 @@
       <div style="margin-top:1.5rem;padding: 0 1rem">
 
         <div style="display: flex;justify-content: space-between;">
-          <h2 *ngIf="detailsInfo.type === 'node'">{{detailsInfo.name}}</h2>
+          <h2 [routerLink]="'/disease/'+detailsInfo.name" *ngIf="detailsInfo.type === 'node'">{{detailsInfo.name}}</h2>
           <button (click)="closeSidenav()" mat-icon-button aria-label="Close Sidenav and unselect a node">
             <mat-icon>close</mat-icon>
           </button>
@@ -65,10 +64,10 @@
           <!--      <p>{{detailsInfo.edgeWeight}}</p>-->
         </div>
 
-        <div class="info_text" *ngIf="detailsInfo.type === 'node'" style="margin-top: 2rem">
-          <span>Studies</span>
-          <!--      <p>{{detailsInfo.edgeWeight}}</p>-->
-        </div>
+<!--        <div class="info_text" *ngIf="detailsInfo.type === 'node'" style="margin-top: 2rem">-->
+<!--          <span>Studies</span>-->
+<!--          &lt;!&ndash;      <p>{{detailsInfo.edgeWeight}}</p>&ndash;&gt;-->
+<!--        </div>-->
       </div>
 
 

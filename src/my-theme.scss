@@ -1,0 +1,44 @@
+@import "variables";
+// Import library functions for theme creation.
+@import '~@angular/material/theming';
+
+// Include non-theme styles for core.
+@include mat-core();
+
+$my-pallete: (
+  50: #e2f2ee,
+  100: #c7dbd3,
+  200: #c7dbd3,
+  300: #88a89e,
+  400: #6f9489,
+  500: #588276,
+  600: #4d7267,
+  700:#3d5e54,
+  800: #2f4a43,
+  900: #1e352f,
+  contrast: (
+    50: $dark-primary-text,
+    100: $dark-primary-text,
+    200: $dark-primary-text,
+    300: $dark-primary-text,
+    400: $dark-primary-text,
+    500: $light-primary-text,
+    600: $light-primary-text,
+    700: $light-primary-text,
+    800: $light-primary-text,
+    900: $light-primary-text,
+  )
+);
+
+// Define your application's custom theme.
+$primary: mat-palette($my-pallete);
+$accent:  mat-palette($mat-pink, A200, A100, A400);
+$theme: mat-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+  )
+));
+
+// Include theme styles for Angular Material components.
+@include angular-material-theme($theme);

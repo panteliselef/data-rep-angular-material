@@ -5,7 +5,7 @@ import {environment} from '../../../environments/environment';
 import {MatSliderChange} from '@angular/material/slider';
 import {MatSelectChange} from '@angular/material/select';
 
-interface DATA {
+export interface GplData {
   type?: string;
   nodes: [any];
   links: Array<{ source: string, target: string, value: number }>;
@@ -25,7 +25,7 @@ export class VisualizationsComponent implements  OnInit, OnDestroy {
   networks: string[];
   maxSliderValue = 10;
   currSliderValue = 10;
-  currNetData: DATA;
+  currNetData: GplData;
 
   lastSelectedNode: string;
   public visNetwork = 'networkId1';
@@ -87,10 +87,7 @@ export class VisualizationsComponent implements  OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     try {
-      // const webkitDep: DATA = await this.httpService.get<DATA>("assets/demo-data.json").toPromise()
-
       this.networks = (await this.httpService.get<{ networks: string[] }>(environment.apiUrl).toPromise()).networks;
-
     } catch (e) {
       console.log('nah');
     }
@@ -134,7 +131,7 @@ export class VisualizationsComponent implements  OnInit, OnDestroy {
 
   async getVisNetworkData($event: MatSelectChange | {value: string}): Promise<void> {
     const selectedNetwork = $event.value;
-    const webkitDep: DATA = await this.httpService.get<DATA>(`${environment.apiUrl}visjs/${selectedNetwork}`).toPromise();
+    const webkitDep: GplData = await this.httpService.get<GplData>(`${environment.apiUrl}visjs/${selectedNetwork}`).toPromise();
     this.currNetData = webkitDep;
     this.maxSliderValue = webkitDep.edges.length;
 

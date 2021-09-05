@@ -1,0 +1,91 @@
+@import 'variables';
+
+
+/* Flexbox classes */
+.flex {
+  display: flex;
+}
+
+.align-flex-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+.space-between {
+  justify-content: space-between;
+}
+
+.h-flex {
+  @extend .flex;
+  flex-direction: row;
+}
+.v-flex {
+  @extend .flex;
+  flex-direction: column;
+}
+/* END: Flexbox classes*/
+
+
+/* Layout */
+.app-two-column-grid {
+  margin: 33px 0;
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 521px;
+  gap: 35px;
+  padding: 0 32px;
+  max-width: $networksMaxWidth;
+}
+
+.as-card {
+  border-radius: 11px;
+  border: 1px solid $grey-light-1;
+
+  &.with-padding {
+    padding: $d-padding;
+  }
+}
+
+.with-radius {
+  border-radius: 11px;
+}
+
+
+
+.badge-node,.badge-edge{
+  font-family: 'Roboto',sans-serif;
+  font-weight: 500;
+  font-size: .75rem;
+  line-height: 11px;
+  color: #fff;
+  background: $green-light-1;
+  padding: 3px 4px;
+  border-radius: 2px;
+}
+
+.badge-edge{
+  background: $yellow-color;
+}
+
+
+
+/* END:Layout */
+
+
+
+/* Colors */
+.mat-icon.green-color {
+  color: $green-light-1;
+}
+.text-light-green {
+  color: $green-light-1;
+}
+
+
+
