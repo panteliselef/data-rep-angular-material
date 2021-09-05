@@ -16,11 +16,9 @@
     font-weight: 600;
     font-size: 1.3rem;
   }
-
   &.scrolled {
     box-shadow: 0 1px 6px rgb(32 33 36 / 28%);
   }
-
   /*Overiding Material Design*/
   .mat-button-disabled {
     color: #b9b9b9;
@@ -58,7 +56,6 @@ h1 {
       margin-right: 0.5rem;
     }
   }
-
 }
 
 .example_searches {
@@ -66,7 +63,6 @@ h1 {
   flex-direction: row;
   align-items: center;
   gap: 10px;
-
   a {
     //margin: 0 5px;
     color: #1e352f;
@@ -75,7 +71,6 @@ h1 {
     span {
       font-size: 18px;
     }
-
     //&:hover {
     //  //text-decoration: underline;
     //}
@@ -89,7 +84,6 @@ h1 {
   grid-template-columns: 1fr 1fr;
   grid-gap: 1rem;
   margin: 3rem 0;
-
   .feature {
     width: 100%;
     display: grid;
@@ -103,7 +97,6 @@ h1 {
       cursor: pointer;
       border: 1px solid #dfe1e5;
     }
-
     img {
       width: 150px;
       height: 150px;

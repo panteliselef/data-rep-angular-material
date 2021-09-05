@@ -14,12 +14,10 @@ export interface SelectedItemNodeInfo {
   visibleNodes?: number;
 
 }
-
 export interface SelectedItem {
   type: string;
   value: EDGE | SelectedItemNodeInfo;
 }
-
 @Component({
   selector: 'app-disease-page',
   templateUrl: './disease-page.component.html',
@@ -102,7 +100,7 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
         hideEdgesOnZoom: true,
         // navigationButtons: true,
       },
-    };
+    }
     this.selectedItem = {
       type: '',
       value: undefined
@@ -338,19 +336,6 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
       edgeFrom: undefined,
       edgeTo: undefined,
     };
-    if (clickData.nodes.length > 0 || clickData.edges.length > 0) {
-
-
-      if (clickData.nodes[0]) {
-        this.selectNode(clickData.nodes[0]);
-
-      } else if (clickData.edges[0]) {
-        this.selectEdge(clickData.edges[0]);
-      }
-    } else {
-      // this.showDetails = false;
-      // this.sidenav.close();
-    }
   }
 
   public networkInitialized(): void {
@@ -401,7 +386,6 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
 
     const nodeId = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
     this.showDetails = true;
-    // this.highlightConnectedNodes(nodeId); not visible difference
     const node: NODE = this.nodes.get({returnType: 'Object'})[nodeId] as NODE;
     this.selectedItem.type = 'node';
     this.selectedItem.value = {

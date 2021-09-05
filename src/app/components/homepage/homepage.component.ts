@@ -21,7 +21,5 @@ export class HomepageComponent implements OnInit {
       this.userHasScrolled = false;
     }
   }
-
   ngOnInit(): void {}
-
 }

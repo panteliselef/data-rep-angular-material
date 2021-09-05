@@ -105,6 +105,4 @@ export function importingEchart(): void {
   bootstrap: [AppComponent]
 })
 
-export class AppModule {
-
-}
+export class AppModule {}

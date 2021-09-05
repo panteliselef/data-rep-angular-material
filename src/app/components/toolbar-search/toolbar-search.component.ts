@@ -10,7 +10,9 @@ import {environment} from 'src/environments/environment';
 export class ToolbarSearchComponent implements OnInit {
 
 
-  constructor(private httpService: HttpClient, private eRef: ElementRef) { }
+  constructor(private httpService: HttpClient, private eRef: ElementRef) {
+  }
+
   @Input() value: string;
   @Input() mode: string;
   searchSuggestions: string[];
@@ -24,7 +26,6 @@ export class ToolbarSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // if (!this.mode) { throw new Error(`Attribute 'mode' is required in component 'app-toolbar-search'`); }
     this.searchSuggestions = [];
   }
 

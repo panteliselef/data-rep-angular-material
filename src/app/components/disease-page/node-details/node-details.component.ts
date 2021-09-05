@@ -22,6 +22,7 @@ import {SelectedItemNodeInfo} from '../disease-page.component';
 export class NodeDetailsComponent implements OnInit, OnChanges{
   // tslint:disable-next-line:no-input-rename
   @Input('nodeDetails') data: SelectedItemNodeInfo;
+  // tslint:disable-next-line:no-input-rename
   @Input('nodesInGraph') nodesInGraph: number;
   @Output() nodeFocused = new EventEmitter<any>();
   @Output() edgeFocused = new EventEmitter<{ id: string, node: IdType }>();
@@ -34,7 +35,6 @@ export class NodeDetailsComponent implements OnInit, OnChanges{
   constructor() {
     this.connectedNodes = new MatTableDataSource<any>();
   }
-
   ngOnInit(): void {
     // this.connectedNodes = new MatTableDataSource<ConnectedNode>(this.data.connectedNodes);
   }
@@ -44,7 +44,6 @@ export class NodeDetailsComponent implements OnInit, OnChanges{
     const data: SelectedItemNodeInfo  = (changes.data.currentValue as SelectedItemNodeInfo);
     this.connectedNodes = new MatTableDataSource<any>(data.connectedNodes
         .sort((a, b) => b.weight - a.weight));
-
     this.datasets = Array
       .from<TableEntry>(data.selectedNode.datasets as any)
       .map(({GSE, Samples, Entity, Type}) => {

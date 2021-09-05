@@ -11,6 +11,7 @@
         of
         disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</h4>
     </div>
+<<<<<<< HEAD
     <app-toolbar-search mode="disease" [value]="diseaseId"></app-toolbar-search>
   </div>
 
@@ -18,6 +19,15 @@
     style="display: grid; gap: 1rem; grid-template-columns: 1.5fr 1fr; width: 100%; max-width: 1120px; margin: 0 auto 2rem auto;min-height: 500px">
 
     <div style="width: 100%; position:relative; overflow: hidden;">
+<!--=======-->
+<!--    <app-toolbar-search [value]="diseaseId"></app-toolbar-search>-->
+<!--  </div>-->
+
+<!--  <div-->
+<!--    style="display: grid; grid-template-columns: 2fr 1fr; width: 100%; max-width: 1440px; margin: 0 auto;min-height: 500px">-->
+
+<!--    <div style="width: 100%; border: 1px solid #dfe1e5; border-radius: 5px">-->
+<!--&gt;>>>>>> c5fb5dc2e21fa9e24af49e471fae42fc8f245599-->
       <div class="graph-area">
         <div
           class="network-canvas"
@@ -27,6 +37,7 @@
           (initialized)="networkInitialized()"
         ></div>
       </div>
+<<<<<<< HEAD
 
       <div class="disease_dropdown">
         <img src="assets/Union.svg">
@@ -38,6 +49,12 @@
 
     <div  class="mat-elevation-z2" style="height: 800px; overflow: hidden;  border-radius: 5px">
       <app-node-details *ngIf="selectedItem.type === 'node'" [nodesInGraph]="nodesInGraph || selectedItem.value.connectedNodes.length" [nodeDetails]="selectedItem.value" (edgeFocused)="focusEdge($event)" (nodeFocused)="focusNode($event)"></app-node-details>
+<!--=======-->
+<!--    </div>-->
+
+<!--    <div style="height: 600px; overflow: auto">-->
+<!--      <app-node-details *ngIf="selectedItem.type === 'node'" [nodeDetails]="selectedItem.value"></app-node-details>-->
+<!--&gt;>>>>>> c5fb5dc2e21fa9e24af49e471fae42fc8f245599-->
       <app-edge-details *ngIf="selectedItem.type === 'edge'" [edgeDetails]="selectedItem.value"></app-edge-details>
     </div>
   </div>
