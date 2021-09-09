@@ -1,38 +1,11 @@
 <app-navbar style="width: 100%" class="mat-elevation-z6"></app-navbar>
 
 
-<div
-  style="width: 100%; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.12);">
-  <div class="network-searchbar">
-    <div class="network-name">
-      Phenonet
-      <mat-icon aria-label="Expand" fontSet="material-icons-round">expand_more</mat-icon>
-    </div>
-
-    <div id="jaja"  style="position: relative;gap:15px; width: 100%; max-width: 755px" class="h-flex align-center">
-      <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 28px"></div>
-      <mat-icon aria-label="search" style="color:#9AA0A6" fontSet="material-icons-round">search</mat-icon>
-      <input (focusin)="searchFocused = true"
-             (focusout)="searchFocused = false"
-             (ngModelChange)="onSearchPhenonet($event)"
-             [(ngModel)]="searchBarPhenotype"
-             type="text"
-             placeholder="Search phenotypes"/>
-
-      <div *ngIf="searchRecommendations.length" class="search-results">
-        <ul>
-          <li class="search_suggestion" *ngFor="let suggestion of searchRecommendations">
-            <a [href]="'/v2/phenonet/'+suggestion" [routerLink]="'/v2/phenonet/'+suggestion">
-              {{suggestion}}
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-  </div>
-
-</div>
+<app-phenonet-top-bar
+  style="width: 100%; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.12);"
+  [searchBarPhenotype]="mainDisease"
+>
+</app-phenonet-top-bar>
 
 <main class="app-two-column-grid">
   <div style="gap: 35px;" class="v-flex">
@@ -42,33 +15,13 @@
       (onSliderInput)="handleSliderInput($event)"
     ></app-graph-filter-bar>
 
-    <div class="as-card" style="height:800px;width: 100%; position:relative;/*overflow: hidden*/">
-      <div class="graph-controls v-flex">
-        <button mat-icon-button aria-label="See more details">
-          <mat-icon class="green-color" fontSet="material-icons-round">zoom_in</mat-icon>
-        </button>
-        <button mat-icon-button aria-label="See more details">
-          <mat-icon class="green-color" fontSet="material-icons-round">zoom_out</mat-icon>
-        </button>
-        <button mat-icon-button aria-label="See more details">
-          <mat-icon class="green-color" fontSet="material-icons-round">zoom_out_map</mat-icon>
-        </button>
-        <button mat-icon-button aria-label="See more details">
-          <mat-icon class="green-color" fontSet="material-icons-round">save</mat-icon>
-        </button>
-      </div>
-
-      <div class="graph-area">
-        <div
-          class="network-canvas"
-          [visNetwork]="visNetwork"
-          [visNetworkData]="visNetworkData"
-          [visNetworkOptions]="visNetworkOptions"
-          (initialized)="networkInitialized()"
-        ></div>
-      </div>
-
-    </div>
+    <app-network-graph
+      [disease]="mainDisease || 'phenonet'"
+      [graphData]="mainDiseaseGraph"
+      [sliderValue]="currSliderValue"
+      (selectEdge)="onEdgeSelect($event)"
+      (selectNode)="onNodeSelect($event)"
+    ></app-network-graph>
 
 
   </div>
@@ -86,24 +39,26 @@
     </div>
 
 
-    <!--    <div style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px" class="as-card with-padding">-->
+    <!--    <div style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px"-->
+    <!--         class="as-card with-padding">-->
     <!--      <div class="badge-node">NODE</div>-->
     <!--      <p class="title-1">GSE46184</p>-->
     <!--      <p class="subtitle-1 text-light-green">breast cancer</p>-->
     <!--    </div>-->
 
-    <!--    <div style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px" class="as-card with-padding">-->
+    <!--    <div style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px"-->
+    <!--         class="as-card with-padding">-->
     <!--      <div class="badge-edge">EDGE</div>-->
 
     <!--      <div style="display: flex;gap:6px;">-->
 
     <!--        <div class="v-flex" style="gap:9px;">-->
     <!--          <p class="title-1">GSE46184</p>-->
-    <!--          <p class="subtitle-1 text-light-green"  style="max-width: 150px">breast cancer</p>-->
+    <!--          <p class="subtitle-1 text-light-green" style="max-width: 150px">breast cancer</p>-->
     <!--        </div>-->
 
 
-    <!--        <div> <p class="title-1">-</p></div>-->
+    <!--        <div><p class="title-1">-</p></div>-->
 
     <!--        <div class="v-flex" style="gap:9px;">-->
     <!--          <p class="title-1">GSE39088</p>-->
@@ -112,10 +67,31 @@
 
     <!--      </div>-->
 
-    <!--    </div>-->
+    <div *ngIf="selectedEdge" style="padding-bottom: 29px" class="v-flex as-card">
+      <div class="v-flex align-flex-start" style="gap:9px;padding: 17px 17px 0 17px">
+        <div class="badge-edge">EDGE</div>
+        <div class="flex" style="gap:6px;">
+<!--          <div class="v-flex" style="flex: 0 0 auto;">-->
+            <p class="title-1" style="flex: 0 0 auto; max-width: 220px">{{mainDisease}}</p>
+<!--          </div>-->
+          <div><p class="title-1">-</p></div>
+<!--          <div class="v-flex" style="flex: 0 0 auto;">-->
+            <p class="title-1" style="flex: 0 0 auto; max-width: 220px">{{selectedEdge.node}}</p>
+<!--          </div>-->
+        </div>
+      </div>
 
 
-    <div *ngIf="mainDisease" class="info-panel">
+      <app-study-pairs-list
+        style="width: 100%; overflow: hidden"
+        [parentComponentName]="'edge-info-panel'"
+        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="mainDisease"
+        [secondaryDisease]="selectedEdge.node"></app-study-pairs-list>
+
+    </div>
+
+
+    <div *ngIf="mainDisease && !selectedEdge" class="info-panel">
 
       <div class="info-panel-top-part">
         <div class="v-flex align-flex-start" style="gap:9px;">

@@ -4,6 +4,7 @@ import {ConnectedNode, DATASET, EDGE, GRAPH, NODE} from 'src/app/models/graph.mo
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
+import {fullPhenonetConfig, sPhenonetConfig} from 'src/util/utils';
 
 @Component({
   selector: 'app-phenonet-network',
@@ -28,60 +29,58 @@ export class PhenonetNetworkComponent implements OnInit {
 
 
   /* About Vis.js Network Graph */
-  public visNetwork = 'networkDisease';
-  public visNetworkData: Data;
-  public nodes: DataSet<Node>;
-  public edges: DataSet<Edge>;
-  public visNetworkOptions: Options;
-  private nodeDefaultColor = {
-    background: '#1E352F',
-    border: '#A6C36F',
-    hover: {
-      border: '#5EB1BF',
-      background: '#483D8B',
-    },
-    highlight: {
-      border: '#5EB1BF',
-      background: '#483D8B',
-    }
-  };
+  // public visNetwork = 'networkDisease';
+  // public visNetworkData: Data;
+  // public nodes: DataSet<Node>;
+  // public edges: DataSet<Edge>;
+  // public visNetworkOptions: Options;
+  // private nodeDefaultColor = {
+  //   background: '#1E352F',
+  //   border: '#A6C36F',
+  //   hover: {
+  //     border: '#5EB1BF',
+  //     background: '#483D8B',
+  //   },
+  //   highlight: {
+  //     border: '#5EB1BF',
+  //     background: '#483D8B',
+  //   }
+  // };
 
 
-  private networkOptions1 = {
-    height: '100%',
-    width: '100%',
-    nodes: {
-      shape: 'dot',
-      color: this.nodeDefaultColor,
-      font: {
-        face: 'roboto',
-      }
-    },
-    layout: {
-      randomSeed: 12,
-      improvedLayout: true,
-      hierarchical: {
-        enabled: false,
-      }
-    },
-    interaction: {
-      hover: true,
-      hideEdgesOnDrag: true,
-      hideEdgesOnZoom: true,
-      // navigationButtons: true,
-    },
-  };
-  searchFocused: boolean;
+  // private networkOptions1 = {
+  //   height: '100%',
+  //   width: '100%',
+  //   nodes: {
+  //     shape: 'dot',
+  //     color: this.nodeDefaultColor,
+  //     font: {
+  //       face: 'roboto',
+  //     }
+  //   },
+  //   layout: {
+  //     randomSeed: 12,
+  //     improvedLayout: true,
+  //     hierarchical: {
+  //       enabled: false,
+  //     }
+  //   },
+  //   interaction: {
+  //     hover: true,
+  //     hoverConnectedEdges: true,
+  //     hideEdgesOnDrag: true,
+  //     hideEdgesOnZoom: true,
+  //     // navigationButtons: true,
+  //   },
+  // };
+  // searchFocused: boolean;
   searchBarPhenotype: string;
   public searchRecommendations: string[];
+  selectedEdge: ConnectedNode;
 
   constructor(
     private apiService: ApiService,
-    private route: ActivatedRoute,
-    private visNetworkService: VisNetworkService, private router: Router) {
-    this.nodes = new DataSet<Node>([]);
-    this.edges = new DataSet<Edge>([]);
-    this.visNetworkData = {nodes: this.nodes, edges: this.edges};
+    private route: ActivatedRoute, private router: Router) {
     this.searchRecommendations = [];
   }
 
@@ -104,7 +103,7 @@ export class PhenonetNetworkComponent implements OnInit {
             })
             .sort((a, b) => b.weight - a.weight)
         );
-        this.setGraphData(graph);
+        // this.setGraphData(graph);
         this.setSliderValues(
           this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
           this.mainDiseaseGraph.edges[0].weight
@@ -131,26 +130,14 @@ export class PhenonetNetworkComponent implements OnInit {
   }
 
 
-  setGraphData(graph: GRAPH): void {
-    this.nodes.clear();
-    this.nodes.add(graph.nodes);
-    this.edges.clear();
-    this.edges.add(graph.edges);
-  }
-
   onParamsChange(params: Params): void {
     const {diseaseId} = params;
     this.mainDisease = diseaseId;
 
-    this.visNetworkOptions = this.networkOptions1;
-
-
     /* Fetch Edges and Nodes */
     if (!diseaseId) {
       this.apiService.getPhenonet().subscribe((graph: GRAPH) => {
-        this.setGraphData(graph);
         this.setMainGraph(graph);
-        console.log(graph);
         this.setSliderValues(
           graph.edges[graph.edges.length - 1].weight,
           graph.edges[0].weight
@@ -166,53 +153,17 @@ export class PhenonetNetworkComponent implements OnInit {
     this.route.params.subscribe(this.onParamsChange.bind(this));
   }
 
-
-  public networkInitialized(): void {
-    // now we can use the service to register on events
-    this.visNetworkService.on(this.visNetwork, 'click');
-    this.visNetworkService.click.subscribe(this._onNetworkClick.bind(this));
-  }
-
-  private _onNetworkClick(eventData: any[]): void {
-    const [networkId, clickData] = eventData;
-
-    if (networkId !== this.visNetwork) {
-      return;
-    }
-
-    const clickedNode = clickData?.nodes[0];
-    if (!clickedNode) { return; }
-    this.router.navigate(['/v2/phenonet', clickedNode]).then(console.log);
+  onEdgeSelect(edge: ConnectedNode): void {
+    this.selectedEdge = edge;
   }
 
 
   handleSliderInput(limit: number): void {
     this.currSliderValue = limit;
-    const finalNodesSet = new Set<string>();
-    const finalEdges = this.mainDiseaseGraph.edges.slice().filter((edge: EDGE) => edge.weight >= limit);
-    for (const edge of finalEdges) {
-      finalNodesSet.add(edge.from);
-      finalNodesSet.add(edge.to);
-    }
-    const finalNodes = Array.from(finalNodesSet).map(nodeId => this.mainDiseaseGraph.nodes.find(node => node.id === nodeId));
-    this.nodesInGraph = finalNodesSet.size - 1;
-
-    this.nodes.clear();
-    this.nodes.add(finalNodes);
-    this.edges.clear();
-    this.edges.add(finalEdges);
   }
 
-  onSearchPhenonet($event): void{
-    this.searchBarPhenotype = $event;
-    this.apiService
-      .getPhenonetSearchResults(this.searchBarPhenotype)
-      .subscribe((recommendations: string[]) => {
-        this.searchRecommendations = recommendations;
-        console.log(recommendations);
-      });
-    console.log(this.searchBarPhenotype);
-
+  onNodeSelect(node: string): void{
+    this.router.navigate(['/v2/phenonet', node]).then(console.log);
   }
 }
 

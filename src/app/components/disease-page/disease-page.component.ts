@@ -100,7 +100,7 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
         hideEdgesOnZoom: true,
         // navigationButtons: true,
       },
-    }
+    };
     this.selectedItem = {
       type: '',
       value: undefined
@@ -295,6 +295,7 @@ export class DiseasePageComponent implements OnInit, OnDestroy {
 
     } else if (params?.nodes?.length > 0) {
       this.highlightConnectedNodes(params.nodes[0]);
+      console.log('connected nodes');
     }
 
     let updateArray = [];

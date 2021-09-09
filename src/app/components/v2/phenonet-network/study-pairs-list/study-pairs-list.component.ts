@@ -9,6 +9,7 @@ import {DATASET_PAIRS} from 'src/app/models/graph.model';
 export class StudyPairsListComponent implements OnInit {
 
   @Input() studyPairs: DATASET_PAIRS;
+  @Input() parentComponentName = '';
   @Input() primaryDisease: string;
   @Input() secondaryDisease: string;
 

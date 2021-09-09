@@ -41,6 +41,8 @@ import {StudyPairsListComponent} from './components/v2/phenonet-network/study-pa
 import {NeighborsTableComponent} from './components/v2/phenonet-network/neighbors-table/neighbors-table.component';
 import {StudiesTableComponent} from './components/v2/phenonet-network/studies-table/studies-table.component';
 import {GraphFilterBarComponent} from './components/v2/phenonet-network/graph-filter-bar/graph-filter-bar.component';
+import {PhenonetTopBarComponent} from "./components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component";
+import {NetworkGraphComponent} from "./components/v2/phenonet-network/network-graph/network-graph.component";
 
 export function importingEchart(): void {
   import('echarts');
@@ -64,7 +66,9 @@ export function importingEchart(): void {
     StudyPairsListComponent,
     NeighborsTableComponent,
     StudiesTableComponent,
-    GraphFilterBarComponent
+    PhenonetTopBarComponent,
+    GraphFilterBarComponent,
+    NetworkGraphComponent
   ],
   imports: [
     CommonModule,

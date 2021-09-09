@@ -1,5 +1,4 @@
-<!--<p>study-pairs-list works!</p>-->
-<div class="example-element-detail-header">
+<div class="example-element-detail-header" [ngClass]="[parentComponentName]">
   <span>Study ID Pairs</span>
   <button mat-icon-button aria-label="See more details">
     <mat-icon class="green-color" [matTooltip]="'Between '+ primaryDisease +' and '+ secondaryDisease "
@@ -7,7 +6,7 @@
     </mat-icon>
   </button>
 </div>
-<ul class="example-element-detail-body">
+<ul class="example-element-detail-body" [ngClass]="[parentComponentName]">
   <li *ngFor="let studyPair of studyPairs">
     <div style="width:100%;gap: 25px" class="h-flex align-center">
       <span>{{studyPair.dA}}</span>
