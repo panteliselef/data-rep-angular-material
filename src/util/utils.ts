@@ -1,4 +1,4 @@
-const nodeDefaultColor = {
+export const nodeDefaultColor = {
   background: '#1E352F',
   border: '#A6C36F',
   hover: {
@@ -11,7 +11,7 @@ const nodeDefaultColor = {
   }
 };
 
-const edgeDefaultColor = {
+export const edgeDefaultColor = {
   highlight: '#1E352F',
   color: '#A6C36F',
   hover: '#FFB90F',
