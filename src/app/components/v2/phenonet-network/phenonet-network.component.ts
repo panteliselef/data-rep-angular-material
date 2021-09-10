@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from 'src/app/services/api.service';
-import {ConnectedNode, DATASET, EDGE, GRAPH, NODE} from 'src/app/models/graph.model';
+import {ConnectedNode, DATASET, GRAPH, NODE} from 'src/app/models/graph.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
-import {fullPhenonetConfig, sPhenonetConfig} from 'src/util/utils';
 
 @Component({
   selector: 'app-phenonet-network',
@@ -77,6 +75,8 @@ export class PhenonetNetworkComponent implements OnInit {
   searchBarPhenotype: string;
   public searchRecommendations: string[];
   selectedEdge: ConnectedNode;
+  filterNodes: string[];
+  diseaseToBeHighlighted: string;
 
   constructor(
     private apiService: ApiService,
@@ -127,6 +127,7 @@ export class PhenonetNetworkComponent implements OnInit {
 
   setMainGraph(graph: GRAPH): void {
     this.mainDiseaseGraph = graph;
+    this.filterNodes = graph.nodes.map(({disease}) => disease);
   }
 
 

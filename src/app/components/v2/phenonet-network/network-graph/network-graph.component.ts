@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {ConnectedNode, EDGE, GRAPH} from 'src/app/models/graph.model';
+import {ConnectedNode, EDGE, GRAPH, NODE} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, fullPhenonetConfig, nodeDefaultColor, sPhenonetConfig} from 'src/util/utils';
 import {IdType} from 'vis';
@@ -14,9 +14,11 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
   @Input() graphData: GRAPH;
   @Input() disease: string;
   @Input() sliderValue: number;
+  @Input() diseaseToBeHighlighted: string;
 
   @Output() selectEdge = new EventEmitter<ConnectedNode>();
   @Output() selectNode = new EventEmitter<string>();
+  @Output() filterNodes = new EventEmitter<string[]>();
 
   /* About Vis.js Network Graph */
   public visNetwork = 'networkDisease';
@@ -33,9 +35,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   private _onChangeDisease(disease: string): void {
     this.disease = disease;
@@ -60,16 +60,21 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
       nodes: finalNodes,
       edges: finalEdges
     });
+    this.filterNodes.emit(Array.from(finalNodesSet));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const {disease, graphData, sliderValue} = changes;
+    const {disease, graphData, sliderValue, diseaseToBeHighlighted} = changes;
     if (disease?.currentValue) {this._onChangeDisease(disease.currentValue); }
     if (graphData?.currentValue) {
       this.setGraphData((graphData.currentValue as GRAPH));
     }
     if (sliderValue?.currentValue) {
       this._onChangeSlider(sliderValue.currentValue as number);
+    }
+
+    if (diseaseToBeHighlighted?.currentValue) {
+      this._focusNode(diseaseToBeHighlighted.currentValue);
     }
   }
 
@@ -80,6 +85,23 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
     this.edges.add(graph.edges);
   }
 
+  private _focusNode(diseaseId: string): void {
+    this.highlightConnectedNodes(diseaseId);
+    const nodePos = this.visNetworkService.getPositions(this.visNetwork, [diseaseId])[diseaseId];
+    this.visNetworkService.selectNodes(this.visNetwork, [diseaseId], false);
+    this.visNetworkService.moveTo(this.visNetwork, {
+      position: nodePos,
+      scale: 1,
+      offset: {
+        x: 0,
+        y: 0
+      },
+      animation: {
+        easingFunction: 'easeInOutCubic',
+        duration: 500
+      }
+    });
+  }
 
   public networkInitialized(): void {
     // now we can use the service to register on events
@@ -106,7 +128,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
   }
 
   private _onNetworkHoverNode(eventData: any[]): void {
-    const [networkId, clickData] = eventData;
+    const [_, clickData] = eventData;
     const hoveredNode = clickData.node;
     console.log('hoverNode', hoveredNode);
 
@@ -256,7 +278,6 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
       node: cEdge.from === this.disease ? cEdge.to : cEdge.from
     });
   }
-
 
   private _onNetworkDeselectEdge(): void {
     this.selectEdge.emit(undefined);

@@ -1,12 +1,31 @@
 <div class="graph-filter-bar">
   <div class="h-flex align-center" style="gap: 6px">
     <img alt="icon with many nodes" src="assets/Union.svg">
-    <mat-slider [style.width]=" '120px'" [min]="minGraphEdgeFreq" [max]="maxGraphEdgeFreq" step="1" color="primary" [value]="currSliderValue"
-                tickInterval="1" thumbLabel   (input)="handleSliderInput($event)"></mat-slider>
+    <mat-slider [style.width]=" '120px'" [min]="minGraphEdgeFreq" [max]="maxGraphEdgeFreq" step="1" color="primary"
+                [value]="currSliderValue"
+                tickInterval="1" thumbLabel (input)="handleSliderInput($event)"></mat-slider>
     <img alt="icon with few nodes" src="assets/Group%20116.svg">
   </div>
   <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
-  <div></div>
+  <div style="width: 100%;max-width: 326px;">
+
+    <mat-form-field style="width: 100%;" appearance="outline" class="example-full-width">
+      <mat-label>Disease</mat-label>
+      <input type="text"
+             placeholder="sepsis"
+             aria-label="Highlight disease"
+             matInput
+             [formControl]="highlightDiseaseControl"
+             [matAutocomplete]="auto">
+      <mat-autocomplete (optionSelected)="emitSelectedOption($event)" #auto="matAutocomplete">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
+
+  </div>
   <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
   <div></div>
 </div>

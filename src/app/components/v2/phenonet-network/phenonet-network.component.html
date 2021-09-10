@@ -12,15 +12,20 @@
     <app-graph-filter-bar
       [minGraphEdgeFreq]="minGraphEdgeFreq"
       [maxGraphEdgeFreq]="maxGraphEdgeFreq"
-      (onSliderInput)="handleSliderInput($event)"
+      [dropdownItems]="filterNodes"
+      (sliderChange)="handleSliderInput($event)"
+      (highlightDisease)="diseaseToBeHighlighted = $event"
     ></app-graph-filter-bar>
 
     <app-network-graph
       [disease]="mainDisease || 'phenonet'"
       [graphData]="mainDiseaseGraph"
       [sliderValue]="currSliderValue"
+      [diseaseToBeHighlighted]="diseaseToBeHighlighted"
       (selectEdge)="onEdgeSelect($event)"
       (selectNode)="onNodeSelect($event)"
+      (filterNodes)="filterNodes = $event"
+
     ></app-network-graph>
 
 
