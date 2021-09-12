@@ -1,21 +1,22 @@
 <div class="as-card" style="height:800px;width: 100%; position:relative;/*overflow: hidden*/">
   <div class="graph-controls v-flex">
-    <button mat-icon-button aria-label="See more details">
+    <button mat-icon-button aria-label="See more details" (click)="zoomIn()">
       <mat-icon class="green-color" fontSet="material-icons-round">zoom_in</mat-icon>
     </button>
-    <button mat-icon-button aria-label="See more details">
+    <button mat-icon-button aria-label="See more details" (click)="zoomOut()">
       <mat-icon class="green-color" fontSet="material-icons-round">zoom_out</mat-icon>
     </button>
-    <button mat-icon-button aria-label="See more details">
+    <button mat-icon-button aria-label="See more details" (click)="fitAllNodes()">
       <mat-icon class="green-color" fontSet="material-icons-round">zoom_out_map</mat-icon>
     </button>
-    <button mat-icon-button aria-label="See more details">
+    <button mat-icon-button aria-label="See more details" (click)="savePNG()">
       <mat-icon class="green-color" fontSet="material-icons-round">save</mat-icon>
     </button>
   </div>
 
   <div class="graph-area">
     <div
+      #networkCanvas
       class="network-canvas"
       [visNetwork]="visNetwork"
       [visNetworkData]="visNetworkData"

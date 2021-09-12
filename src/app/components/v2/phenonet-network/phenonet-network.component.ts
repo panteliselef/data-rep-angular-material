@@ -96,8 +96,8 @@ export class PhenonetNetworkComponent implements OnInit {
             .map(({from, to, ...rest}) => {
               return {
                 ...rest,
-                from,
-                to,
+                from: disease,
+                to:  from === disease ? to : from,
                 node: from === disease ? to : from,
               };
             })

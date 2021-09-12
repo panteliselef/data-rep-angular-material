@@ -1,15 +1,27 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output, Renderer2,
+  SimpleChanges,
+  ViewChild
+} from '@angular/core';
 import {ConnectedNode, EDGE, GRAPH, NODE} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, fullPhenonetConfig, nodeDefaultColor, sPhenonetConfig} from 'src/util/utils';
 import {IdType} from 'vis';
+import {templateJitUrl} from '@angular/compiler';
 
 @Component({
   selector: 'app-network-graph',
   templateUrl: './network-graph.component.html',
   styleUrls: ['./network-graph.component.scss']
 })
-export class NetworkGraphComponent implements OnInit, OnChanges {
+export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() graphData: GRAPH;
   @Input() disease: string;
@@ -20,6 +32,10 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
   @Output() selectNode = new EventEmitter<string>();
   @Output() filterNodes = new EventEmitter<string[]>();
 
+  @ViewChild('networkCanvas') canvasContainer: ElementRef;
+
+  canvas: HTMLCanvasElement;
+
   /* About Vis.js Network Graph */
   public visNetwork = 'networkDisease';
   public visNetworkData: Data;
@@ -29,13 +45,19 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
   private highlightActive: boolean;
   private lastSelectedEdge: any;
 
-  constructor(private visNetworkService: VisNetworkService) {
+  constructor(private visNetworkService: VisNetworkService, private rd: Renderer2) {
     this.nodes = new DataSet<Node>([]);
     this.edges = new DataSet<Edge>([]);
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
   }
 
-  ngOnInit(): void {}
+  ngAfterViewInit(): void{
+    this.canvas = this.canvasContainer.nativeElement.children[0].children[0] as HTMLCanvasElement;
+    console.log(this.canvas);
+  }
+
+  ngOnInit(): void {
+  }
 
   private _onChangeDisease(disease: string): void {
     this.disease = disease;
@@ -104,6 +126,16 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
   }
 
   public networkInitialized(): void {
+
+    this.visNetworkService.on(this.visNetwork, 'beforeDrawing');
+    this.visNetworkService.beforeDrawing.subscribe((eventData: any[]) => {
+      // const [_, ctx] = eventData;
+      // ctx.fillStyle = 'rgb(0,255,255)';
+      // ctx.strokeStyle = 'red';
+      // ctx.stroke();
+      // ctx.fillRect(-200,-200,this.canvas.width,this.canvas.height);
+      // console.log(ctx);
+    });
     // now we can use the service to register on events
     this.visNetworkService.on(this.visNetwork, 'click');
     this.visNetworkService.click.subscribe(this._onNetworkClick.bind(this));
@@ -353,5 +385,71 @@ export class NetworkGraphComponent implements OnInit, OnChanges {
     }
 
     this.nodes.update(updateArray);
+  }
+
+  fitAllNodes(): void {
+    try {
+      this.visNetworkService.fit(this.visNetwork, {animation: true});
+    }catch (e) {
+      this.visNetworkService.blurEdge.emit([]);
+      setTimeout(() => {
+        this.visNetworkService.fit(this.visNetwork, {animation: true});
+      }, 0);
+    }
+  }
+
+  zoomIn(): void {
+    const scale = this.visNetworkService.getScale(this.visNetwork);
+    this.visNetworkService.moveTo(this.visNetwork, { position: { x: 0, y: 0}, scale: scale + 0.3, animation: true} );
+  }
+
+  zoomOut(): void {
+    const scale = this.visNetworkService.getScale(this.visNetwork);
+    this.visNetworkService.moveTo(this.visNetwork, { position: { x: 0, y: 0}, scale: scale - 0.3, animation: true} );
+  }
+
+  savePNG(): void {
+    function downloadBlob(url, filename) {
+      // Create an object URL for the blob object
+      // const url = URL.createObjectURL(blob);
+
+      // Create a new anchor element
+      const a = document.createElement('a');
+
+      // Set the href and download attributes for the anchor element
+      // You can optionally set other attributes like `title`, etc
+      // Especially, if the anchor element will be attached to the DOM
+      a.href = url;
+      a.download = filename || 'download';
+
+      // Click handler that releases the object URL after the element has been clicked
+      // This is required for one-off downloads of the blob content
+      const clickHandler = function() {
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          this.removeEventListener('click', clickHandler);
+        }, 150);
+      };
+
+      // Add the click event listener on the anchor element
+      // Comment out this line if you don't want a one-off download of the blob content
+      a.addEventListener('click', clickHandler.bind(a), false);
+
+      // Programmatically trigger a click on the anchor element
+      // Useful if you want the download to happen automatically
+      // Without attaching the anchor element to the DOM
+      // Comment out this line if you don't want an automatic download of the blob content
+      a.click();
+
+      // Return the anchor element
+      // Useful if you want a reference to the element
+      // in order to attach it to the DOM or use it in some other way
+      return a;
+    }
+    const a = this.canvas.getAttribute('background');
+    console.log(a);
+    const img = this.canvas.toDataURL('image/png');
+    downloadBlob(img, 'adad');
+    // console.log(img);
   }
 }
