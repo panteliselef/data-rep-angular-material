@@ -1,4 +1,6 @@
+@use 'src/variables' as v;
 @import "src/util";
+
 
 .graph-filter-bar {
   @extend .as-card, .h-flex, .align-center;
@@ -9,5 +11,37 @@
 
   div {
     height: 56px;
+  }
+}
+
+
+.neighbor-depth-degree{
+  @extend  .v-flex, .space-between;
+  font-family: v.$primaryFontFamily;
+  p {
+    font-weight: 600;
+    font-size: 14px;
+    color: v.$green-light-1;
+  }
+  .degree_option {
+    @extend .flex, .align-center, .center, .with-pointer;
+    width: 40px;
+    height: 30px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    border-radius: 9px;
+    color: v.$green-light-1;
+    background-color: v.$green-transparent-3;
+    transition: background-color 0.2s ease-out;
+    text-transform: capitalize;
+    &.degree_option_selected {
+      background-color: v.$green-transparent-1;
+    }
+
+    &:hover {
+      background-color: v.$green-transparent-1;
+    }
   }
 }

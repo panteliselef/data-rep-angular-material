@@ -20,6 +20,9 @@
 .space-between {
   justify-content: space-between;
 }
+.center {
+  justify-content: center;
+}
 
 .h-flex {
   @extend .flex;
@@ -54,6 +57,10 @@
 
 .with-radius {
   border-radius: 11px;
+}
+
+.with-pointer {
+  cursor: pointer;
 }
 
 

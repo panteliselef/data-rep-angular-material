@@ -14,7 +14,6 @@ import {ConnectedNode, EDGE, GRAPH, NODE} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, fullPhenonetConfig, nodeDefaultColor, sPhenonetConfig} from 'src/util/utils';
 import {IdType} from 'vis';
-import {templateJitUrl} from '@angular/compiler';
 
 @Component({
   selector: 'app-network-graph',
@@ -45,7 +44,10 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
   private highlightActive: boolean;
   private lastSelectedEdge: any;
 
-  constructor(private visNetworkService: VisNetworkService, private rd: Renderer2) {
+  constructor(
+    private visNetworkService: VisNetworkService,
+    private rd: Renderer2
+  ) {
     this.nodes = new DataSet<Node>([]);
     this.edges = new DataSet<Edge>([]);
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
@@ -351,6 +353,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     // all second degree nodes get a different color and their label back
+    console.log('da', Array.from(new Set([...allConnectedNodes, ...connectedNodes])).sort());
     for (i = 0; i < allConnectedNodes.length; i++) {
       allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.5)';
       if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
@@ -361,6 +364,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     // all first degree nodes get their own color and their label back
+    console.log('od', Array.from(new Set(connectedNodes)).sort());
     for (i = 0; i < connectedNodes.length; i++) {
       allNodes[connectedNodes[i]].color = nodeDefaultColor;
       if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {

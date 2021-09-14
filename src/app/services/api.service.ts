@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import {Observable} from 'rxjs';
 import {GRAPH} from 'src/app/models/graph.model';
+import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,10 @@ export class ApiService {
 
   public getPhenonetDiseaseNeighbors(disease: string): Observable<GRAPH>{
     return this.http.get<GRAPH>(`${this.apiURL}getPhenoNeighbors?q=${disease}`);
+  }
+
+  public getPhenonetDiseaseNeighborsAtDepth(disease: string, depth: DEPTH_DEGREE): Observable<GRAPH>{
+    return this.http.get<GRAPH>(`${this.apiURL}getPhenoNeighborsAtDepth?q=${disease}&d=${depth}`);
   }
 
   public getPhenonet(): Observable<GRAPH> {

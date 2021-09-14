@@ -4,13 +4,14 @@ import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import {DEPTH_DEGREE, DEPTH_DEGREE_ARR, GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
 
 @Component({
   selector: 'app-graph-filter-bar',
   templateUrl: './graph-filter-bar.component.html',
   styleUrls: ['./graph-filter-bar.component.scss']
 })
-export class GraphFilterBarComponent implements OnInit, OnChanges{
+export class GraphFilterBarComponent implements OnInit, OnChanges {
 
   @Input() minGraphEdgeFreq: number;
   @Input() maxGraphEdgeFreq: number;
@@ -19,14 +20,21 @@ export class GraphFilterBarComponent implements OnInit, OnChanges{
   @Output() sliderChange = new EventEmitter<number>();
   @Output() highlightDisease = new EventEmitter<string>();
 
+  @Output() neighborDegree = new EventEmitter<DEPTH_DEGREE>();
+
   currSliderValue: number;
   highlightDiseaseControl = new FormControl();
   filteredOptions: Observable<string[]>;
 
-  constructor() { }
+  depthDegreeValues = DEPTH_DEGREE_ARR;
+
+  depthDegree: DEPTH_DEGREE;
+
+  constructor(private graphFilterBarService: GraphFilterBarService) {
+  }
 
   ngOnInit(): void {
-
+    this.depthDegree = 'all';
     this.minGraphEdgeFreq = this.currSliderValue;
   }
 
@@ -54,8 +62,16 @@ export class GraphFilterBarComponent implements OnInit, OnChanges{
     const diseaseName = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
     this.highlightDisease.emit(diseaseName);
   }
+
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.dropdownItems.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+
+  setNeighborDegree(degree: DEPTH_DEGREE): void {
+    this.depthDegree = degree;
+    this.graphFilterBarService.updateDepthDegree(degree);
+    this.neighborDegree.emit(degree);
   }
 }

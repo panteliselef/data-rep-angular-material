@@ -3,6 +3,8 @@ import {ApiService} from 'src/app/services/api.service';
 import {ConnectedNode, DATASET, GRAPH, NODE} from 'src/app/models/graph.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
+import {Title} from '@angular/platform-browser';
+import {DEPTH_DEGREE, GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
 
 @Component({
   selector: 'app-phenonet-network',
@@ -80,35 +82,40 @@ export class PhenonetNetworkComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private route: ActivatedRoute, private router: Router) {
+    private route: ActivatedRoute,
+    private router: Router,
+    private graphFilterBarService: GraphFilterBarService,
+    private titleService: Title) {
     this.searchRecommendations = [];
+  }
+
+  private _onFetchGraph(disease: string, graph: GRAPH): void  {
+    console.log(graph, disease);
+    this.setMainGraph(graph);
+    this.setMainDiseaseNeighborsCount(graph.nodes.length - 1); // because 'nodes' include the main disease
+    this.setStudiesForDisease(disease);
+    this.connectedNodes = new MatTableDataSource<ConnectedNode>(
+      graph.edges
+        .map(({from, to, ...rest}) => {
+          return {
+            ...rest,
+            from: disease,
+            to:  from === disease ? to : from,
+            node: from === disease ? to : from,
+          };
+        })
+        .sort((a, b) => b.weight - a.weight)
+    );
+    this.setSliderValues(
+      this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
+      this.mainDiseaseGraph.edges[0].weight
+    );
   }
 
 
   fetchDiseaseFromPhenonet(disease: string): void {
     this.apiService.getPhenonetDiseaseNeighbors(disease)
-      .subscribe((graph: GRAPH) => {
-        this.setMainGraph(graph);
-        this.setMainDiseaseNeighborsCount(graph.nodes.length - 1); // because 'nodes' include the main disease
-        this.setStudiesForDisease(disease);
-        this.connectedNodes = new MatTableDataSource<ConnectedNode>(
-          graph.edges
-            .map(({from, to, ...rest}) => {
-              return {
-                ...rest,
-                from: disease,
-                to:  from === disease ? to : from,
-                node: from === disease ? to : from,
-              };
-            })
-            .sort((a, b) => b.weight - a.weight)
-        );
-        // this.setGraphData(graph);
-        this.setSliderValues(
-          this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
-          this.mainDiseaseGraph.edges[0].weight
-        );
-      });
+      .subscribe(this._onFetchGraph.bind(this, disease));
   }
 
   setSliderValues(min: number, max: number): void {
@@ -152,6 +159,19 @@ export class PhenonetNetworkComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(this.onParamsChange.bind(this));
+    this.titleService.setTitle('v2');
+
+    //
+    this.graphFilterBarService
+      .depthDegree$
+      .subscribe((degree: DEPTH_DEGREE) => {
+        console.log(this.mainDisease);
+        this.apiService.getPhenonetDiseaseNeighborsAtDepth(this.mainDisease, degree).subscribe(
+
+          // TODO: impement function
+          // this._onFetchGraph.bind(this, this.mainDisease)
+        );
+      });
   }
 
   onEdgeSelect(edge: ConnectedNode): void {
