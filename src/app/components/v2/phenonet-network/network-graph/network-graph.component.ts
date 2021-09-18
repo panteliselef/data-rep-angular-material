@@ -14,6 +14,8 @@ import {ConnectedNode, EDGE, GRAPH, NODE} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, fullPhenonetConfig, nodeDefaultColor, sPhenonetConfig} from 'src/util/utils';
 import {IdType} from 'vis';
+import {GraphFilterBarService} from '../../../../services/graph-filter-bar.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-network-graph',
@@ -46,6 +48,8 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
 
   constructor(
     private visNetworkService: VisNetworkService,
+    private route: ActivatedRoute,
+    private graphFilterBarService: GraphFilterBarService,
     private rd: Renderer2
   ) {
     this.nodes = new DataSet<Node>([]);
@@ -63,11 +67,11 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
 
   private _onChangeDisease(disease: string): void {
     this.disease = disease;
-    if (disease === 'phenonet') { // is full Phenonet
-      this.visNetworkOptions = fullPhenonetConfig;
-    }else {
-      this.visNetworkOptions = sPhenonetConfig;
-    }
+    // if (disease === 'phenonet') { // is full Phenonet
+    this.visNetworkOptions = fullPhenonetConfig;
+    // }else {
+    //   this.visNetworkOptions = sPhenonetConfig;
+    // }
   }
 
   private _onChangeSlider(currentValue: number): void {
@@ -129,8 +133,8 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
 
   public networkInitialized(): void {
 
-    this.visNetworkService.on(this.visNetwork, 'beforeDrawing');
-    this.visNetworkService.beforeDrawing.subscribe((eventData: any[]) => {
+    this.visNetworkService.on(this.visNetwork, 'afterDrawing');
+    this.visNetworkService.afterDrawing.subscribe((eventData: any[]) => {
       // const [_, ctx] = eventData;
       // ctx.fillStyle = 'rgb(0,255,255)';
       // ctx.strokeStyle = 'red';

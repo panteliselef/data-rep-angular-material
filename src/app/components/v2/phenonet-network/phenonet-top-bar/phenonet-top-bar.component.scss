@@ -68,6 +68,16 @@
     display: flex;
     align-items: center;
     gap: 16px;
+
+    p {
+      @extend .with-radius, .with-pointer;
+      padding: 5px 10px;
+      transition: .2s background-color;
+      background: inherit;
+      &:hover {
+        background: v.$green-transparent-2;
+      }
+    }
   }
 
   input {

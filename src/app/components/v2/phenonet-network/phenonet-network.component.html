@@ -14,6 +14,7 @@
       [maxGraphEdgeFreq]="maxGraphEdgeFreq"
       [dropdownItems]="filterNodes"
       (sliderChange)="handleSliderInput($event)"
+      (neighborDegree)="onDegreeDepthClick($event)"
       (highlightDisease)="diseaseToBeHighlighted = $event"
     ></app-graph-filter-bar>
 
