@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@use "variables" as v;
 @import "~vis-network/styles/vis-network.css";
-@import "variables";
 * { box-sizing: border-box}
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -19,7 +19,7 @@ app-navbar {
   background: white;
 }
 .mat-tab-label[aria-selected='true'] {
-  color: $green-light-1;
+  color: v.$green-light-1;
   opacity: 1;
 }
 
@@ -85,4 +85,12 @@ app-phenonet-network {
 
 .mat-typography p {
   margin: 0;
+}
+
+.app-tooltip {
+  background-color: v.$green-dark;
+  padding: 0;
+  border-radius: 4px;
+  font-weight: 400;
+  font-size: 10px;
 }
