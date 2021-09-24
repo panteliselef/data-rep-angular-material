@@ -2,13 +2,14 @@
 
 
 <app-phenonet-top-bar
-  *ngIf="!loadingGraphData"
+  *ngIf="!(loadingGraphData$ | async)"
   style="width: 100%; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.12);"
   [searchBarPhenotype]="mainDisease"
 >
 </app-phenonet-top-bar>
 
-<main *ngIf="!loadingGraphData else loader" class="app-two-column-grid">
+<!--courseObs | async as course; else loading-->
+<main *ngIf="!(loadingGraphData$ | async) as loadingGraph; else loader " class="app-two-column-grid">
   <div style="gap: 35px;" class="v-flex">
     <app-graph-filter-bar
       [minGraphEdgeFreq]="minGraphEdgeFreq"
