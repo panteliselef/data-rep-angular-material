@@ -1,4 +1,4 @@
-@import 'src/variables';
+@use 'src/variables' as v;
 @import "src/mat-table-appearance";
 
 #jaja:focus-within {
@@ -18,7 +18,7 @@
   overflow: auto;
   top: 50px;
   background: #FFFFFF;
-  box-shadow: $drop-shadow-1;
+  box-shadow: v.$drop-shadow-1;
   z-index: 99;
 
   ul {
@@ -34,7 +34,7 @@
       text-indent: 28px;
       width: 100%;
       font-size: 1rem;
-      color: $text-black-1;
+      color: v.$text-black-1;
 
 
       a {
@@ -44,7 +44,7 @@
       }
 
       &:hover {
-        background-color: $green-transparent-2;
+        background-color: v.$green-transparent-2;
       }
     }
   }
@@ -54,8 +54,8 @@
 .network-searchbar {
   width: 100%;
   padding: 0 32px;
-  max-width: $networksMaxWidth;
-  font-family: $primaryFontFamily;
+  max-width: v.$networksMaxWidth;
+  font-family: v.$primaryFontFamily;
   display: flex;
   align-items: center;
   gap:15px;
@@ -66,14 +66,14 @@
     font-size: 26px;
     line-height: 36px;
     /* green_color */
-    color: $green-dark;
+    color: v.$green-dark;
     display: flex;
     align-items: center;
     gap: 16px;
   }
 
   input {
-    font-family: $primaryFontFamily;
+    font-family: v.$primaryFontFamily;
     font-size: 1rem;
     font-weight: 500;
     line-height: 22px;
@@ -85,20 +85,20 @@
     appearance: none;
     outline: none;
     &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-      color: $green-light-1;
+      color: v.$green-light-1;
       opacity: 1; /* Firefox */
     }
 
     &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color: $green-light-1;
+      color: v.$green-light-1;
     }
 
     &::-ms-input-placeholder { /* Microsoft Edge */
-      color: $green-light-1;
+      color: v.$green-light-1;
     }
 
     &:focus {
-      border-bottom-color: $green-light-1;
+      border-bottom-color: v.$green-light-1;
     }
   }
 
@@ -112,7 +112,7 @@
 
   .info-panel-top-part {
     @extend .h-flex, .space-between;
-    padding: $d-padding $d-padding 0 $d-padding;
+    padding: v.$d-padding v.$d-padding 0 v.$d-padding;
 
     .statistic-info {
       @extend  .v-flex;
@@ -145,7 +145,7 @@
 
 
 .title-1 {
-  font-family: $primaryFontFamily;
+  font-family: v.$primaryFontFamily;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.75rem;
@@ -171,7 +171,7 @@
 .phenonet-all-hint {
   display: flex;
   flex-direction: row;
-  font-family: $primaryFontFamily;
+  font-family: v.$primaryFontFamily;
   //justify-content: center;
   align-items: center;
   gap: 4px;
@@ -181,13 +181,50 @@
     margin: 0;
   }
   .text {
-    font-family: $primaryFontFamily;
+    font-family: v.$primaryFontFamily;
     font-style: normal;
     font-weight: 500;
     font-size: .875rem;
     line-height: 19px;
-    color: $text-black-1
+    color: v.$text-black-1
   }
 }
 
+.loading_top_bar {
+  width: 100%;
+  padding: 0 32px;
+  max-width: v.$networksMaxWidth;
+  font-family: v.$primaryFontFamily;
+  display: flex;
+  align-items: center;
+  gap:15px;
+}
 
+.loading_graph_filters {
+  @extend .as-card, .h-flex, .align-center;
+  padding: 19px 17px;
+  gap: 15px;
+  justify-content: flex-start;
+  height: 94px;
+}
+
+.l_placeholder {
+  @extend .with-radius;
+  background: rgba(77, 114, 103, 0.2);
+  background: rgb(77,114,103);
+  background: linear-gradient(-45deg, rgba(77,114,103,0.15),rgba(77,114,103,0.05));
+  background-size: 400% 400%;
+  border-radius: 11px;
+  animation: bg 1s ease infinite;
+
+  &_circle {
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+  }
+}
+
+@keyframes bg {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}

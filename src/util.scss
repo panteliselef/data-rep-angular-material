@@ -1,4 +1,4 @@
-@import 'variables';
+@use 'variables' as v;
 
 
 /* Flexbox classes */
@@ -43,15 +43,15 @@
   grid-template-columns: 1fr 521px;
   gap: 35px;
   padding: 0 32px;
-  max-width: $networksMaxWidth;
+  max-width: v.$networksMaxWidth;
 }
 
 .as-card {
   border-radius: 11px;
-  border: 1px solid $grey-light-1;
+  border: 1px solid v.$grey-light-1;
 
   &.with-padding {
-    padding: $d-padding;
+    padding: v.$d-padding;
   }
 }
 
@@ -71,13 +71,13 @@
   font-size: .75rem;
   line-height: 11px;
   color: #fff;
-  background: $green-light-1;
+  background: v.$green-light-1;
   padding: 3px 4px;
   border-radius: 2px;
 }
 
 .badge-edge{
-  background: $yellow-color;
+  background: v.$yellow-color;
 }
 
 
@@ -88,10 +88,10 @@
 
 /* Colors */
 .mat-icon.green-color {
-  color: $green-light-1;
+  color: v.$green-light-1;
 }
 .text-light-green {
-  color: $green-light-1;
+  color: v.$green-light-1;
 }
 
 
