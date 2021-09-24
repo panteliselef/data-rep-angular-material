@@ -24,6 +24,8 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   mainDiseaseNeighborsCount: number;
   mainDiseaseStudiesCount: number;
 
+  loadingGraphData = true;
+
 
   maxGraphEdgeFreq = 0;
   minGraphEdgeFreq = 0;
@@ -94,6 +96,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
   private _onFetchGraph(disease: string, graph: GRAPH): void  {
+    this.loadingGraphData = false;
     console.log(graph, disease);
     this.setMainGraph(graph);
     this.setStudiesForDisease(disease);
@@ -158,6 +161,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
       this.titleService.setTitle('Phenonet');
       this.graphFilterBarService.updateDepthDegreeDisabled(true);
       this.apiService.getPhenonet().subscribe((graph: GRAPH) => {
+        this.loadingGraphData = false;
         this.setMainGraph(graph);
         this.setSliderValues(
           graph.edges[graph.edges.length - 1].weight,
@@ -167,6 +171,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     } else {
       this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
       this.graphFilterBarService.updateDepthDegreeDisabled(false);
+      this.graphFilterBarService.updateDepthDegree(1);
       this.fetchDiseaseFromPhenonet(diseaseId);
       this.searchBarPhenotype = diseaseId;
     }
@@ -209,6 +214,8 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
   onDegreeDepthClick(degree: DEPTH_DEGREE): void {
+
+    this.loadingGraphData = true;
     this.apiService.getPhenonetDiseaseNeighborsAtDepth(this.mainDisease, degree).subscribe(
 
       // TODO: impement function
