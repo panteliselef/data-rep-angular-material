@@ -15,7 +15,14 @@
   <ng-container matColumnDef="connected_node">
     <th mat-header-cell *matHeaderCellDef> Name</th>
 <!--    <td mat-cell *matCellDef="let element"> {{element.node}} - {{element.to}}</td>-->
-    <td mat-cell *matCellDef="let element"> {{element.node}}</td>
+    <td mat-cell *matCellDef="let element">
+      {{element.node}}
+      <button mat-icon-button
+              (click)="openNewTab(element.node)"
+              aria-label="See more details">
+        <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+      </button>
+    </td>
   </ng-container>
 
   <!-- Symbol Column -->
