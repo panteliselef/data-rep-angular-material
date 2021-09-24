@@ -134,12 +134,18 @@
 
       <mat-tab-group mat-align-tabs="start">
         <mat-tab label="Neighbors">
+          <ng-template mat-tab-label>
+            <span [matBadge]="connectedNodes.data.length" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
+          </ng-template>
           <div style="height: 100%;width: 100%; overflow: hidden">
             <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
             <app-neighbors-table [connectedNodes]="connectedNodes" [mainDisease]="mainDisease"></app-neighbors-table>
           </div>
         </mat-tab>
         <mat-tab label="Studies">
+          <ng-template mat-tab-label>
+            <span [matBadge]="studies.data.length" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
+          </ng-template>
           <div style="height: 100%;width: 100%; overflow: hidden">
             <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
             <app-studies-table [studies]="studies"></app-studies-table>

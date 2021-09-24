@@ -21,7 +21,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatChipsModule} from '@angular/material/chips';
-import { MAT_TABS_CONFIG } from '@angular/material/tabs';
+import {MatBadgeModule} from '@angular/material/badge';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
@@ -41,8 +41,8 @@ import {StudyPairsListComponent} from './components/v2/phenonet-network/study-pa
 import {NeighborsTableComponent} from './components/v2/phenonet-network/neighbors-table/neighbors-table.component';
 import {StudiesTableComponent} from './components/v2/phenonet-network/studies-table/studies-table.component';
 import {GraphFilterBarComponent} from './components/v2/phenonet-network/graph-filter-bar/graph-filter-bar.component';
-import {PhenonetTopBarComponent} from "./components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component";
-import {NetworkGraphComponent} from "./components/v2/phenonet-network/network-graph/network-graph.component";
+import {PhenonetTopBarComponent} from './components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component';
+import {NetworkGraphComponent} from './components/v2/phenonet-network/network-graph/network-graph.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -84,6 +84,7 @@ export function importingEchart(): void {
     MatChipsModule,
     MatAutocompleteModule,
     MatSidenavModule,
+    MatBadgeModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
