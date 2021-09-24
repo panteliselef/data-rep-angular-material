@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 
-export const DEPTH_DEGREE_ARR = [1, 2 , 3 , 'all'] as const;
+export const DEPTH_DEGREE_ARR = [1, 'all'] as const;
 export type DEPTH_DEGREE = typeof DEPTH_DEGREE_ARR[any];
 
 @Injectable({

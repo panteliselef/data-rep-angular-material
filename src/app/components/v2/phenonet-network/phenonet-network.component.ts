@@ -96,13 +96,11 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   private _onFetchGraph(disease: string, graph: GRAPH): void  {
     console.log(graph, disease);
     this.setMainGraph(graph);
-    this.setMainDiseaseNeighborsCount(graph.nodes.length - 1); // because 'nodes' include the main disease
     this.setStudiesForDisease(disease);
-
     const d = graph.edges
-      // .filter(({from, to}) => {
-      //   return from === disease || to === disease;
-      // })
+      .filter(({from, to}) => {
+        return from === disease || to === disease;
+      })
       .map(({from, to, ...rest}) => {
         return {
           ...rest,
@@ -114,6 +112,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
         };
       })
       .sort((a, b) => b.weight - a.weight);
+    this.setMainDiseaseNeighborsCount(d.length); // because 'nodes' include the main disease
     this.connectedNodes = new MatTableDataSource<ConnectedNode>(d);
     this.setSliderValues(
       this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
@@ -123,7 +122,10 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
 
 
   fetchDiseaseFromPhenonet(disease: string): void {
-    this.apiService.getPhenonetDiseaseNeighbors(disease)
+    // this.apiService.getPhenonetDiseaseNeighbors(disease)
+    //   .subscribe(this._onFetchGraph.bind(this, disease));
+
+    this.apiService.getPhenonetDiseaseNeighborsAtDepth(disease, 1)
       .subscribe(this._onFetchGraph.bind(this, disease));
   }
 
