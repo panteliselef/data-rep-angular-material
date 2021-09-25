@@ -29,4 +29,8 @@ export class ApiService {
   public getPhenonetSearchResults(query: string): Observable<string[]> {
     return this.http.get<string[]>(`${environment.apiUrl}search?q=${query}`);
   }
+
+  public getGlobalSearchResults(query: string): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}searchV2?q=${query}`);
+  }
 }
