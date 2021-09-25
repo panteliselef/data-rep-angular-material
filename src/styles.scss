@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use "variables" as v;
+@use "sass:map";
 @import "~vis-network/styles/vis-network.css";
 * { box-sizing: border-box}
 html, body { height: 100%; }
@@ -93,4 +94,34 @@ app-phenonet-network {
   border-radius: 4px;
   font-weight: 400;
   font-size: 10px;
+}
+
+
+.mat-slide-toggle {
+
+  &:not(.mat-disabled) {
+    .mat-slide-toggle-bar {
+      background: #DADADA;
+    }
+
+    .mat-slide-toggle-thumb {
+      background: #ABABAB;
+    }
+  }
+
+
+  &.mat-checked {
+    .mat-slide-toggle-ripple .mat-ripple-element {
+      background-color:  map.get(v.$light-green, 100);
+    }
+    &:not(.mat-disabled) {
+      .mat-slide-toggle-bar {
+        background-color:  map.get(v.$light-green, 20);
+      }
+
+      .mat-slide-toggle-thumb {
+        background-color:  map.get(v.$light-green, 100);
+      }
+    }
+  }
 }

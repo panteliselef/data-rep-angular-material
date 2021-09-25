@@ -22,6 +22,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
@@ -78,6 +79,7 @@ export function importingEchart(): void {
     BrowserModule,
     MatInputModule,
     MatButtonModule,
+    MatSlideToggleModule,
     MatTableModule,
     MatTabsModule,
     MatIconModule,
