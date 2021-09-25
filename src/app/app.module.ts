@@ -25,6 +25,9 @@ import { MAT_TABS_CONFIG } from '@angular/material/tabs';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
+
+
+
 import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
@@ -41,8 +44,9 @@ import {StudyPairsListComponent} from './components/v2/phenonet-network/study-pa
 import {NeighborsTableComponent} from './components/v2/phenonet-network/neighbors-table/neighbors-table.component';
 import {StudiesTableComponent} from './components/v2/phenonet-network/studies-table/studies-table.component';
 import {GraphFilterBarComponent} from './components/v2/phenonet-network/graph-filter-bar/graph-filter-bar.component';
-import {PhenonetTopBarComponent} from "./components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component";
-import {NetworkGraphComponent} from "./components/v2/phenonet-network/network-graph/network-graph.component";
+import {PhenonetTopBarComponent} from './components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component';
+import {NetworkGraphComponent} from './components/v2/phenonet-network/network-graph/network-graph.component';
+import {HomepageSearchbarComponent} from './components/homepage-searchbar/homepage-searchbar.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -68,7 +72,8 @@ export function importingEchart(): void {
     StudiesTableComponent,
     PhenonetTopBarComponent,
     GraphFilterBarComponent,
-    NetworkGraphComponent
+    NetworkGraphComponent,
+    HomepageSearchbarComponent
   ],
   imports: [
     CommonModule,

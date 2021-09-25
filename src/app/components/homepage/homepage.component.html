@@ -1,8 +1,5 @@
 <link rel="stylesheet" href="homepage.component.scss">
 <nav  class="navbar-header" [class.scrolled]="userHasScrolled">
-<!--<nav class="navbar-header">-->
-<!--&gt;>>>>>> c5fb5dc2e21fa9e24af49e471fae42fc8f245599-->
-
   <div style="flex-grow: 1"></div>
   <a mat-button href="/phenonet" routerLink="phenonet">Phenonet</a>
   <a mat-button href="/vis" routerLink="vis">Visualisation</a>
@@ -12,9 +9,6 @@
 </nav>
 
 <div class="top_container">
-<!--<div style="min-height:calc(100vh - 52px);display: flex;flex-direction: column; justify-content: center; align-items: center">-->
-<!--&gt;>>>>>> c5fb5dc2e21fa9e24af49e471fae42fc8f245599-->
-
   <h1>
     <span style="font-size: inherit" class="material-icons-round">bar_chart</span>
     Data Repurposing
@@ -62,31 +56,9 @@
           GPL96</mat-chip>
       </a>
     </mat-chip-list>
-    <!--    <a href="">sepsis</a>-->
-    <!--    <a href="">asthma</a>-->
-    <!--    <a href="">breast cancer</a>-->
   </div>
 
-  <app-toolbar-search mode="diseases"></app-toolbar-search>
-
-
-  <!--  <div routerLink="/phenonet" class="features" style="margin-top: 3rem;">-->
-  <!--    <div class="feature">-->
-  <!--      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>-->
-  <!--      <div class="details">-->
-  <!--        <h2 class="title">Phenotype network</h2>-->
-  <!--        <p class="info">In phenotype network, each node represents a phenotype. Phenotype network is an aggregation network from individual dataset networks, where two nodes are connected by an edge whenever a dataset of phenotype A has been found similar to a dataset of phenotype B in any dataset network of the same species. Edge weight represents the frequency of the similarity (A,B) (more details).</p>-->
-  <!--      </div>-->
-  <!--    </div>-->
-
-  <!--    <div routerLink="/phenonet" class="feature">-->
-  <!--      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>-->
-  <!--      <div class="details">-->
-  <!--        <h2 class="title">Dataset network</h2>-->
-  <!--        <p class="info">In dataset networks, each node represents a dataset. Edges represent similarities between datasets, as distances between two empirical, multivariable, statistical distributions, intuitively implying that molecular quantities measured in the two datasets are inter-correlated in a similar way, i.e., the covariance matrices are similar. Computation in these networks is unsupervised and depends only on the omics data distributions, ignoring any annotation or labeling of each dataset (more details).</p>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
+  <app-homepage-searchbar></app-homepage-searchbar>
 
 </div>
 
@@ -119,27 +91,3 @@
     </div>
   </div>
 </section>
-<!--=======-->
-<!--  <app-toolbar-search></app-toolbar-search>-->
-
-
-<!--  <div class="features" style="margin-top: 3rem;">-->
-<!--    <div class="feature">-->
-<!--      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>-->
-<!--      <div class="details">-->
-<!--        <h2 class="title">Phenonet</h2>-->
-<!--        <p class="info">This is the network of disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</p>-->
-<!--      </div>-->
-<!--    </div>-->
-
-<!--    <div class="feature">-->
-<!--      <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>-->
-<!--      <div class="details">-->
-<!--        <h2 class="title">Phenonet</h2>-->
-<!--        <p class="info">This is the network of disease-disease similarities of all Homo Sapiens gene expression measurement platforms.</p>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-
-<!--</div>-->
-

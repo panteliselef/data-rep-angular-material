@@ -4,6 +4,7 @@ import {environment} from 'src/environments/environment';
 import {Observable} from 'rxjs';
 import {GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
+import {SEARCH_RESULT} from "../models/search.model";
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class ApiService {
     return this.http.get<string[]>(`${environment.apiUrl}search?q=${query}`);
   }
 
-  public getGlobalSearchResults(query: string): Observable<any> {
+  public getGlobalSearchResults(query: string): Observable<SEARCH_RESULT[]> {
     return this.http.get<any>(`${environment.apiUrl}searchV2?q=${query}`);
   }
 }
