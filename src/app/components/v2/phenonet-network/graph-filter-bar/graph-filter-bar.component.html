@@ -25,16 +25,21 @@
     </mat-form-field>
   </div>
   <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
-  <div class="neighbor-depth-degree" [ngClass]="{disabled: (isDisabled$ | async)}">
-    <p>Neighbor Depth Degree</p>
+  <div class="neighbor-depth-degree center" style="gap: 7px" [ngClass]="{disabled: (isDisabled$ | async)}">
+    <p>Display all nodes</p>
 
-    <div class="h-flex" style="gap: 9px; flex: 0 0 30px;">
-      <div *ngFor="let v of depthDegreeValues"
-           [ngClass]="{'degree_option_selected':v=== (depthDegree$ | async)}"
-           class="degree_option"
-           (click)="setNeighborDegree(v)"
-      >{{v}}</div>
-    </div>
+    <mat-slide-toggle
+
+      (ngModelChange)="setNeighborDegree($event)"
+      [ngModel]="isToggleChecked" aria-label="Display all nodes"></mat-slide-toggle>
+
+<!--    <div class="h-flex" style="gap: 9px; flex: 0 0 30px;">-->
+<!--      <div *ngFor="let v of depthDegreeValues"-->
+<!--           [ngClass]="{'degree_option_selected':v=== (depthDegree$ | async)}"-->
+<!--           class="degree_option"-->
+<!--           (click)="setNeighborDegree(v)"-->
+<!--      >{{v}}</div>-->
+<!--    </div>-->
 
 
 
