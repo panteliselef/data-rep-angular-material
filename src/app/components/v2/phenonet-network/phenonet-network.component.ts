@@ -97,7 +97,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
   private _onFetchGraph(disease: string, graph: GRAPH): void  {
-    console.log(graph, disease);
+    console.log(graph.edges);
     this.setMainGraph(graph);
     this.setStudiesForDisease(disease);
     const d = graph.edges
@@ -118,8 +118,8 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     this.setMainDiseaseNeighborsCount(d.length); // because 'nodes' include the main disease
     this.connectedNodes = new MatTableDataSource<ConnectedNode>(d);
     this.setSliderValues(
+      this.mainDiseaseGraph.edges[0].weight,
       this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
-      this.mainDiseaseGraph.edges[0].weight
     );
   }
 
@@ -134,8 +134,9 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
   setSliderValues(min: number, max: number): void {
-    this.maxGraphEdgeFreq = min;
-    this.minGraphEdgeFreq = max;
+    console.log(min, max);
+    this.minGraphEdgeFreq = min;
+    this.maxGraphEdgeFreq = max;
   }
 
   setStudiesForDisease(disease: string): void {
@@ -163,6 +164,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
       this.graphFilterBarService.updateDepthDegreeDisabled(true);
       this.apiService.getPhenonet().subscribe((graph: GRAPH) => {
         this.setMainGraph(graph);
+        console.log(graph.edges);
         this.setSliderValues(
           graph.edges[graph.edges.length - 1].weight,
           graph.edges[0].weight
