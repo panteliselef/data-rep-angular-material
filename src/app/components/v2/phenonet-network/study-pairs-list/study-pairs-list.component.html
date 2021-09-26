@@ -1,7 +1,9 @@
 <div class="example-element-detail-header" [ngClass]="[parentComponentName]">
   <span>Study ID Pairs</span>
   <button mat-icon-button aria-label="See more details">
-    <mat-icon class="green-color" [matTooltip]="'Between '+ primaryDisease +' and '+ secondaryDisease "
+    <mat-icon class="green-color"
+              matTooltipClass="app-tooltip"
+              [matTooltip]="'Between '+ primaryDisease +' and '+ secondaryDisease "
               fontSet="material-icons-round">help_rounded
     </mat-icon>
   </button>
@@ -16,13 +18,17 @@
       <span>{{studyPair.dB}}</span>
     </div>
     <div style="width:100%;padding-right: 20px;" class="h-flex align-center justify-end">
-      <button mat-icon-button aria-label="See more details">
-        <mat-icon class="green-color" [matTooltip]="'Between '+ primaryDisease +' and '+ secondaryDisease "
+      <button mat-icon-button aria-label="Download data">
+        <mat-icon class="green-color"
+                  matTooltip="Download data"
+                  matTooltipClass="app-tooltip"
                   fontSet="material-icons-round">get_app
         </mat-icon>
       </button>
-      <button mat-icon-button aria-label="See more details">
-        <mat-icon class="green-color" [matTooltip]="'Between '+ primaryDisease +' and '+ secondaryDisease "
+      <button mat-icon-button aria-label="Download annotation">
+        <mat-icon class="green-color"
+                  matTooltip="Download annotation"
+                  matTooltipClass="app-tooltip"
                   fontSet="material-icons-round">description
         </mat-icon>
       </button>
