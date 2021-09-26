@@ -1,9 +1,15 @@
 <div class="graph-filter-bar">
   <div class="h-flex align-center" style="gap: 6px">
     <img alt="icon with many nodes" src="assets/Union.svg">
-    <mat-slider [style.width]=" '120px'" [min]="minGraphEdgeFreq" [max]="maxGraphEdgeFreq" step="1" color="primary"
+    <mat-slider [style.width]=" '120px'"
+                [min]="minGraphEdgeFreq"
+                [max]="maxGraphEdgeFreq"
                 [value]="currSliderValue"
-                tickInterval="1" thumbLabel (input)="handleSliderInput($event)"></mat-slider>
+                step="1"
+                color="primary"
+                tickInterval="1"
+                thumbLabel
+                (input)="handleSliderInput($event)"></mat-slider>
     <img alt="icon with few nodes" src="assets/Group%20116.svg">
   </div>
   <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
@@ -29,9 +35,9 @@
     <p>Display all nodes</p>
 
     <mat-slide-toggle
-
       (ngModelChange)="setNeighborDegree($event)"
-      [ngModel]="isToggleChecked" aria-label="Display all nodes"></mat-slide-toggle>
+      [ngModel]="isToggleChecked"
+      aria-label="Display all nodes"></mat-slide-toggle>
 
 <!--    <div class="h-flex" style="gap: 9px; flex: 0 0 30px;">-->
 <!--      <div *ngFor="let v of depthDegreeValues"-->
