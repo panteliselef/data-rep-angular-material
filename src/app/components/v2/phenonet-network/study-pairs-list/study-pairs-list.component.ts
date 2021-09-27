@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {DATASET_PAIRS} from 'src/app/models/graph.model';
+import {DATASET_PAIR} from 'src/app/models/graph.model';
 
 @Component({
   selector: 'app-study-pairs-list',
@@ -8,7 +8,7 @@ import {DATASET_PAIRS} from 'src/app/models/graph.model';
 })
 export class StudyPairsListComponent implements OnInit {
 
-  @Input() studyPairs: DATASET_PAIRS;
+  @Input() studyPairs: DATASET_PAIR[];
   @Input() parentComponentName = '';
   @Input() primaryDisease: string;
   @Input() secondaryDisease: string;
