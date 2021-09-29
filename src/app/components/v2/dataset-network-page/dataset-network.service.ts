@@ -38,7 +38,7 @@ export class DatasetNetworkService {
 
   fetchNetwork(technology: Technology): void {
     console.warn('requesting');
-    this.apiService.getTechnologyGraph('GPL96').subscribe(this._setGraph.bind(this));
+    this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
   }
 
   private _setSlider(count: number): void {
