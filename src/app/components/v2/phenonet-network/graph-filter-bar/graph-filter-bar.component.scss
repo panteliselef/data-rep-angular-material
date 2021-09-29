@@ -12,6 +12,23 @@
   div {
     height: 56px;
   }
+
+  .slider-icon {
+    height: 30px;
+    aspect-ratio: 1 / 1;
+    background-color: transparent;
+    background-position: center;
+    background-size: contain;
+
+    &.slider-icon-1 {
+      background-image: url("/assets/network_few_nodes.svg");
+    }
+    &.slider-icon-2 {
+      background-image: url("/assets/network_many_nodes.svg");
+    }
+
+
+  }
 }
 
 
