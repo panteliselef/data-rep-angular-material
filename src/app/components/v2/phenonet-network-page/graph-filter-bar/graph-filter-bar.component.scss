@@ -1,5 +1,5 @@
 @use 'src/variables' as v;
-@import "src/util";
+@forward "src/util";
 
 
 .graph-filter-bar {

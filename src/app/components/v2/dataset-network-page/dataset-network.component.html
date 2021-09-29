@@ -1,0 +1,47 @@
+<app-navbar style="width: 100%" class="mat-elevation-z6"></app-navbar>
+
+
+<app-dataset-top-bar
+  style="width: 100%; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.12);"
+  >
+</app-dataset-top-bar>
+
+
+<main *ngIf="(gplGraph$ | async) as gplData else loader" class="app-two-column-grid">
+<!--<main class="app-two-column-grid">-->
+  <div style="gap: 35px;" class="v-flex">
+    <app-dataset-filter-bar></app-dataset-filter-bar>
+    <app-dataset-network-graph></app-dataset-network-graph>
+  </div>
+  <div style="gap: 30px;" class="v-flex">
+
+    <div style="padding: 0 17px" class="as-card">
+      <div class="hint-with-badges" style="height: 56px">
+        <p class="text">Select a</p>
+        <div class="badge-node">NODE</div>
+        <p class="text">or an</p>
+        <div class="badge-edge">EDGE</div>
+        <p class="text">from the network graph</p>
+      </div>
+    </div>
+
+    <div class="as-card with-padding">
+      <p class="title title_2">Graph Legend</p>
+
+
+      <div class="legend_list">
+        <div class="legend_list_item" *ngFor="let item of gplData.categories">
+          <div></div>
+          <p>{{item.name}}</p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+
+
+<ng-template #loader>
+  loading....
+</ng-template>

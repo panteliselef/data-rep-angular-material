@@ -1,18 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
-import {environment} from '../../../environments/environment';
+import {environment} from 'src/environments/environment';
 import {MatSliderChange} from '@angular/material/slider';
 import {MatSelectChange} from '@angular/material/select';
-
-export interface GplData {
-  type?: string;
-  nodes: [any];
-  links: Array<{ source: string, target: string, value: number }>;
-  edges: Array<{ from: string, to: string, value: number }>;
-  categories: [any];
-}
-
+import {GplData} from 'src/app/models/gplGraph.model';
 
 @Component({
   selector: 'app-visualizations',

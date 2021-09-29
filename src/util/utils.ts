@@ -128,4 +128,64 @@ export const sPhenonetConfig = {
   },
 };
 
+export const gplEdgeColor = {
+  highlight: '#1E352F',
+  color: 'rgba(150,150,150,0.5)',
+  hover: '#1E352F',
+  opacity: .5,
+};
+
+export const gplConfig =  {
+  height: '100%',
+  width: '100%',
+  layout: {
+    randomSeed: 12,
+    hierarchical: false,
+    improvedLayout: true,
+  },
+  nodes: {
+    shape: 'dot',
+    font: {
+      face: 'roboto',
+      size: 22
+    },
+  },
+  edges: {
+    color: gplEdgeColor,
+    hoverWidth: 7,
+    selectionWidth: 17,
+    scaling: {
+      min: 4,
+      max: 17,
+    },
+    smooth: false,
+  },
+  physics: {
+    enabled: true,
+    minVelocity: 15,
+    solver: 'forceAtlas2Based',
+    maxVelocity: 50,
+    forceAtlas2Based: {
+      gravitationalConstant: -500,
+      centralGravity: 0.05,
+      avoidOverlap: 0
+    },
+    stabilization: {
+      enabled: true,
+      iterations: 1,
+      fit: true
+    },
+  },
+  interaction: {
+    hover: true,
+    // tooltipDelay: 200,
+    hideEdgesOnDrag: true,
+    hideEdgesOnZoom: true,
+    // multiselect: true,
+    // navigationButtons: true,
+    // selectable: true,
+    // selectConnectedEdges:true,
+  },
+};
+
 

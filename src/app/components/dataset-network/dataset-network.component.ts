@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
-import {environment} from '../../../environments/environment';
+import {environment} from 'src/environments/environment';
 import {MatSelectChange} from '@angular/material/select';
-import {GplData} from '../visualizations/visualizations.component';
+import {GplData} from 'src/app/models/gplGraph.model';
 import {ActivatedRoute, Params} from '@angular/router';
 import {IdType} from 'vis';
 import {map, startWith} from 'rxjs/operators';

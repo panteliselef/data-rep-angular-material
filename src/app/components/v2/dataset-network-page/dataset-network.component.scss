@@ -1,0 +1,28 @@
+@use 'src/variables' as v;
+@import "src/mat-table-appearance";
+
+
+.legend_list {
+  @extend .v-flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+
+  .legend_list_item {
+    @extend .h-flex, .align-center;
+    gap: 10px;
+
+    div:nth-child(1)  {
+      aspect-ratio: 1 / 1;
+      width: 21px;
+      border-radius: 50%;
+      background-color: map-get(v.$light-green,100);
+    }
+
+    p {
+      color: #0000008A;
+    }
+
+
+  }
+}

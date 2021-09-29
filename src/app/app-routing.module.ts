@@ -5,7 +5,8 @@ import {VisualizationsComponent} from './components/visualizations/visualization
 import {HomepageComponent} from './components/homepage/homepage.component';
 import {DiseasePageComponent} from './components/disease-page/disease-page.component';
 import {DatasetNetworkComponent} from './components/dataset-network/dataset-network.component';
-import {PhenonetNetworkComponent} from './components/v2/phenonet-network/phenonet-network.component';
+import {PhenonetNetworkComponent} from './components/v2/phenonet-network-page/phenonet-network.component';
+import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/dataset-network.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent, },
@@ -16,6 +17,7 @@ const routes: Routes = [
   {path: 'phenonet', component: DiseaseNetworkComponent, },
   {path: 'v2/phenonet', component: PhenonetNetworkComponent, },
   {path: 'v2/phenonet/:diseaseId', component: PhenonetNetworkComponent, },
+  {path: 'v2/dataset', component: DatasetNetworkPageComponent, },
   {path: 'vis', component: VisualizationsComponent}
 ];
 

@@ -1,0 +1,30 @@
+<div class="network-searchbar">
+  <div class="network-name" routerLink="/v2/dataset">
+    <p>Dataset Network</p>
+    <mat-icon aria-label="Expand" fontSet="material-icons-round">expand_more</mat-icon>
+  </div>
+
+  <div id="jaja" style="position: relative;gap:15px; width: 100%; max-width: 755px" class="h-flex align-center">
+    <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 28px"></div>
+    <mat-icon aria-label="search" style="color:#9AA0A6" fontSet="material-icons-round">search</mat-icon>
+    <input (focusin)="searchFocused = true"
+           (focusout)="searchFocused = false"
+           (ngModelChange)="onSearch($event)"
+           [(ngModel)]="searchBarValue"
+           type="text"
+           placeholder="Type GPLxxx"/>
+
+    <div *ngIf="searchRecommendations.length" class="search-results">
+
+      <ul>
+        under development
+<!--        <li class="search_suggestion" *ngFor="let suggestion of searchRecommendations">-->
+<!--          <a [href]="'/v2/phenonet/'+suggestion" [routerLink]="'/v2/phenonet/'+suggestion">-->
+<!--            {{suggestion}}-->
+<!--          </a>-->
+<!--        </li>-->
+      </ul>
+    </div>
+  </div>
+
+</div>

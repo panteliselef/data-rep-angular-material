@@ -1,0 +1,88 @@
+@use 'src/variables' as v;
+@import "src/mat-table-appearance";
+
+.info-panel {
+  @extend .as-card, .v-flex;
+  overflow: hidden;
+
+
+  .info-panel-top-part {
+    @extend .h-flex, .space-between;
+    padding: v.$d-padding v.$d-padding 0 v.$d-padding;
+
+    .statistic-info {
+      @extend  .v-flex;
+      gap: 5px;
+      font-family: Roboto, sans-serif;
+
+      p {
+        margin: 0;
+      }
+
+      .stat-description {
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      .stat-value {
+        font-style: normal;
+        font-weight: normal;
+        font-size: 17px;
+        line-height: 20px;
+        color: #000000;
+      }
+
+    }
+  }
+}
+
+.subtitle-1 {
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 16px;
+  margin: 0;
+}
+
+.loading_top_bar {
+  width: 100%;
+  padding: 0 32px;
+  max-width: v.$networksMaxWidth;
+  font-family: v.$primaryFontFamily;
+  display: flex;
+  align-items: center;
+  gap:15px;
+}
+
+.loading_graph_filters {
+  @extend .as-card, .h-flex, .align-center;
+  padding: 19px 17px;
+  gap: 15px;
+  justify-content: flex-start;
+  height: 94px;
+}
+
+.l_placeholder {
+  @extend .with-radius;
+  background: rgba(77, 114, 103, 0.2);
+  background: rgb(77,114,103);
+  background: linear-gradient(-45deg, rgba(77,114,103,0.15),rgba(77,114,103,0.05));
+  background-size: 400% 400%;
+  border-radius: 11px;
+  animation: bg 1s ease infinite;
+
+  &_circle {
+    aspect-ratio: 1/1;
+    border-radius: 100%;
+  }
+}
+
+@keyframes bg {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
