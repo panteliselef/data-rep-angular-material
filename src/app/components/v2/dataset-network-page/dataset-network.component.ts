@@ -5,10 +5,9 @@ import {LoadingService} from 'src/app/services/loading.service';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from './dataset-network.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter, map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
-
-type DUMMY = {s: string, v: number};
+type GENE = string;
 @Component({
   selector: 'app-dataset-network2',
   templateUrl: './dataset-network.component.html',
@@ -24,6 +23,11 @@ export class DatasetNetworkPageComponent implements OnInit {
   networkName$: Observable<string>;
   dummyData: MatTableDataSource<GPLEDGE>;
   tableData$: Observable<GPLEDGE[]>;
+
+  limitGenes = 100;
+  limits: number[] = [100, 500, 1000, 2000];
+
+  bestExplainingGene: MatTableDataSource<GENE>;
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
@@ -73,6 +77,8 @@ export class DatasetNetworkPageComponent implements OnInit {
       }
       this.datasetNetworkService.fetchNetwork(technology.toUpperCase() as Technology);
     });
+
+    this.bestExplainingGene = new MatTableDataSource<GENE>(Array(	12).fill('ZAP70' as GENE) as GENE[]);
 
 
   }
