@@ -31,23 +31,11 @@
         <p class="title title_2">Similar Datasets</p>
       </div>
 
-      <table mat-table multiTemplateDataRows id="neighbors" [dataSource]="dummyData"
+      <table mat-table multiTemplateDataRows [dataSource]="dummyData"
              style="width: 100%">
-
-        <!--- Note that these columns can be defined in any order.
-              The actual rendered columns are set as a property on the row definition" -->
-        <!-- Name Column -->
-<!--        <ng-container matColumnDef="node_in_graph">-->
-<!--          <th mat-header-cell *matHeaderCellDef></th>-->
-<!--          <td mat-cell *matCellDef="let element; let index = dataIndex ;">-->
-<!--            &lt;!&ndash;                <div *ngIf="index < nodesInGraph" class="in_graph_indicator"></div>&ndash;&gt;-->
-<!--            <div class="in_graph_indicator"></div>-->
-<!--          </td>-->
-<!--        </ng-container>-->
 
         <ng-container matColumnDef="dataset_name">
           <th mat-header-cell *matHeaderCellDef> Name</th>
-          <!--    <td mat-cell *matCellDef="let element"> {{element.node}} - {{element.to}}</td>-->
           <td mat-cell *matCellDef="let element">
             {{element.to}}
           </td>
@@ -62,11 +50,8 @@
         <tr mat-header-row
             *matHeaderRowDef="['dataset_name','dataset_qvalue'];sticky:true"></tr>
         <tr mat-row *matRowDef="let row; columns: ['dataset_name','dataset_qvalue'];"></tr>
-        <!--          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>-->
-
-        <!--       Row shown when there is no matching data.-->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="4">No data matching the filter</td>
+          <td class="mat-cell" colspan="4">No results.</td>
         </tr>
       </table>
 
@@ -93,6 +78,52 @@
         </div>
 
       </div>
+    </div>
+
+    <div *ngIf="(selectedEdge$ | async) as selectedEdge" class="v-flex align-flex-start as-card" style="overflow: hidden">
+      <div class="h-flex space-between align-center"
+           style="width: 100%;height: 58px;padding: 0 16px; border-bottom: 1px solid rgba(0,0,0,.12)">
+        <p class="title title_4">Best explaining genes</p>
+
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="h-flex"
+          [(ngModel)]="limitGenes"
+          style="gap: 10px">
+          <mat-radio-button *ngFor="let limit of limits" [value]="limit">
+            {{limit}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <table mat-table multiTemplateDataRows [dataSource]="bestExplainingGene"
+             style="width: 100%">
+
+        <ng-container matColumnDef="gene">
+          <th mat-header-cell *matHeaderCellDef> Gene</th>
+          <td mat-cell *matCellDef="let element">
+            {{element}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="view_on">
+          <th mat-header-cell *matHeaderCellDef>View on</th>
+          <td mat-cell *matCellDef="let element"> TO BE FILLED</td>
+        </ng-container>
+
+        <tr mat-header-row
+            *matHeaderRowDef="['gene','view_on'];sticky:true"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['gene','view_on'];"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No results.</td>
+        </tr>
+      </table>
+
+      <div class="h-flex align-center"
+           style="width: 100%;height: 60px;padding: 0 16px; border-top: 1px solid rgba(0,0,0,.12)">
+
+      </div>
+
+
     </div>
 
     <div *ngIf="!(isEdgeNodeSelected$ | async)" style="padding: 0 17px" class="as-card">
