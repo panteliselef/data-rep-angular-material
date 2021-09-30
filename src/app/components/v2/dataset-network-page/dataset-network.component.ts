@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
+import { combineLatest } from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
-import {GplData, Technology} from 'src/app/models/gplGraph.model';
+import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from './dataset-network.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {map} from 'rxjs/operators';
@@ -16,6 +17,8 @@ export class DatasetNetworkPageComponent implements OnInit {
 
   loadingGraphData$: Observable<boolean>;
   gplGraph$: Observable<GplData>;
+  selectedNode$: Observable<GPLNODE>;
+  selectedEdge$: Observable<GPLEDGE>;
 
   networkName$: Observable<string>;
 
@@ -26,10 +29,17 @@ export class DatasetNetworkPageComponent implements OnInit {
     private route: ActivatedRoute) {
   }
 
+  get isEdgeNodeSelected$(): Observable<GPLNODE | GPLEDGE> {
+    return combineLatest([this.selectedNode$, this.selectedEdge$])
+      .pipe(map(([a$, b$]) => a$ || b$));
+  }
+
   ngOnInit(): void {
     this.networkName$ = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')));
     this.loadingGraphData$ = this.loadingService.loading$;
     this.gplGraph$ = this.datasetNetworkService.filteredGraph$;
+    this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
+    this.selectedNode$ = this.datasetNetworkService.selectedNode$;
 
     this.networkName$.subscribe(async (technology) => {
       // TODO: verify that technology exist

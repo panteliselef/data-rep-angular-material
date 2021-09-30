@@ -107,9 +107,13 @@
 
 /* Typography */
 
+.title, .subtitle {
+  font-style: normal;
+  margin: 0;
+}
+
 .title {
   font-family: v.$primaryFontFamily;
-  margin: 0;
   line-height: 1.4;
 
   &_1 {
@@ -133,6 +137,15 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+.subtitle {
+  font-family: 'Roboto', sans-serif;
+  &_1 {
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.2;
   }
 }
 

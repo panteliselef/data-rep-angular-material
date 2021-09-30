@@ -15,7 +15,36 @@
   </div>
   <div style="gap: 30px;" class="v-flex">
 
-    <div style="padding: 0 17px" class="as-card">
+    <div *ngIf="(selectedNode$ | async) as selectedNode" style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px"
+         class="as-card with-padding">
+      <div class="badge-node">NODE</div>
+      <p class="title title_1">{{selectedNode.id}}</p>
+      <p class="subtitle subtitle_1 text-light-green">{{selectedNode.group}}</p>
+    </div>
+
+    <div *ngIf="(selectedEdge$ | async) as selectedEdge" style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 21px"
+         class="as-card with-padding">
+      <div class="badge-edge">EDGE</div>
+
+      <div style="display: flex;gap:6px;">
+
+        <div class="v-flex" style="gap:9px;">
+          <p class="title title_1">{{selectedEdge.from?.id}}</p>
+          <p class="subtitle subtitle_1 text-light-green" style="max-width: 150px">{{selectedEdge.from?.group}}</p>
+        </div>
+
+
+        <div><p class="title title_1">-</p></div>
+
+        <div class="v-flex" style="gap:9px;">
+          <p class="title title_1">{{selectedEdge.to?.id}}</p>
+          <p class="subtitle subtitle_1 text-light-green" style="max-width: 150px">{{selectedEdge.to?.group}} </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="!(isEdgeNodeSelected$ | async)" style="padding: 0 17px" class="as-card">
       <div class="hint-with-badges" style="height: 56px">
         <p class="text">Select a</p>
         <div class="badge-node">NODE</div>
@@ -25,7 +54,7 @@
       </div>
     </div>
 
-    <div class="as-card with-padding">
+    <div *ngIf="!(isEdgeNodeSelected$ | async)" class="as-card with-padding">
       <p class="title title_2">Graph Legend</p>
 
       <div class="legend_list">

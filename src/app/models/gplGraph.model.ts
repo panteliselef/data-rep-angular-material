@@ -5,8 +5,8 @@ export interface GPLNODE {
 }
 
 export interface GPLEDGE {
-  from: string;
-  to: string;
+  from: string | GPLNODE;
+  to: string | GPLNODE;
   value: number;
 }
 

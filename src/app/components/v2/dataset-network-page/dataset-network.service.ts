@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {GPLCATEGORY, GplData, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
+import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
 
 @Injectable()
@@ -13,6 +13,9 @@ export class DatasetNetworkService {
   private maxSliderValue = new BehaviorSubject<number>(1);
   private diseaseToBeHighlighted = new BehaviorSubject<string>('');
 
+  private selectedNode = new BehaviorSubject<GPLNODE>(undefined);
+  private selectedEdge = new BehaviorSubject<GPLEDGE>(undefined);
+
   // Exposed observable (read-only).
   readonly graph$ = this.graph.asObservable();
   readonly filteredGraph$ = this.filteredGraph.asObservable();
@@ -20,11 +23,21 @@ export class DatasetNetworkService {
   readonly minSliderValue$ = this.minSliderValue.asObservable();
   readonly maxSliderValue$ = this.maxSliderValue.asObservable();
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
+  readonly selectedNode$ = this.selectedNode.asObservable();
+  readonly selectedEdge$ = this.selectedEdge.asObservable();
 
   constructor(
     private apiService: ApiService
   ) {
 
+  }
+
+  updateSelectedNode(node: GPLNODE): void {
+    this.selectedNode.next(node);
+  }
+
+  updateSelectedEdge(edge: GPLEDGE): void {
+    this.selectedEdge.next(edge);
   }
 
 
@@ -61,8 +74,8 @@ export class DatasetNetworkService {
 
     const finalEdges = graphInstance.edges.slice(0, count);
     for (const edge of finalEdges) {
-      finalNodesSet.add(edge.from);
-      finalNodesSet.add(edge.to);
+      finalNodesSet.add(edge.from as string);
+      finalNodesSet.add(edge.to as string);
     }
     const finalNodes = Array.from(finalNodesSet).map<GPLNODE>(nodeId => {
       const n = graphInstance.nodes.find(node => node.id === nodeId) as GPLNODE;
