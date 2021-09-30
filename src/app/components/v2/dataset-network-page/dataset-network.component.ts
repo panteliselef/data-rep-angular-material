@@ -5,8 +5,10 @@ import {LoadingService} from 'src/app/services/loading.service';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from './dataset-network.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map} from 'rxjs/operators';
+import {filter, map, tap} from 'rxjs/operators';
+import {MatTableDataSource} from '@angular/material/table';
 
+type DUMMY = {s: string, v: number};
 @Component({
   selector: 'app-dataset-network2',
   templateUrl: './dataset-network.component.html',
@@ -19,8 +21,9 @@ export class DatasetNetworkPageComponent implements OnInit {
   gplGraph$: Observable<GplData>;
   selectedNode$: Observable<GPLNODE>;
   selectedEdge$: Observable<GPLEDGE>;
-
   networkName$: Observable<string>;
+  dummyData: MatTableDataSource<GPLEDGE>;
+  tableData$: Observable<GPLEDGE[]>;
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
@@ -35,11 +38,30 @@ export class DatasetNetworkPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.networkName$ = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')));
+    this.networkName$ = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()));
     this.loadingGraphData$ = this.loadingService.loading$;
     this.gplGraph$ = this.datasetNetworkService.filteredGraph$;
     this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
     this.selectedNode$ = this.datasetNetworkService.selectedNode$;
+
+    this.selectedNode$.subscribe((node) => {
+      if (!node) { return ; }
+      this.datasetNetworkService.graph$
+        .pipe(
+          map(graph => graph.edges
+            .filter(edge => edge.from === node.id || edge.to === node.id)
+            .map( ({from, to, value}) => ({
+              to: to === node.id ? from : to,
+              from: node.id,
+              value
+            }))
+          ),
+        ).subscribe((neighbors) => {
+          console.log(neighbors);
+          this.dummyData = new MatTableDataSource<GPLEDGE>(neighbors);
+      });
+
+    });
 
     this.networkName$.subscribe(async (technology) => {
       // TODO: verify that technology exist

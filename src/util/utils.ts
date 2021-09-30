@@ -166,6 +166,7 @@ export const gplConfig =  {
     solver: 'forceAtlas2Based',
     maxVelocity: 50,
     forceAtlas2Based: {
+      damping: 1,
       gravitationalConstant: -500,
       centralGravity: 0.05,
       avoidOverlap: 0
