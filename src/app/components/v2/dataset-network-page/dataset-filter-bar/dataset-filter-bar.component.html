@@ -1,6 +1,6 @@
 <div class="graph-filter-bar">
   <div class="h-flex align-center" style="gap: 6px">
-    <img alt="icon with few nodes" src="assets/Group%20116.svg">
+    <div class="slider-icon slider-icon-1" aria-label="icon with few nodes"></div>
     <mat-slider [style.width]=" '120px'"
                 [min]="minSliderValue$ | async"
                 [max]="maxSliderValue$ | async"
@@ -11,7 +11,7 @@
                 thumbLabel
                 (change)="handleSliderInput($event)"
     ></mat-slider>
-    <img alt="icon with many nodes" src="assets/Union.svg">
+    <div class="slider-icon slider-icon-2" aria-label="icon with many nodes"></div>
   </div>
   <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
   <div style="width: 100%;max-width: 326px;">
