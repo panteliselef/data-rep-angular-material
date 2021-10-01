@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {ConnectedNode, EDGE} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
-import {edgeDefaultColor, gplConfig, nodeDefaultColor} from 'src/util/utils';
+import {edgeDefaultColor, gplConfig, nodeDefaultColor, gplEdgeColor} from 'src/util/utils';
 import {ActivatedRoute} from '@angular/router';
 import {GplData, GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from '../dataset-network.service';
@@ -64,7 +64,8 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
     this.filteredGraphSub = this.datasetNetworkService.filteredGraph$.subscribe(this.setGraphData.bind(this));
     this.diseaseToBeHighlighted$ = this.datasetNetworkService.diseaseToBeHighlighted$;
     this.diseaseToBeHighlightedSub = this.diseaseToBeHighlighted$.subscribe((diseaseToBeHighlighted: string) => {
-      // TODO: Highlight all nodes of the disease in graph
+      if (!diseaseToBeHighlighted) { return; }
+      this._highlightByDisease(diseaseToBeHighlighted);
       console.log('Disease Highlighted: ', diseaseToBeHighlighted);
     });
 
@@ -275,7 +276,7 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
       this._onNetworkSelectEdge(eventData);
     }else if (clickData?.nodes.length > 0) {
       // Node is clicked
-      console.log('nodeeee')
+      console.log('nodeeee');
       const clickedNode = clickData.nodes[0];
       const allNodes = this.nodes.get({returnType: 'Object'}) as any;
       const cNode = allNodes[clickedNode] as GPLNODE;
@@ -375,6 +376,90 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
     }
 
     this.nodes.update(updateArray);
+  }
+
+  private _highlightByDisease(diseaseName: string): void {
+    console.log('By disease Highlight');
+    // tslint:disable-next-line:max-line-length
+    // Code from https://visjs.github.io/vis-network/examples/static/jsfiddle.a6eacda850dfe6c88d8ea581887b67b263eb310301cdd593e76f7cabd6df4800.html
+    const allNodes = this.nodes.get({returnType: 'Object'}) as any;
+    const allEdges = this.edges.get({returnType: 'Object'}) as any;
+
+    if (this.highlightActive === true) {
+      console.log('Nothing selected');
+      // reset all nodes
+      for (const nodeId in allNodes) {
+        if (allNodes.hasOwnProperty(nodeId)) {
+          allNodes[nodeId].color = undefined;
+          if (allNodes[nodeId].hiddenLabel !== undefined) {
+            allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+            allNodes[nodeId].hiddenLabel = undefined;
+          }
+        }
+
+      }
+
+      if (this.lastSelectedEdge) {
+        // this.lastSelectedEdge.color = this.edgeDefaultColor;
+      }
+      //
+      // mark all nodes as hard to read.
+      for (const edgeId in allEdges) {
+        if (allEdges.hasOwnProperty(edgeId)) {
+          allEdges[edgeId].color = gplEdgeColor;
+        }
+      }
+      this.highlightActive = false;
+    }
+    // Highlight only nodes that represent the corresponding disease
+
+    this.highlightActive = true;
+
+    // mark all nodes as hard to read.
+    for (const nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
+        if (allNodes[nodeId].hiddenLabel === undefined) {
+          allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+          allNodes[nodeId].label = undefined;
+        }
+      }
+    }
+
+    const allDiseaseNodes = Object.values(allNodes)
+      .filter(({group}: { group: string }) => group.toLowerCase() === diseaseName.toLowerCase())
+      .map(({id}: {id: string}) => id) as string[];
+
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < allDiseaseNodes.length; i++) {
+      allNodes[allDiseaseNodes[i]].color = undefined;
+      if (allNodes[allDiseaseNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allDiseaseNodes[i]].label =
+          allNodes[allDiseaseNodes[i]].hiddenLabel;
+        allNodes[allDiseaseNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    let updateArray = [];
+    for (const edgeId in allEdges) {
+      if (allEdges.hasOwnProperty(edgeId)) {
+        updateArray.push(allEdges[edgeId]);
+      }
+    }
+
+    this.edges.update(updateArray);
+
+    // transform the object into an array
+    updateArray = [];
+    for (const nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+
+    this.nodes.update(updateArray);
+
   }
 
   zoomIn(): void {

@@ -503,7 +503,7 @@ export class DatasetNetworkComponent implements OnInit, OnDestroy {
     }
 
     const allDiseaseNodes = Object.values(allNodes)
-      .filter(({hiddenLabel}: { hiddenLabel: string }) => hiddenLabel.toLowerCase() === diseaseName.toLowerCase())
+      .filter(({group}: { group: string }) => group.toLowerCase() === diseaseName.toLowerCase())
       .map(({id}: {id: string}) => id) as string[];
 
     // tslint:disable-next-line:prefer-for-of
