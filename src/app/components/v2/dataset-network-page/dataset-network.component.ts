@@ -7,6 +7,7 @@ import {DatasetNetworkService} from './dataset-network.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {map} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
+import {ApiService} from '../../../services/api.service';
 type GENE = string;
 @Component({
   selector: 'app-dataset-network2',
@@ -21,16 +22,18 @@ export class DatasetNetworkPageComponent implements OnInit {
   selectedNode$: Observable<GPLNODE>;
   selectedEdge$: Observable<GPLEDGE>;
   networkName$: Observable<string>;
-  dummyData: MatTableDataSource<GPLEDGE>;
+  similarDatasets: MatTableDataSource<GPLEDGE>;
   tableData$: Observable<GPLEDGE[]>;
 
   limitGenes = 100;
   limits: number[] = [100, 500, 1000, 2000];
+  downloadUrl = '';
 
   bestExplainingGene: MatTableDataSource<GENE>;
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
+    private apiService: ApiService,
     private loadingService: LoadingService,
     private router: Router,
     private route: ActivatedRoute) {
@@ -39,6 +42,11 @@ export class DatasetNetworkPageComponent implements OnInit {
   get isEdgeNodeSelected$(): Observable<GPLNODE | GPLEDGE> {
     return combineLatest([this.selectedNode$, this.selectedEdge$])
       .pipe(map(([a$, b$]) => a$ || b$));
+  }
+
+  public requestDataFiles(): string {
+    return this.apiService
+      .getStudiesFilesURL(this.similarDatasets.data.map<string>(edge => edge.to as string), 'annotation');
   }
 
   ngOnInit(): void {
@@ -61,8 +69,8 @@ export class DatasetNetworkPageComponent implements OnInit {
             }))
           ),
         ).subscribe((neighbors) => {
-          console.log(neighbors);
-          this.dummyData = new MatTableDataSource<GPLEDGE>(neighbors);
+          this.similarDatasets = new MatTableDataSource<GPLEDGE>(neighbors);
+          this.downloadUrl = this.requestDataFiles();
       });
 
     });

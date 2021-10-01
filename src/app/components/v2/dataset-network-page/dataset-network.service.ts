@@ -13,7 +13,11 @@ export class DatasetNetworkService {
   private maxSliderValue = new BehaviorSubject<number>(1);
   private diseaseToBeHighlighted = new BehaviorSubject<string>('');
 
-  private selectedNode = new BehaviorSubject<GPLNODE>(undefined);
+  private selectedNode = new BehaviorSubject<GPLNODE>({
+    group: '',
+    id: '',
+    label: ''
+  });
   private selectedEdge = new BehaviorSubject<GPLEDGE>(undefined);
 
   // Exposed observable (read-only).

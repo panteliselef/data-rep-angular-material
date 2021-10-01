@@ -29,9 +29,17 @@
       <div class="h-flex space-between align-center"
            style="width: 100%;height: 68px;padding: 0 16px; border-bottom: 1px solid rgba(0,0,0,.12)">
         <p class="title title_2">Similar Datasets</p>
+
+
+        <a [href]="downloadUrl">
+          <button mat-flat-button class="app_button app_button_left_icon">
+            <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+            Download all similar datasets</button>
+
+        </a>
       </div>
 
-      <table mat-table multiTemplateDataRows [dataSource]="dummyData"
+      <table mat-table multiTemplateDataRows [dataSource]="similarDatasets"
              style="width: 100%">
 
         <ng-container matColumnDef="dataset_name">
