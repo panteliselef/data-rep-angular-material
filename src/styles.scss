@@ -125,3 +125,9 @@ app-phenonet-network {
     }
   }
 }
+
+.mat-ripple.mat-button-ripple {
+  .mat-ripple-element {
+    background-color: map.get(v.$green, 100);
+  }
+}
