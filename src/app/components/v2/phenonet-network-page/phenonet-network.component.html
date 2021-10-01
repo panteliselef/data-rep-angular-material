@@ -36,8 +36,8 @@
 
   <div style="gap: 35px;" class="v-flex">
     <div *ngIf="!mainDisease && !selectedEdge" class="as-card with-padding">
-      <p class="title-1">Phenonet</p>
-      <div class="phenonet-all-hint">
+      <p class="title title_1">Phenonet</p>
+      <div class="hint-with-badges">
         <p class="text">Select a</p>
         <div class="badge-node">NODE</div>
         <p class="text">or an</p>
@@ -46,46 +46,17 @@
       </div>
     </div>
 
-
-    <!--    <div style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px"-->
-    <!--         class="as-card with-padding">-->
-    <!--      <div class="badge-node">NODE</div>-->
-    <!--      <p class="title-1">GSE46184</p>-->
-    <!--      <p class="subtitle-1 text-light-green">breast cancer</p>-->
-    <!--    </div>-->
-
-    <!--    <div style="display: flex;align-items: flex-start; flex-direction: column;gap:9px;padding-bottom: 35px"-->
-    <!--         class="as-card with-padding">-->
-    <!--      <div class="badge-edge">EDGE</div>-->
-
-    <!--      <div style="display: flex;gap:6px;">-->
-
-    <!--        <div class="v-flex" style="gap:9px;">-->
-    <!--          <p class="title-1">GSE46184</p>-->
-    <!--          <p class="subtitle-1 text-light-green" style="max-width: 150px">breast cancer</p>-->
-    <!--        </div>-->
-
-
-    <!--        <div><p class="title-1">-</p></div>-->
-
-    <!--        <div class="v-flex" style="gap:9px;">-->
-    <!--          <p class="title-1">GSE39088</p>-->
-    <!--          <p class="subtitle-1 text-light-green" style="max-width: 150px">systemic lupus erythematosus </p>-->
-    <!--        </div>-->
-
-    <!--      </div>-->
-
     <div *ngIf="selectedEdge" style="padding-bottom: 29px" class="v-flex as-card">
       <div class="v-flex align-flex-start" style="gap:9px;padding: 17px 17px 0 17px">
         <div class="badge-edge">EDGE</div>
         <div class="flex" style="gap:6px;">
           <!--          <div class="v-flex" style="flex: 0 0 auto;">-->
           <!--            <p class="title-1" style="flex: 0 0 auto; max-width: 220px">{{mainDisease && selectedEdge.node === selectedEdge.from ? selectedEdge.to: selectedEdge.from}}</p>-->
-          <p class="title-1" style="flex: 0 0 auto; max-width: 220px">{{selectedEdge.from}}</p>
+          <p class="title title_1" style="flex: 0 0 auto; max-width: 220px">{{selectedEdge.from}}</p>
           <!--          </div>-->
-          <div><p class="title-1">-</p></div>
+          <div><p class="title title_1">-</p></div>
           <!--          <div class="v-flex" style="flex: 0 0 auto;">-->
-          <p class="title-1" style="flex: 0 0 auto; max-width: 220px">{{selectedEdge.to}}</p>
+          <p class="title title_1" style="flex: 0 0 auto; max-width: 220px">{{selectedEdge.to}}</p>
           <!--          </div>-->
         </div>
       </div>
@@ -105,7 +76,7 @@
       <div class="info-panel-top-part">
         <div class="v-flex align-flex-start" style="gap:9px;">
           <div class="badge-node">NODE</div>
-          <p class="title-1" style="max-width: 270px">{{mainDisease}}</p>
+          <p class="title title_1" style="max-width: 270px">{{mainDisease}}</p>
         </div>
 
 

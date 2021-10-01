@@ -1,5 +1,5 @@
 @use "variables" as v;
-@import "util";
+@forward "util";
 /* Material Table Override */
 /* TODO: make this global */
 

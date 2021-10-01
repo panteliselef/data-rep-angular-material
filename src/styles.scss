@@ -31,7 +31,8 @@ app-disease-page{
   grid-template-rows: 52px 1fr;
 }
 
-app-phenonet-network {
+app-phenonet-network,
+app-dataset-network2{
   display: grid;
   justify-items: center;
   grid-template-rows: 52px 64px 1fr;
@@ -130,4 +131,34 @@ app-phenonet-network {
   .mat-ripple-element {
     background-color: map.get(v.$green, 100);
   }
+}
+
+//.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle , .mat-radio-outer-circle {
+//  border-color: blue !important;
+//}
+
+//.mat-radio-button.mat-accent .mat-radio-inner-circle{
+//  background-color: blue !important;
+//}
+
+
+.mat-radio-button.mat-accent {
+
+  //.mat-radio-outer-circle{
+  //  border-color: map.get(v.$light-green, 100);
+  //}
+  .mat-radio-inner-circle {
+    background-color: map.get(v.$light-green, 100);
+  }
+
+  .mat-radio-ripple .mat-ripple-element {
+    background-color: map.get(v.$light-green, 100) !important;
+  }
+
+
+ &.mat-radio-checked {
+   .mat-radio-outer-circle{
+     border-color: map.get(v.$light-green, 100);
+   }
+ }
 }
