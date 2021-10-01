@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import { combineLatest } from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
@@ -17,6 +17,17 @@ type GENE = string;
 })
 export class DatasetNetworkPageComponent implements OnInit {
 
+
+  @ViewChild('userContent') set userContent(element) {
+    if (element) {
+      this.collassible = element;
+      // here you get access only when element is rendered (or destroyed)
+      console.log(element);
+    }
+  }
+
+  collassible: ElementRef;
+
   loadingGraphData$: Observable<boolean>;
   gplGraph$: Observable<GplData>;
   selectedNode$: Observable<GPLNODE>;
@@ -30,6 +41,8 @@ export class DatasetNetworkPageComponent implements OnInit {
   downloadUrl = '';
 
   bestExplainingGene: MatTableDataSource<GENE>;
+
+  isCollapsed = false;
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
@@ -87,8 +100,14 @@ export class DatasetNetworkPageComponent implements OnInit {
     });
 
     this.bestExplainingGene = new MatTableDataSource<GENE>(Array(	12).fill('ZAP70' as GENE) as GENE[]);
-
-
   }
 
+  toggle(): void {
+    if(this.isCollapsed) {
+      this.collassible.nativeElement.style.maxHeight = '300px';
+    }else {
+      this.collassible.nativeElement.style.maxHeight = this.collassible.nativeElement.scrollHeight + 'px';
+    }
+    this.isCollapsed = !this.isCollapsed;
+  }
 }

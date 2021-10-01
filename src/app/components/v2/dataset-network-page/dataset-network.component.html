@@ -151,13 +151,17 @@
     <div *ngIf="!(isEdgeNodeSelected$ | async)" class="as-card with-padding">
       <p class="title title_2">Graph Legend</p>
 
-      <div class="legend_list">
+      <div #userContent class="legend_list">
         <div class="legend_list_item" *ngFor="let item of gplData.categories">
           <div></div>
           <p>{{item.name}}</p>
         </div>
 
       </div>
+
+      <button mat-flat-button (click)="toggle()">
+        View More
+      </button>
 
     </div>
   </div>
