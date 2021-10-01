@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import {Observable} from 'rxjs';
 import {GRAPH} from 'src/app/models/graph.model';
@@ -29,4 +29,16 @@ export class ApiService {
   public getPhenonetSearchResults(query: string): Observable<string[]> {
     return this.http.get<string[]>(`${environment.apiUrl}search?q=${query}`);
   }
+
+  public getStudiesFilesURL(studyIds: string[], fileType: 'data' | 'annotation'): string {
+    let params = new HttpParams();
+    params = params.append('ids', studyIds.join(','));
+    params = params.append('type', fileType);
+    return `${environment.apiUrl}files?${params.toString()}`;
+  }
+
+  // public getStudiesFiles(studyIds: string[]): Observable<any> {
+  //   return this.http.get<any>(this.getStudiesFilesURL(studyIds));
+  // }
+
 }
