@@ -19,6 +19,7 @@ const routes: Routes = [
   {path: 'v2/phenonet/:diseaseId', component: PhenonetNetworkComponent, },
   {path: 'v2/dataset', component: DatasetNetworkPageComponent, },
   {path: 'v2/dataset/:technology', component: DatasetNetworkPageComponent, },
+  {path: 'v2/dataset/:technology/:study', component: DatasetNetworkPageComponent, },
   {path: 'vis', component: VisualizationsComponent}
 ];
 
