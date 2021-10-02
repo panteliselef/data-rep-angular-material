@@ -73,15 +73,18 @@
       <div style="display: flex;gap:6px;">
 
         <div class="v-flex" style="gap:9px;">
-          <p class="title title_1">{{selectedEdge.from?.id}}</p>
+          <a [href]="'/v2/dataset/'+ (networkName$ | async) +'/'+selectedEdge.from?.id">
+            <p class="title title_1">{{selectedEdge.from?.id}}</p>
+          </a>
           <p class="subtitle subtitle_1 text-light-green" style="max-width: 150px">{{selectedEdge.from?.group}}</p>
         </div>
 
 
         <div><p class="title title_1">-</p></div>
-
         <div class="v-flex" style="gap:9px;">
-          <p class="title title_1">{{selectedEdge.to?.id}}</p>
+          <a [href]="'/v2/dataset/'+ (networkName$ | async) +'/'+selectedEdge.to?.id">
+            <p class="title title_1">{{selectedEdge.to?.id}}</p>
+          </a>
           <p class="subtitle subtitle_1 text-light-green" style="max-width: 150px">{{selectedEdge.to?.group}} </p>
         </div>
 
