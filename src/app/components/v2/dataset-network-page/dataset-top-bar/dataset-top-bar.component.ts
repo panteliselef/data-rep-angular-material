@@ -1,36 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from 'src/app/services/api.service';
+import {Observable} from 'rxjs';
+import {SEARCH_RESULT} from 'src/app/models/search.model';
+import {SearchService} from 'src/app/services/search.service';
 
 @Component({
   selector: 'app-dataset-top-bar',
   templateUrl: './dataset-top-bar.component.html',
   styleUrls: [
     './dataset-top-bar.component.scss',
+    '../../../homepage-searchbar/homepage-searchbar.component.scss',
     '../../phenonet-network-page/phenonet-top-bar/phenonet-top-bar.component.scss'
   ]
 })
 export class DatasetTopBarComponent implements OnInit {
 
-  searchFocused: boolean;
-  searchRecommendations: string[];
-  searchBarValue: string;
+  searchFocused = false;
+  searchBarValue = '';
 
-  constructor(private apiService: ApiService) { }
+  searchResults$: Observable<SEARCH_RESULT[]>;
+
+  constructor(private apiService: ApiService, private searchService: SearchService) { }
 
   ngOnInit(): void {
-    this.searchRecommendations = [];
+    this.searchResults$ = this.searchService.searchResults$;
+    this.searchService.searchWithFilters(['study', 'technology'], this.searchBarValue);
   }
   onSearch($event): void{
     this.searchBarValue = $event;
-
-    // TODO: make this part of DatasetNetworkService
-    this.apiService
-      .getPhenonetSearchResults(this.searchBarValue)
-      .subscribe((recommendations: string[]) => {
-        this.searchRecommendations = recommendations;
-        console.log(recommendations);
-      });
-    console.log(this.searchBarValue);
+    this.searchService.searchWithFilters(['study', 'technology'], this.searchBarValue);
   }
-
 }

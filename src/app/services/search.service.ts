@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import {ApiService} from './api.service';
-import {BehaviorSubject, Observable, Subscription} from 'rxjs';
-import {SEARCH_RESULT} from 'src/app/models/search.model';
-
-
-export const SEARCH_FILTER_ARR = ['Phenotype', 'Study', 'Technology' , 'none'] as const;
-export type SEARCH_FILTER = typeof SEARCH_FILTER_ARR[any];
+import {BehaviorSubject, Subscription} from 'rxjs';
+import {SEARCH_FILTER, SEARCH_RESULT} from 'src/app/models/search.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +19,12 @@ export class SearchService {
 
   searchWithFilter(filter: SEARCH_FILTER, keyword: string): Subscription {
     return this.apiService.getGlobalSearchResults(keyword).subscribe((results) => {
+      this.searchResults.next(results);
+    });
+  }
+
+  searchWithFilters(filters: SEARCH_FILTER[], keyword: string): Subscription {
+    return this.apiService.getGlobalSearchResults(keyword, filters).subscribe((results) => {
       this.searchResults.next(results);
     });
   }
