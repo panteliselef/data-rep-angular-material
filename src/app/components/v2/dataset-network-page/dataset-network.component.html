@@ -76,7 +76,7 @@
           <a [href]="'/v2/dataset/'+ (networkName$ | async) +'/'+selectedEdge.from?.id">
             <p class="title title_1">{{selectedEdge.from?.id}}</p>
           </a>
-          <p class="subtitle subtitle_1 text-light-green" style="max-width: 150px">{{selectedEdge.from?.group}}</p>
+          <p (click)="highlightDisease(selectedEdge.from?.group)" class="subtitle subtitle_1 text-light-green with-pointer" style="max-width: 150px">{{selectedEdge.from?.group}}</p>
         </div>
 
 
@@ -85,7 +85,7 @@
           <a [href]="'/v2/dataset/'+ (networkName$ | async) +'/'+selectedEdge.to?.id">
             <p class="title title_1">{{selectedEdge.to?.id}}</p>
           </a>
-          <p class="subtitle subtitle_1 text-light-green" style="max-width: 150px">{{selectedEdge.to?.group}} </p>
+          <p (click)="highlightDisease(selectedEdge.to?.group)" class="subtitle subtitle_1 text-light-green with-pointer" style="max-width: 150px">{{selectedEdge.to?.group}} </p>
         </div>
 
       </div>

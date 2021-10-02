@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Observable} from 'rxjs';
 import { combineLatest } from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
@@ -116,11 +116,15 @@ export class DatasetNetworkPageComponent implements OnInit {
   }
 
   toggle(): void {
-    if(this.isCollapsed) {
+    if (this.isCollapsed) {
       this.collapsible.nativeElement.style.maxHeight = '300px';
     }else {
       this.collapsible.nativeElement.style.maxHeight = this.collapsible.nativeElement.scrollHeight + 'px';
     }
     this.isCollapsed = !this.isCollapsed;
   }
+
+    highlightDisease(id: string): void {
+        this.datasetNetworkService.updateDiseaseToBeHighlighted(id);
+    }
 }
