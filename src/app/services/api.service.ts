@@ -4,6 +4,7 @@ import {environment} from 'src/environments/environment';
 import {Observable} from 'rxjs';
 import {GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
+import {SEARCH_RESULT} from "../models/search.model";
 import {GplData, Technology} from 'src/app/models/gplGraph.model';
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,11 @@ export class ApiService {
   public getPhenonetSearchResults(query: string): Observable<string[]> {
     return this.http.get<string[]>(`${environment.apiUrl}search?q=${query}`);
   }
-
+  
+  public getGlobalSearchResults(query: string): Observable<SEARCH_RESULT[]> {
+    return this.http.get<any>(`${environment.apiUrl}searchV2?q=${query}`);
+  }
+  
   public getTechnologyGraph(technology: Technology): Observable<GplData> {
     return this.http.get<GplData>(`${environment.apiUrl}visjs/${technology}`);
   }
@@ -44,5 +49,4 @@ export class ApiService {
   // public getStudiesFiles(studyIds: string[]): Observable<any> {
   //   return this.http.get<any>(this.getStudiesFilesURL(studyIds));
   // }
-
 }

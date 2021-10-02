@@ -164,12 +164,14 @@
 
 
 /* Colors */
-.mat-icon.green-color {
-  color: v.$green-light-1;
-}
-.text-light-green {
+.mat-icon.green-color, .text-light-green{
   color: v.$green-light-1;
 }
 
+/* Functions */
+@function toRem($value) {
+  $remValue: ($value / 16) + rem;
+  @return $remValue;
+}
 
 
