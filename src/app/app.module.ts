@@ -41,13 +41,13 @@ import { NodeDetailsComponent } from './components/disease-page/node-details/nod
 import { EdgeDetailsComponent } from './components/disease-page/edge-details/edge-details.component';
 import { DatasetNetworkComponent } from './components/dataset-network/dataset-network.component';
 import { ToolbarSearchDatasetComponent } from './components/toolbar-search-dataset/toolbar-search-dataset.component';
-import {PhenonetNetworkComponent} from './components/v2/phenonet-network/phenonet-network.component';
-import {StudyPairsListComponent} from './components/v2/phenonet-network/study-pairs-list/study-pairs-list.component';
-import {NeighborsTableComponent} from './components/v2/phenonet-network/neighbors-table/neighbors-table.component';
-import {StudiesTableComponent} from './components/v2/phenonet-network/studies-table/studies-table.component';
-import {GraphFilterBarComponent} from './components/v2/phenonet-network/graph-filter-bar/graph-filter-bar.component';
-import {PhenonetTopBarComponent} from './components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component';
-import {NetworkGraphComponent} from './components/v2/phenonet-network/network-graph/network-graph.component';
+import {PhenonetNetworkComponent} from './components/v2/phenonet-network-page/phenonet-network.component';
+import {StudyPairsListComponent} from './components/v2/phenonet-network-page/study-pairs-list/study-pairs-list.component';
+import {NeighborsTableComponent} from './components/v2/phenonet-network-page/neighbors-table/neighbors-table.component';
+import {StudiesTableComponent} from './components/v2/phenonet-network-page/studies-table/studies-table.component';
+import {GraphFilterBarComponent} from './components/v2/phenonet-network-page/graph-filter-bar/graph-filter-bar.component';
+import {PhenonetTopBarComponent} from './components/v2/phenonet-network-page/phenonet-top-bar/phenonet-top-bar.component';
+import {NetworkGraphComponent} from './components/v2/phenonet-network-page/network-graph/network-graph.component';
 import {HomepageSearchbarComponent} from './components/homepage-searchbar/homepage-searchbar.component';
 import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/dataset-network.component';
 import {DatasetTopBarComponent} from './components/v2/dataset-network-page/dataset-top-bar/dataset-top-bar.component';
@@ -79,7 +79,7 @@ export function importingEchart(): void {
     PhenonetTopBarComponent,
     GraphFilterBarComponent,
     NetworkGraphComponent,
-    HomepageSearchbarComponent
+    HomepageSearchbarComponent,
     DatasetNetworkPageComponent,
     DatasetTopBarComponent,
     DatasetNetworkGraphComponent,
