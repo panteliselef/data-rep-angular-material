@@ -1,5 +1,5 @@
-@import "variables";
-@import "util";
+@use "variables" as v;
+@forward "util";
 /* Material Table Override */
 /* TODO: make this global */
 
@@ -35,8 +35,7 @@ tr {
   }
   &.mat-row:hover {
     //background: whitesmoke;
-    background-color: $green-transparent-2;
-
+    background-color: v.$green-transparent-2;
     a {
       text-decoration: underline;
     }
@@ -87,7 +86,7 @@ tr {
   left: calc(29px / 2);
   height: 10px;
   width: 10px;
-  background: $green-dark;
+  background: v.$green-dark;
   border-radius: 50%;
   position: absolute;
 }
@@ -117,7 +116,7 @@ tr.example-element-row:not(.example-expanded-row):active {
 
   &.expanded {
     width: 100%;
-    border-top: 1px solid $grey-light-1;
+    border-top: 1px solid v.$grey-light-1;
   }
 }
 //

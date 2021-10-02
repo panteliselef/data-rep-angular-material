@@ -31,6 +31,8 @@ export class GraphFilterBarComponent implements OnInit, OnChanges {
   depthDegree$: Observable<DEPTH_DEGREE>;
   isDisabled$: Observable<boolean>;
 
+  isToggleChecked: boolean;
+
   constructor(private graphFilterBarService: GraphFilterBarService) {
   }
 
@@ -38,9 +40,9 @@ export class GraphFilterBarComponent implements OnInit, OnChanges {
     this.minGraphEdgeFreq = this.currSliderValue;
     this.isDisabled$ = this.graphFilterBarService.isDepthDegreeDisabled$;
     this.depthDegree$ = this.graphFilterBarService.depthDegree$;
-    // this.depthDegree$.subscribe((degree: DEPTH_DEGREE) => {
-    //
-    // });
+    this.depthDegree$.subscribe((degree: DEPTH_DEGREE) => {
+      this.isToggleChecked = degree !== 1;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -74,7 +76,8 @@ export class GraphFilterBarComponent implements OnInit, OnChanges {
   }
 
 
-  setNeighborDegree(degree: DEPTH_DEGREE): void {
+  setNeighborDegree($event: boolean): void {
+    const degree = $event === false ? 1 : 'all';
     this.graphFilterBarService.updateDepthDegree(degree);
     this.neighborDegree.emit(degree);
   }

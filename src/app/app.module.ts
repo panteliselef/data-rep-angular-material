@@ -21,7 +21,9 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatChipsModule} from '@angular/material/chips';
-import { MAT_TABS_CONFIG } from '@angular/material/tabs';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatRadioModule} from '@angular/material/radio';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
@@ -47,6 +49,10 @@ import {GraphFilterBarComponent} from './components/v2/phenonet-network/graph-fi
 import {PhenonetTopBarComponent} from './components/v2/phenonet-network/phenonet-top-bar/phenonet-top-bar.component';
 import {NetworkGraphComponent} from './components/v2/phenonet-network/network-graph/network-graph.component';
 import {HomepageSearchbarComponent} from './components/homepage-searchbar/homepage-searchbar.component';
+import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/dataset-network.component';
+import {DatasetTopBarComponent} from './components/v2/dataset-network-page/dataset-top-bar/dataset-top-bar.component';
+import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page/dataset-network-graph/dataset-network-graph.component';
+import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -74,6 +80,10 @@ export function importingEchart(): void {
     GraphFilterBarComponent,
     NetworkGraphComponent,
     HomepageSearchbarComponent
+    DatasetNetworkPageComponent,
+    DatasetTopBarComponent,
+    DatasetNetworkGraphComponent,
+    DatasetFilterBarComponent
   ],
   imports: [
     CommonModule,
@@ -83,12 +93,15 @@ export function importingEchart(): void {
     BrowserModule,
     MatInputModule,
     MatButtonModule,
+    MatSlideToggleModule,
     MatTableModule,
     MatTabsModule,
     MatIconModule,
     MatChipsModule,
     MatAutocompleteModule,
     MatSidenavModule,
+    MatBadgeModule,
+    MatRadioModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,

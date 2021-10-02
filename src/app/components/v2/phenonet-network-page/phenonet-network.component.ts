@@ -5,8 +5,9 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
 import {DEPTH_DEGREE, GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
-import {Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import 'src/util/string.extentions';
+import {LoadingService} from 'src/app/services/loading.service';
 
 
 @Component({
@@ -23,6 +24,8 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
 
   mainDiseaseNeighborsCount: number;
   mainDiseaseStudiesCount: number;
+
+  loadingGraphData$: Observable<boolean>;
 
 
   maxGraphEdgeFreq = 0;
@@ -82,27 +85,25 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   selectedEdge: ConnectedNode;
   filterNodes: string[];
   diseaseToBeHighlighted: string;
-  private depthDegreeSubsription: Subscription;
 
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
     private router: Router,
+    private loadingService: LoadingService,
     private graphFilterBarService: GraphFilterBarService,
     private titleService: Title) {
     this.searchRecommendations = [];
   }
 
   private _onFetchGraph(disease: string, graph: GRAPH): void  {
-    console.log(graph, disease);
+    console.log(graph.edges);
     this.setMainGraph(graph);
-    this.setMainDiseaseNeighborsCount(graph.nodes.length - 1); // because 'nodes' include the main disease
     this.setStudiesForDisease(disease);
-
     const d = graph.edges
-      // .filter(({from, to}) => {
-      //   return from === disease || to === disease;
-      // })
+      .filter(({from, to}) => {
+        return from === disease || to === disease;
+      })
       .map(({from, to, ...rest}) => {
         return {
           ...rest,
@@ -114,22 +115,28 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
         };
       })
       .sort((a, b) => b.weight - a.weight);
+    this.setMainDiseaseNeighborsCount(d.length); // because 'nodes' include the main disease
     this.connectedNodes = new MatTableDataSource<ConnectedNode>(d);
     this.setSliderValues(
+      this.mainDiseaseGraph.edges[0].weight,
       this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
-      this.mainDiseaseGraph.edges[0].weight
     );
   }
 
 
   fetchDiseaseFromPhenonet(disease: string): void {
-    this.apiService.getPhenonetDiseaseNeighbors(disease)
+    // this.apiService.getPhenonetDiseaseNeighbors(disease)
+    //   .subscribe(this._onFetchGraph.bind(this, disease));
+
+    this.loadingService
+      .showLoaderUntilCompleted(this.apiService.getPhenonetDiseaseNeighborsAtDepth(disease, 1))
       .subscribe(this._onFetchGraph.bind(this, disease));
   }
 
   setSliderValues(min: number, max: number): void {
-    this.maxGraphEdgeFreq = min;
-    this.minGraphEdgeFreq = max;
+    console.log(min, max);
+    this.minGraphEdgeFreq = min;
+    this.maxGraphEdgeFreq = max;
   }
 
   setStudiesForDisease(disease: string): void {
@@ -157,6 +164,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
       this.graphFilterBarService.updateDepthDegreeDisabled(true);
       this.apiService.getPhenonet().subscribe((graph: GRAPH) => {
         this.setMainGraph(graph);
+        console.log(graph.edges);
         this.setSliderValues(
           graph.edges[graph.edges.length - 1].weight,
           graph.edges[0].weight
@@ -165,6 +173,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     } else {
       this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
       this.graphFilterBarService.updateDepthDegreeDisabled(false);
+      this.graphFilterBarService.updateDepthDegree(1);
       this.fetchDiseaseFromPhenonet(diseaseId);
       this.searchBarPhenotype = diseaseId;
     }
@@ -173,23 +182,10 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.params.subscribe(this.onParamsChange.bind(this));
 
-    //
-    // this.depthDegreeSubsription =  this.graphFilterBarService
-    //   .depthDegree$
-    //   .subscribe((degree: DEPTH_DEGREE) => {
-    //
-    //     console.warn(this.mainDisease);
-    //     this.apiService.getPhenonetDiseaseNeighborsAtDepth(this.mainDisease, degree).subscribe(
-    //
-    //       // TODO: impement function
-    //       this._onFetchGraph.bind(this, this.mainDisease)
-    //     );
-    //   });
+    this.loadingGraphData$ = this.loadingService.loading$;
   }
 
-  ngOnDestroy(): void {
-    // this.depthDegreeSubsription.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 
   onEdgeSelect(edge: ConnectedNode): void {
     this.selectedEdge = edge;
@@ -201,7 +197,6 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
   onNodeSelect(node: string): void{
-    // this.depthDegreeSubsription.unsubscribe();
     this.graphFilterBarService.updateDepthDegree(1);
     this.router.navigate(['/v2/phenonet', node]).then(console.log);
   }

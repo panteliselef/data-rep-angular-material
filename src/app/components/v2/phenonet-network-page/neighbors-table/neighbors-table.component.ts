@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {ConnectedNode} from 'src/app/models/graph.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-neighbors-table',
@@ -21,9 +22,18 @@ export class NeighborsTableComponent implements OnInit {
   @Input() mainDisease: string;
   expandedElement: any;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
+  }
+
+  openNewTab(disease: string): void {
+    // Converts the route into a string that can be used
+    // with the window.open() function
+    const url = this.router.serializeUrl(
+      this.router.createUrlTree([`/v2/phenonet/${disease}`])
+    );
+    window.open(url, '_blank');
   }
 
 }

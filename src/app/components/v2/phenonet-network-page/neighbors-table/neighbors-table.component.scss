@@ -1,0 +1,19 @@
+@forward "src/mat-table-appearance";
+tr {
+  .mat-column-connected_node .mat-icon-button {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-10px);
+    transition: all .2s ease-out;
+  }
+  &.mat-row:hover {
+    .mat-column-connected_node {
+      text-decoration: underline;
+    }
+    .mat-icon-button {
+      transform: translateX(0px);
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}

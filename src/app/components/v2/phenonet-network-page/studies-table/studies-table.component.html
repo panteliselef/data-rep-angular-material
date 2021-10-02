@@ -33,14 +33,22 @@
       <!--          <span class="gmail_like"></span>-->
 
       <div class="gmail_like ">
-        <button mat-icon-button matTooltip="Download Data"
-                aria-label="Example icon button with a vertical three dot icon">
-          <mat-icon class="green-color" fontSet="material-icons-round">file_download</mat-icon>
-        </button>
-        <button mat-icon-button matTooltip="Download Annotation"
-                aria-label="Example icon button with a vertical three dot icon">
-          <mat-icon class="green-color" fontSet="material-icons-round">description</mat-icon>
-        </button>
+        <a [href]="requestDownloadData([element.GSE])">
+          <button mat-icon-button
+                  aria-label="Download data"
+                  matTooltipClass="app-tooltip"
+                  matTooltip="Download Data">
+            <mat-icon class="green-color" fontSet="material-icons-round">file_download</mat-icon>
+          </button>
+        </a>
+        <a [href]="requestDownloadAnnotations([element.GSE])">
+          <button mat-icon-button
+                  matTooltip="Download annotation"
+                  matTooltipClass="app-tooltip"
+                  aria-label="Download annotation">
+            <mat-icon class="green-color" fontSet="material-icons-round">description</mat-icon>
+          </button>
+        </a>
       </div>
     </td>
   </ng-container>
