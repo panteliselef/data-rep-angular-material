@@ -50,6 +50,18 @@ app-dataset-network2{
   align-items: center;
 }
 
+a {
+  text-decoration: none;
+  color: black;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+a.title, a .title {
+  color: black;
+}
+
 //.mat-slider.mat-slider-horizontal .mat-slider-wrapper {
 //  top: 18px;
 //}
