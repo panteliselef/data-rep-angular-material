@@ -74,7 +74,8 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
     });
 
     this.selectedNodeSub = this.datasetNetworkService.selectedNode$.subscribe((selectedNode: GPLNODE) => {
-      console.log('Selected Node', selectedNode);
+      if (!selectedNode) { return; }
+      setTimeout(() => this._focusNode(selectedNode.id), 300);
     });
   }
 
@@ -148,6 +149,24 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
     console.log('hoverNode', hoveredNode);
 
     this.highlightConnectedNodes(hoveredNode);
+  }
+
+  private _focusNode(diseaseId: string): void {
+    this.highlightConnectedNodes(diseaseId);
+    const nodePos = this.visNetworkService.getPositions(this.visNetwork, [diseaseId])[diseaseId];
+    this.visNetworkService.selectNodes(this.visNetwork, [diseaseId], false);
+    this.visNetworkService.moveTo(this.visNetwork, {
+      position: nodePos,
+      scale: 1,
+      offset: {
+        x: 0,
+        y: 0
+      },
+      animation: {
+        easingFunction: 'easeInOutCubic',
+        duration: 500
+      }
+    });
   }
 
   private _onNetworkBlurNode(eventData: any[]): void {

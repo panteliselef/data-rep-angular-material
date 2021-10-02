@@ -16,17 +16,18 @@ type GENE = string;
   providers: [DatasetNetworkService]
 })
 export class DatasetNetworkPageComponent implements OnInit {
+  private studyId: string;
 
 
   @ViewChild('userContent') set userContent(element) {
     if (element) {
-      this.collassible = element;
+      this.collapsible = element;
       // here you get access only when element is rendered (or destroyed)
       console.log(element);
     }
   }
 
-  collassible: ElementRef;
+  collapsible: ElementRef;
 
   loadingGraphData$: Observable<boolean>;
   gplGraph$: Observable<GplData>;
@@ -64,10 +65,18 @@ export class DatasetNetworkPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.networkName$ = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()));
+    this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => this.studyId = id);
     this.loadingGraphData$ = this.loadingService.loading$;
     this.gplGraph$ = this.datasetNetworkService.filteredGraph$;
     this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
     this.selectedNode$ = this.datasetNetworkService.selectedNode$;
+
+    this.gplGraph$.subscribe((graph) => {
+      if (!graph) { return; }
+      const {nodes} = graph;
+      const selectedNode = nodes.find( node => node.id === this.studyId);
+      this.datasetNetworkService.updateSelectedNode(selectedNode);
+    });
 
     this.selectedNode$.subscribe((node) => {
       if (!node) { return ; }
@@ -88,6 +97,10 @@ export class DatasetNetworkPageComponent implements OnInit {
 
     });
 
+    // this.studyId$.subscribe((name) => {
+    //   console.log('name', name);
+    // });
+
     this.networkName$.subscribe(async (technology) => {
       // TODO: verify that technology exist
       if (!technology) {
@@ -104,9 +117,9 @@ export class DatasetNetworkPageComponent implements OnInit {
 
   toggle(): void {
     if(this.isCollapsed) {
-      this.collassible.nativeElement.style.maxHeight = '300px';
+      this.collapsible.nativeElement.style.maxHeight = '300px';
     }else {
-      this.collassible.nativeElement.style.maxHeight = this.collassible.nativeElement.scrollHeight + 'px';
+      this.collapsible.nativeElement.style.maxHeight = this.collapsible.nativeElement.scrollHeight + 'px';
     }
     this.isCollapsed = !this.isCollapsed;
   }
