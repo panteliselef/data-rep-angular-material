@@ -27,51 +27,55 @@
       margin: 0 20px 0 14px;
       padding-bottom: 4px;
     }
+  }
 
-    .search_suggestions {
-      list-style: none;
-      padding: u.toRem(7) 5px 0 u.toRem(13);
-      margin: 0;
-      height: inherit;
-      overflow-y: auto;
-      a {
-        padding-left: 39px;
-        width: 100%;
-        text-decoration: none;
-        line-height: 30px;
-        color: #000;
-        border-radius: u.toRem(5);
-        min-height: 30px;
-        display: flex;
-        align-items: center;
-        gap: u.toRem(5);
-        font-size: u.toRem(14);
-        text-transform: capitalize;
+  .search-results .search_suggestions {
+    padding: u.toRem(7) 5px u.toRem(7) u.toRem(13);
+  }
 
-        .suggestion_primary {
-          @extend .text-light-green;
-          font-weight: 600;
-        }
+  .search_suggestions {
+    list-style: none;
+    padding: u.toRem(7) 5px 0 u.toRem(13);
+    margin: 0;
+    height: inherit;
+    overflow-y: auto;
+    a {
+      padding-left: 39px;
+      width: 100%;
+      text-decoration: none;
+      line-height: 30px;
+      color: #000;
+      border-radius: u.toRem(5);
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: u.toRem(5);
+      font-size: u.toRem(14);
+      text-transform: capitalize;
 
-        .suggestion_secondary {
-          font-weight: 400;
-          color: #9AA0A6;
-        }
+      .suggestion_primary {
+        @extend .text-light-green;
+        font-weight: 600;
+      }
 
-        .dot {
-          //height: 3px;
-          //aspect-ratio: 1/1;
-          //width: 5px;
-          color: #bbb;
-          //border-radius: 100%;
-          //display: inline-block;
-        }
+      .suggestion_secondary {
+        font-weight: 400;
+        color: #9AA0A6;
+      }
+
+      .dot {
+        //height: 3px;
+        //aspect-ratio: 1/1;
+        //width: 5px;
+        color: #bbb;
+        //border-radius: 100%;
+        //display: inline-block;
+      }
 
 
-        &:hover {
-          //background-color: hsl(164, 25%, 88%);
-          background: rgba(217, 232, 228, 0.5);
-        }
+      &:hover {
+        //background-color: hsl(164, 25%, 88%);
+        background: rgba(217, 232, 228, 0.5);
       }
     }
   }
