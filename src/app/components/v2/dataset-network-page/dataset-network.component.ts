@@ -12,7 +12,10 @@ type GENE = string;
 @Component({
   selector: 'app-dataset-network2',
   templateUrl: './dataset-network.component.html',
-  styleUrls: ['./dataset-network.component.scss'],
+  styleUrls: [
+    './dataset-network.component.scss',
+    '../phenonet-network-page/phenonet-network.component.scss'
+  ],
   providers: [DatasetNetworkService]
 })
 export class DatasetNetworkPageComponent implements OnInit {

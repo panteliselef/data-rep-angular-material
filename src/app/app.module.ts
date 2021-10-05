@@ -53,7 +53,7 @@ import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/
 import {DatasetTopBarComponent} from './components/v2/dataset-network-page/dataset-top-bar/dataset-top-bar.component';
 import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page/dataset-network-graph/dataset-network-graph.component';
 import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
-import {UrlPipe} from "./components/v2/dataset-network-page/url.pipe";
+import {UrlPipe} from './components/v2/dataset-network-page/url.pipe';
 
 export function importingEchart(): void {
   import('echarts');
@@ -85,7 +85,7 @@ export function importingEchart(): void {
     DatasetTopBarComponent,
     DatasetNetworkGraphComponent,
     DatasetFilterBarComponent,
-    UrlPipe
+    UrlPipe,
   ],
   imports: [
     CommonModule,
