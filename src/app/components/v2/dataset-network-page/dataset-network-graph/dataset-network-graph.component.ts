@@ -1,28 +1,28 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges, OnDestroy,
+  OnDestroy,
   OnInit,
-  Output, Renderer2,
-  SimpleChanges,
+  Output,
   ViewChild
 } from '@angular/core';
-import {ConnectedNode, EDGE} from 'src/app/models/graph.model';
+import {ConnectedNode} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, gplConfig, nodeDefaultColor, gplEdgeColor} from 'src/util/utils';
-import {ActivatedRoute} from '@angular/router';
 import {GplData, GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from '../dataset-network.service';
 import {Observable, Subscription} from 'rxjs';
 import {IdType} from 'vis';
+import {ImageSaver} from 'src/util/ImageSaver';
 @Component({
   selector: 'app-dataset-network-graph',
   templateUrl: './dataset-network-graph.component.html',
   styleUrls: ['./dataset-network-graph.component.scss']
 })
-export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestroy {
+export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterViewInit {
 
   graphData$: Observable<GplData>;
   @Input() sliderValue: number;
@@ -51,12 +51,15 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
-    private visNetworkService: VisNetworkService,
-    private route: ActivatedRoute
+    private visNetworkService: VisNetworkService
   ) {
     this.nodes = new DataSet<Node>([]);
     this.edges = new DataSet<Edge>([]);
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
+  }
+
+  ngAfterViewInit(): void{
+    this.canvas = this.canvasContainer.nativeElement.children[0].children[0] as HTMLCanvasElement;
   }
 
   ngOnInit(): void {
@@ -84,10 +87,6 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
     this.diseaseToBeHighlightedSub.unsubscribe();
     this.selectedEdgeSub.unsubscribe();
     this.selectedNodeSub.unsubscribe();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const {diseaseToBeHighlighted} = changes;
   }
 
   setGraphData(graph: GplData): void {
@@ -224,7 +223,7 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     const allEdges = this.edges.get({returnType: 'Object'}) as any;
 
-    const [networkId, clickData] = eventData;
+    const [, clickData] = eventData;
     const hoveredEdge = clickData.edge;
     console.log(hoveredEdge);
     this.highlightActive = true;
@@ -308,7 +307,7 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
   }
 
   private _onNetworkSelectEdge(eventData: any[]): void {
-    const [_, clickData] = eventData;
+    const [, clickData] = eventData;
     const clickedEdge = clickData.edges[0];
     const allEdges = this.edges.get({returnType: 'Object'}) as any;
     const cEdge = allEdges[clickedEdge] as GPLEDGE;
@@ -492,48 +491,9 @@ export class DatasetNetworkGraphComponent implements OnInit, OnChanges, OnDestro
   }
 
   savePNG(): void {
-    function downloadBlob(url, filename) {
-      // Create an object URL for the blob object
-      // const url = URL.createObjectURL(blob);
-
-      // Create a new anchor element
-      const a = document.createElement('a');
-
-      // Set the href and download attributes for the anchor element
-      // You can optionally set other attributes like `title`, etc
-      // Especially, if the anchor element will be attached to the DOM
-      a.href = url;
-      a.download = filename || 'download';
-
-      // Click handler that releases the object URL after the element has been clicked
-      // This is required for one-off downloads of the blob content
-      const clickHandler = function() {
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-          this.removeEventListener('click', clickHandler);
-        }, 150);
-      };
-
-      // Add the click event listener on the anchor element
-      // Comment out this line if you don't want a one-off download of the blob content
-      a.addEventListener('click', clickHandler.bind(a), false);
-
-      // Programmatically trigger a click on the anchor element
-      // Useful if you want the download to happen automatically
-      // Without attaching the anchor element to the DOM
-      // Comment out this line if you don't want an automatic download of the blob content
-      a.click();
-
-      // Return the anchor element
-      // Useful if you want a reference to the element
-      // in order to attach it to the DOM or use it in some other way
-      return a;
-    }
-    const a = this.canvas.getAttribute('background');
-    console.log(a);
-    const img = this.canvas.toDataURL('image/png');
-    downloadBlob(img, 'adad');
-    // console.log(img);
+    const imageSaver = new ImageSaver();
+    imageSaver.fromCanvas(this.canvas);
+    imageSaver.requestDownload('test');
   }
 }
 

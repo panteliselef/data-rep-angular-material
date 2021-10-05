@@ -57,7 +57,7 @@ export class DatasetFilterBarComponent implements OnInit {
     } else {
       limit = $event;
     }
-    this.datasetNetworkService.updateSliderEdgeCount(limit);
+    this.datasetNetworkService.updateSliderEdgeLimit(limit);
   }
 
 

@@ -1,13 +1,13 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Observable} from 'rxjs';
+import {EMPTY, Observable} from 'rxjs';
 import { combineLatest } from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from './dataset-network.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
-import {ApiService} from '../../../services/api.service';
+import {ApiService} from 'src/app/services/api.service';
 type GENE = string;
 @Component({
   selector: 'app-dataset-network2',
@@ -18,7 +18,10 @@ type GENE = string;
 export class DatasetNetworkPageComponent implements OnInit {
   private studyId: string;
 
-
+  /* Use ViewChild this way
+   * why ?
+   * this allows to get a reference of an element when is inside a block with ngIf
+   */
   @ViewChild('userContent') set userContent(element) {
     if (element) {
       this.collapsible = element;
@@ -59,8 +62,23 @@ export class DatasetNetworkPageComponent implements OnInit {
   }
 
   public requestDataFiles(): string {
+    console.log('heee');
     return this.apiService
       .getStudiesFilesURL(this.similarDatasets.data.map<string>(edge => edge.to as string), 'annotation');
+  }
+
+  private _filterNeighbors(ofNode: GPLNODE): Observable<GPLEDGE[]> {
+    return this.datasetNetworkService.graph$
+      .pipe(
+        map(graph => graph.edges
+          .filter(edge => edge.from === ofNode.id || edge.to === ofNode.id)
+          .map( ({from, to, value}) => ({
+            to: to === ofNode.id ? from : to,
+            from: ofNode.id,
+            value
+          }))
+        ),
+      );
   }
 
   ngOnInit(): void {
@@ -78,28 +96,15 @@ export class DatasetNetworkPageComponent implements OnInit {
       this.datasetNetworkService.updateSelectedNode(selectedNode);
     });
 
-    this.selectedNode$.subscribe((node) => {
-      if (!node) { return ; }
-      this.datasetNetworkService.graph$
-        .pipe(
-          map(graph => graph.edges
-            .filter(edge => edge.from === node.id || edge.to === node.id)
-            .map( ({from, to, value}) => ({
-              to: to === node.id ? from : to,
-              from: node.id,
-              value
-            }))
-          ),
-        ).subscribe((neighbors) => {
-          this.similarDatasets = new MatTableDataSource<GPLEDGE>(neighbors);
-          this.downloadUrl = this.requestDataFiles();
-      });
-
+    this.selectedNode$.pipe(
+      switchMap((node: GPLNODE) => {
+        if (!node) { return EMPTY; }
+        return this._filterNeighbors(node);
+      }),
+    ).subscribe((neighbors) => {
+      this.similarDatasets = new MatTableDataSource<GPLEDGE>(neighbors);
+      this.downloadUrl = this.requestDataFiles();
     });
-
-    // this.studyId$.subscribe((name) => {
-    //   console.log('name', name);
-    // });
 
     this.networkName$.subscribe(async (technology) => {
       // TODO: verify that technology exist

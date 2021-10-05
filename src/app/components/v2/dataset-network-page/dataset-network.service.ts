@@ -8,7 +8,7 @@ export class DatasetNetworkService {
 
   private graph = new BehaviorSubject<GplData>(undefined);
   private filteredGraph = new BehaviorSubject<GplData>(undefined);
-  private sliderEdgeCount = new BehaviorSubject<number>(10);
+  private sliderEdgeLimit = new BehaviorSubject<number>(10);
   private minSliderValue = new BehaviorSubject<number>(0);
   private maxSliderValue = new BehaviorSubject<number>(1);
   private diseaseToBeHighlighted = new BehaviorSubject<string>('');
@@ -19,7 +19,7 @@ export class DatasetNetworkService {
   // Exposed observable (read-only).
   readonly graph$ = this.graph.asObservable();
   readonly filteredGraph$ = this.filteredGraph.asObservable();
-  readonly sliderEdgeCount$ = this.sliderEdgeCount.asObservable();
+  readonly sliderEdgeLimit$ = this.sliderEdgeLimit.asObservable();
   readonly minSliderValue$ = this.minSliderValue.asObservable();
   readonly maxSliderValue$ = this.maxSliderValue.asObservable();
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
@@ -44,6 +44,7 @@ export class DatasetNetworkService {
   private _setGraph(graph: GplData): void {
     console.warn('setting');
     this.graph.next(graph);
+    // this.updateSliderEdgeCount(10);
     this.filteredGraph.next(graph);
     this.minSliderValue.next(10);
     this.maxSliderValue.next(graph.edges.length);
@@ -56,23 +57,19 @@ export class DatasetNetworkService {
 
   private _setSlider(count: number): void {
     console.warn('setting');
-    this.sliderEdgeCount.next(count);
+    this.sliderEdgeLimit.next(count);
   }
 
   updateDiseaseToBeHighlighted(disease: string): void {
     this.diseaseToBeHighlighted.next(disease);
   }
 
-  updateSliderEdgeCount(count: number): void {
-    this._setSlider(count);
-    console.log(count);
-
-    // TODO: Make this a separate function
+  private _filterOriginalGraph(sliderLimit: number): GplData {
     const graphInstance = this.graph.getValue();
     const finalNodesSet = new Set<string>();
     const finalCategoriesSet = new Set<string>();
 
-    const finalEdges = graphInstance.edges.slice(0, count);
+    const finalEdges = graphInstance.edges.slice(0, sliderLimit);
     for (const edge of finalEdges) {
       finalNodesSet.add(edge.from as string);
       finalNodesSet.add(edge.to as string);
@@ -89,10 +86,16 @@ export class DatasetNetworkService {
       };
     });
 
-    this.filteredGraph.next({
+    return {
       nodes: finalNodes,
       edges: finalEdges,
       categories: finalCategories
-    });
+    };
+  }
+
+  updateSliderEdgeLimit(sliderLimit: number): void {
+    this._setSlider(sliderLimit);
+    const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
+    this.filteredGraph.next(filteredOriginalGraph);
   }
 }
