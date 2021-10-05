@@ -50,7 +50,7 @@ app-dataset-network2{
   align-items: center;
 }
 
-a {
+a:not(.mat-button) {
   text-decoration: none;
   color: black;
   &:hover {
