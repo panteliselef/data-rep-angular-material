@@ -17,8 +17,8 @@ import {DatasetNetworkService} from '../dataset-network.service';
 import {Observable, Subscription} from 'rxjs';
 import {IdType} from 'vis';
 import {ImageSaver} from 'src/util/ImageSaver';
-import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
-import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
+// import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
+// import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
 
 @Component({
   selector: 'app-dataset-network-graph',
@@ -72,8 +72,8 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
     this.datasetNetworkService.technology$.subscribe((technology) => {
       if (!technology) { return; }
       switch (technology) {
-        case 'GPL96': gplConfig.groups = groupsGPL96; break;
-        case 'GPL570': gplConfig.groups = groupsGPL570; break;
+        // case 'GPL96': gplConfig.groups = groupsGPL96; break;
+        // case 'GPL570': gplConfig.groups = groupsGPL570; break;
         default: return;
       }
       this.visNetworkOptions = gplConfig;
