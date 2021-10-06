@@ -8,8 +8,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {map, switchMap} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {ApiService} from 'src/app/services/api.service';
-// import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
-// import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
+import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
+import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
 
 type GENE = string;
 @Component({
@@ -99,8 +99,8 @@ export class DatasetNetworkPageComponent implements OnInit {
     this.datasetNetworkService.technology$.subscribe((technology) => {
       if (!technology) { return; }
       switch (technology) {
-        // case 'GPL96': this.groupColors = groupsGPL96; break;
-        // case 'GPL570': this.groupColors = groupsGPL570; break;
+        case 'GPL96': this.groupColors = groupsGPL96; break;
+        case 'GPL570': this.groupColors = groupsGPL570; break;
         default: return;
       }
     });

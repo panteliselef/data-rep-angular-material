@@ -46,4 +46,4 @@ testem.log
 Thumbs.db
 
 # GPL Coloring files
-/src/assets/groupColors
+#/src/assets/groupColors
