@@ -8,6 +8,9 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {map, switchMap} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {ApiService} from 'src/app/services/api.service';
+import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
+import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
+
 type GENE = string;
 @Component({
   selector: 'app-dataset-network2',
@@ -51,6 +54,8 @@ export class DatasetNetworkPageComponent implements OnInit {
 
   isCollapsed = false;
 
+  groupColors: any;
+
   constructor(
     private datasetNetworkService: DatasetNetworkService,
     private apiService: ApiService,
@@ -91,6 +96,14 @@ export class DatasetNetworkPageComponent implements OnInit {
     this.gplGraph$ = this.datasetNetworkService.filteredGraph$;
     this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
     this.selectedNode$ = this.datasetNetworkService.selectedNode$;
+    this.datasetNetworkService.technology$.subscribe((technology) => {
+      if (!technology) { return; }
+      switch (technology) {
+        case 'GPL96': this.groupColors = groupsGPL96; break;
+        case 'GPL570': this.groupColors = groupsGPL570; break;
+        default: return;
+      }
+    });
 
     this.gplGraph$.subscribe((graph) => {
       if (!graph) { return; }

@@ -16,6 +16,8 @@ export class DatasetNetworkService {
   private selectedNode = new BehaviorSubject<GPLNODE>(undefined);
   private selectedEdge = new BehaviorSubject<GPLEDGE>(undefined);
 
+  private technology = new BehaviorSubject<Technology>(undefined);
+
   // Exposed observable (read-only).
   readonly graph$ = this.graph.asObservable();
   readonly filteredGraph$ = this.filteredGraph.asObservable();
@@ -25,6 +27,7 @@ export class DatasetNetworkService {
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
   readonly selectedNode$ = this.selectedNode.asObservable();
   readonly selectedEdge$ = this.selectedEdge.asObservable();
+  readonly technology$ = this.technology.asObservable();
 
   constructor(
     private apiService: ApiService
@@ -52,6 +55,7 @@ export class DatasetNetworkService {
 
   fetchNetwork(technology: Technology): void {
     console.warn('requesting');
+    this.technology.next(technology);
     this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
   }
 

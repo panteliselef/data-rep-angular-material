@@ -17,6 +17,9 @@ import {DatasetNetworkService} from '../dataset-network.service';
 import {Observable, Subscription} from 'rxjs';
 import {IdType} from 'vis';
 import {ImageSaver} from 'src/util/ImageSaver';
+import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
+import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
+
 @Component({
   selector: 'app-dataset-network-graph',
   templateUrl: './dataset-network-graph.component.html',
@@ -63,7 +66,19 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
   }
 
   ngOnInit(): void {
+    // gplConfig.groups = groupsGPL570;
     this.visNetworkOptions = gplConfig;
+
+    this.datasetNetworkService.technology$.subscribe((technology) => {
+      if (!technology) { return; }
+      switch (technology) {
+        case 'GPL96': gplConfig.groups = groupsGPL96; break;
+        case 'GPL570': gplConfig.groups = groupsGPL570; break;
+        default: return;
+      }
+      this.visNetworkOptions = gplConfig;
+    });
+
     this.filteredGraphSub = this.datasetNetworkService.filteredGraph$.subscribe(this.setGraphData.bind(this));
     this.diseaseToBeHighlighted$ = this.datasetNetworkService.diseaseToBeHighlighted$;
     this.diseaseToBeHighlightedSub = this.diseaseToBeHighlighted$.subscribe((diseaseToBeHighlighted: string) => {
@@ -143,7 +158,7 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
   }
 
   private _onNetworkHoverNode(eventData: any[]): void {
-    const [_, clickData] = eventData;
+    const [, clickData] = eventData;
     const hoveredNode = clickData.node;
     console.log('hoverNode', hoveredNode);
 

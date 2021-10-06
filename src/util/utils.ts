@@ -1,3 +1,5 @@
+import {Options} from 'ngx-vis';
+
 export const nodeDefaultColor = {
   background: '#1E352F',
   border: '#A6C36F',
@@ -187,6 +189,6 @@ export const gplConfig =  {
     // selectable: true,
     // selectConnectedEdges:true,
   },
-};
+} as Options;
 
 

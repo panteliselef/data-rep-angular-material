@@ -157,13 +157,13 @@
 
       <div #userContent class="legend_list">
         <div class="legend_list_item" *ngFor="let item of gplData.categories">
-          <div></div>
+          <div [style.background]="groupColors[item.name]?.color?.background || 'red'"></div>
           <p>{{item.name}}</p>
         </div>
 
       </div>
 
-      <button mat-flat-button (click)="toggle()">
+      <button *ngIf="gplData.categories.length > 10" mat-flat-button (click)="toggle()">
         View More
       </button>
 
