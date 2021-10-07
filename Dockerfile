@@ -34,4 +34,4 @@ COPY --from=builder /frontend/dist/data-rep-angular-material /usr/share/nginx/ht
 
 # Expose port 80
 EXPOSE 80
-#CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]

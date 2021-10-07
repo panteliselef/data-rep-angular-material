@@ -4,7 +4,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Docker Production Build
 
-Run `docker build -t angular-frontend .`
+Run `docker build -t angular-frontend .` <br/>
 
 ## Docker run
 
@@ -14,6 +14,42 @@ Command parameters:
 
 - `-d` to run in detached mode
 - `-p` to map container port to machine port
+
+## Docker Compose 
+
+### Development
+- Run immediate command:
+```
+$ docker-compose up
+```
+Use flags: <br/>
+- `-d` to run in detached mode ( without prints )
+- `--build` to build again (good if changes where made)
+
+### Production
+- Run command:
+```
+$ docker-compose -f docker-compose.yml up
+```
+
+## Usefull docker commands
+- To run the project open a command line on the root folder (where the docker-compose.yml is located) and type the following command. The `-d` attribute is for running the services in detached mode. If it is not provided the full logs from all services will be printed on the screen.
+```
+$ docker-compose up
+```
+
+- To stop and remove the running services (docker containers) type the following command:
+```
+$ docker-compose down
+```
+
+- You can start, stop and restart a specific service of the docker-compose file by using the respective commands:
+```
+$ docker-compose start angular-frontend
+$ docker-compose stop angular-frontend
+$ docker-compose restart angular-frontend
+```
+
 
 ## Development server
 
