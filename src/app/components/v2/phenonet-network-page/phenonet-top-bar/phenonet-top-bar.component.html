@@ -1,6 +1,6 @@
 <div class="network-searchbar">
   <div class="network-name" routerLink="/v2/phenonet">
-    <p>Phenonet</p>
+    <p routerLink="/v2/dataset">Phenonet</p>
     <mat-icon aria-label="Expand" fontSet="material-icons-round">expand_more</mat-icon>
   </div>
 
@@ -12,7 +12,7 @@
            (ngModelChange)="onSearchPhenonet($event)"
            [(ngModel)]="searchBarPhenotype"
            type="text"
-           placeholder="Search phenotypes"/>
+           placeholder="Search for a Phenotype"/>
 
     <div *ngIf="searchRecommendations.length" class="search-results">
       <ul>

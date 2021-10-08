@@ -1,0 +1,120 @@
+@use "src/util" as u;
+
+.search_components {
+  font-family: "Manrope", sans-serif;
+  position: relative;
+  .search_suggestions_container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    overflow: auto;
+    position: absolute;
+    z-index: 2;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgb(32 33 36 / 28%);
+    border-color: rgba(223, 225, 229, 0);
+    margin-top: -1px;
+    padding-bottom: 15px;
+
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+
+    .divider {
+      //width: 100%;
+      border-top: 1px solid #e8eaed;
+      margin: 0 20px 0 14px;
+      padding-bottom: 4px;
+    }
+  }
+
+  .search-results .search_suggestions {
+    padding: u.toRem(7) 5px u.toRem(7) u.toRem(13);
+  }
+
+  .search_suggestions {
+    list-style: none;
+    padding: u.toRem(7) 5px 0 u.toRem(13);
+    margin: 0;
+    height: inherit;
+    overflow-y: auto;
+    a {
+      padding-left: 39px;
+      width: 100%;
+      text-decoration: none;
+      line-height: 30px;
+      color: #000;
+      border-radius: u.toRem(5);
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: u.toRem(5);
+      font-size: u.toRem(14);
+      text-transform: capitalize;
+
+      .suggestion_primary {
+        @extend .text-light-green;
+        font-weight: 600;
+      }
+
+      .suggestion_secondary {
+        font-weight: 400;
+        color: #9AA0A6;
+      }
+
+      .dot {
+        //height: 3px;
+        //aspect-ratio: 1/1;
+        //width: 5px;
+        color: #bbb;
+        //border-radius: 100%;
+        //display: inline-block;
+      }
+
+
+      &:hover {
+        //background-color: hsl(164, 25%, 88%);
+        background: rgba(217, 232, 228, 0.5);
+      }
+    }
+  }
+
+  div.toolbar-search {
+    font-family: "Manrope", sans-serif;
+    border-radius: 24px;
+    height: 46px;
+    width: 584px;
+    border: 1px solid #dfe1e5;
+
+    background-color: #fff;
+
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+
+    &:hover,
+    &:focus-within,
+    &.has_results {
+
+      box-shadow: 0 1px 6px rgb(32 33 36 / 28%);
+      border-color: rgba(223, 225, 229, 0);
+    }
+
+    &.has_results {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      input {
+        border-bottom: 1px solid #e8eaed;
+      }
+    }
+
+    input {
+      font-family: inherit;
+      height: 100%; border: none; appearance: none; outline: none; flex: 1 1 100%;
+      font-size: u.toRem(14);
+      border-bottom: 1px solid transparent;
+    }
+  }
+}

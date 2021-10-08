@@ -1,7 +1,6 @@
 @use "variables" as v;
-@import "util";
+@forward "util";
 /* Material Table Override */
-/* TODO: make this global */
 
 th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   padding-left: 5px;
@@ -9,8 +8,6 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 tr {
-
-  /*TODO: Add onhover bg color & underline with icon */
 
   td.mat-cell, td.mat-footer-cell {
     position: relative;

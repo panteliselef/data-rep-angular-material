@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import {Observable} from 'rxjs';
 import {DATASET, GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {ElasticModel} from "../models/elastic.model";
 
+import {SEARCH_FILTER, SEARCH_RESULT} from 'src/app/models/search.model';
+import {GplData, Technology} from 'src/app/models/gplGraph.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -38,4 +40,29 @@ export class ApiService {
   public getBiodataomeStudies(studyIds: string[]): Observable<Array<DATASET>> {
     return this.http.get<Array<DATASET>>(`${environment.apiUrl}biodataome?q=${studyIds.join(':')}`);
   }
+
+  public getGlobalSearchResults(query: string, filters?: SEARCH_FILTER[]): Observable<SEARCH_RESULT[]> {
+
+    let params = new HttpParams();
+    params = params.append('q', query);
+    if (filters) {
+      params = params.append('filters', filters.join(','));
+    }
+    return this.http.get<any>(`${environment.apiUrl}searchV2`, { params });
+  }
+
+  public getTechnologyGraph(technology: Technology): Observable<GplData> {
+    return this.http.get<GplData>(`${environment.apiUrl}visjs/${technology}`);
+  }
+
+  public getStudiesFilesURL(studyIds: string[], fileType: 'data' | 'annotation'): string {
+    let params = new HttpParams();
+    params = params.append('ids', studyIds.join(','));
+    params = params.append('type', fileType);
+    return `${environment.apiUrl}files?${params.toString()}`;
+  }
+
+  // public getStudiesFiles(studyIds: string[]): Observable<any> {
+  //   return this.http.get<any>(this.getStudiesFilesURL(studyIds));
+  // }
 }

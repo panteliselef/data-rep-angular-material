@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 @use "variables" as v;
 @use "sass:map";
+@forward "util";
 @import "~vis-network/styles/vis-network.css";
 * { box-sizing: border-box}
 html, body { height: 100%; }
@@ -12,7 +13,7 @@ app-navbar {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 2;
+  z-index: 3;
 }
 .mat-header-cell, .mat-header-row{
   position: sticky;
@@ -31,7 +32,8 @@ app-disease-page{
   grid-template-rows: 52px 1fr;
 }
 
-app-phenonet-network {
+app-phenonet-network,
+app-dataset-network2{
   display: grid;
   justify-items: center;
   grid-template-rows: 52px 64px 1fr;
@@ -46,6 +48,18 @@ app-phenonet-network {
 .logo span.mat-button-wrapper {
   display: flex;
   align-items: center;
+}
+
+a:not(.mat-button) {
+  text-decoration: none;
+  color: black;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+a.title, a .title {
+  color: black;
 }
 
 //.mat-slider.mat-slider-horizontal .mat-slider-wrapper {
@@ -97,6 +111,47 @@ app-phenonet-network {
 }
 
 
+.mat-flat-button.app_button {
+
+  .mat-button-wrapper {
+    @extend .h-flex, .align-center;
+    gap: 6px;
+  }
+  @extend .with-radius, .with-manrope;
+  background-color: map-get(v.$light-green,20);
+  //color: #2C4D44;
+  color: map-get(v.$light-green,100);
+  font-weight: 600;
+  //border: 0;
+  border: 1px solid transparent;
+  font-size: 14px;
+  //height: 30px;
+  padding: 0 12px;
+
+  transition: all .2s ease;
+
+
+
+  &_left_icon {
+    padding-left: 4px;
+  }
+
+  &_right_icon {
+    padding-right: 4px;
+  }
+
+  &:active {
+    border: 1px solid map-get(v.$light-green,100);
+    background-color: map-get(v.$light-green,30);
+  }
+
+}
+
+.mat-flat-button .mat-ripple-element {
+  opacity: 0.1;
+}
+
+
 .mat-slide-toggle {
 
   &:not(.mat-disabled) {
@@ -124,4 +179,40 @@ app-phenonet-network {
       }
     }
   }
+}
+
+.mat-ripple.mat-button-ripple {
+  .mat-ripple-element {
+    background-color: map.get(v.$green, 100);
+  }
+}
+
+//.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle , .mat-radio-outer-circle {
+//  border-color: blue !important;
+//}
+
+//.mat-radio-button.mat-accent .mat-radio-inner-circle{
+//  background-color: blue !important;
+//}
+
+
+.mat-radio-button.mat-accent {
+
+  //.mat-radio-outer-circle{
+  //  border-color: map.get(v.$light-green, 100);
+  //}
+  .mat-radio-inner-circle {
+    background-color: map.get(v.$light-green, 100);
+  }
+
+  .mat-radio-ripple .mat-ripple-element {
+    background-color: map.get(v.$light-green, 100) !important;
+  }
+
+
+ &.mat-radio-checked {
+   .mat-radio-outer-circle{
+     border-color: map.get(v.$light-green, 100);
+   }
+ }
 }

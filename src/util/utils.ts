@@ -1,3 +1,5 @@
+import {Options} from 'ngx-vis';
+
 export const nodeDefaultColor = {
   background: '#1E352F',
   border: '#A6C36F',
@@ -127,5 +129,66 @@ export const sPhenonetConfig = {
     // navigationButtons: true,
   },
 };
+
+export const gplEdgeColor = {
+  highlight: '#1E352F',
+  color: 'rgba(150,150,150,0.5)',
+  hover: '#1E352F',
+  opacity: .5,
+};
+
+export const gplConfig =  {
+  height: '100%',
+  width: '100%',
+  layout: {
+    randomSeed: 12,
+    hierarchical: false,
+    improvedLayout: true,
+  },
+  nodes: {
+    shape: 'dot',
+    font: {
+      face: 'roboto',
+      size: 22
+    },
+  },
+  edges: {
+    color: gplEdgeColor,
+    hoverWidth: 7,
+    selectionWidth: 17,
+    scaling: {
+      min: 4,
+      max: 17,
+    },
+    smooth: false,
+  },
+  physics: {
+    enabled: true,
+    minVelocity: 15,
+    solver: 'forceAtlas2Based',
+    maxVelocity: 50,
+    forceAtlas2Based: {
+      // damping: 0.8,
+      gravitationalConstant: -500,
+      centralGravity: 0.05,
+      avoidOverlap: 1
+    },
+    stabilization: {
+      enabled: true,
+      iterations: 1,
+      fit: true
+    },
+  },
+  interaction: {
+    hover: true,
+    // tooltipDelay: 200,
+    hideEdgesOnDrag: true,
+    hideEdgesOnZoom: true,
+    // multiselect: true,
+    // navigationButtons: true,
+    // selectable: true,
+    // selectConnectedEdges:true,
+  },
+} as Options;
 
 

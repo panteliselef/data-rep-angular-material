@@ -1,6 +1,8 @@
 import {Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
+import {Observable} from 'rxjs';
+import {ApiService} from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-toolbar-search',
@@ -10,13 +12,17 @@ import {environment} from 'src/environments/environment';
 export class ToolbarSearchComponent implements OnInit {
 
 
-  constructor(private httpService: HttpClient, private eRef: ElementRef) {
+  constructor(private httpService: HttpClient,
+              private apiService: ApiService,
+              private eRef: ElementRef) {
   }
 
   @Input() value: string;
   @Input() mode: string;
   searchSuggestions: string[];
   isToolbarSearchFocused = false;
+
+  searchAllResults$: Observable<any>;
 
   @ViewChild('toolbarSearch') toolbarSearch;
 
@@ -30,10 +36,19 @@ export class ToolbarSearchComponent implements OnInit {
   }
 
   async searchDiseases($event: KeyboardEvent): Promise<void> {
+
+    const q = ($event.target as HTMLInputElement).value;
     this.searchSuggestions = await this.httpService
-      .get<string[]>(`${environment.apiUrl}search?q=${($event.target as HTMLInputElement).value}`)
+      .get<string[]>(`${environment.apiUrl}search?q=${q}`)
       .toPromise();
     console.log(this.searchSuggestions);
+
+
+
+
+    this.apiService.getGlobalSearchResults(q).subscribe(results => {
+      console.log('all', results);
+    });
   }
 
 }
