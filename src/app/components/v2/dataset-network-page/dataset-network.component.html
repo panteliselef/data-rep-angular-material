@@ -101,6 +101,7 @@
           aria-labelledby="example-radio-group-label"
           class="h-flex"
           [(ngModel)]="limitGenes"
+          (change)="fetchGenes()"
           style="gap: 10px">
           <mat-radio-button *ngFor="let limit of limits" [value]="limit">
             {{limit}}

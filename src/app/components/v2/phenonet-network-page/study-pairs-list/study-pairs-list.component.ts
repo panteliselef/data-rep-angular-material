@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {DATASET_PAIRS} from 'src/app/models/graph.model';
 import {ApiService} from 'src/app/services/api.service';
 import {DATASET_PAIR} from 'src/app/models/graph.model';
 

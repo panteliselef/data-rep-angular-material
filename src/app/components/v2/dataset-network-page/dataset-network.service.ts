@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
+import {PlatformEdge, PlatformNode} from 'src/app/models/elastic.model';
 
 @Injectable()
 export class DatasetNetworkService {
@@ -39,8 +40,13 @@ export class DatasetNetworkService {
     this.selectedNode.next(node);
   }
 
-  updateSelectedEdge(edge: GPLEDGE): void {
-    this.selectedEdge.next(edge);
+  updateSelectedEdge(selectedEdge: GPLEDGE): void {
+    // const edge = {
+    //   from: (selectedEdge.from as GPLNODE)?.id || selectedEdge.from,
+    //   to: (selectedEdge.to as GPLNODE)?.id || selectedEdge.to,
+    //   value: selectedEdge.value
+    // };
+    this.selectedEdge.next(selectedEdge);
   }
 
 
@@ -56,7 +62,50 @@ export class DatasetNetworkService {
   fetchNetwork(technology: Technology): void {
     console.warn('requesting');
     this.technology.next(technology);
-    this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
+    // this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
+
+    this.apiService.getTechnologyGraphElastic(technology).subscribe((edges: PlatformEdge[]) => {
+
+      const diseaseSet = new Set<string>();
+      const nodes = new Array<GPLNODE>();
+
+      const GSESet = new Set<string>();
+
+      for (const edge of edges) {
+        const pairNodes = [edge.node1, edge.node2];
+        pairNodes.forEach((node: PlatformNode) => {
+          if (GSESet.has(node.data_table_id)) {
+            return;
+          }
+          GSESet.add(node.data_table_id);
+          diseaseSet.add(node.disease);
+          nodes.push({
+            id: node.data_table_id,
+            label: node.data_table_id,
+            group: node.disease
+          });
+        });
+      }
+
+      const gplEdges =  edges.map<GPLEDGE>((edge: PlatformEdge) => {
+        return {
+          from: edge.node1.data_table_id,
+          to: edge.node2.data_table_id,
+          value: edge.q_value
+        };
+      });
+
+      const graph = {
+        nodes,
+        edges: gplEdges,
+        categories: Array.from(diseaseSet).map<GPLCATEGORY>(disease => ({name: disease}))
+      };
+
+
+
+
+      this._setGraph(graph);
+    });
   }
 
   private _setSlider(count: number): void {
@@ -101,5 +150,13 @@ export class DatasetNetworkService {
     this._setSlider(sliderLimit);
     const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
     this.filteredGraph.next(filteredOriginalGraph);
+  }
+
+  get technologyValue(): Technology {
+    return this.technology.getValue();
+  }
+
+  get edgesValue(): GPLEDGE[] {
+    return this.graph.getValue().edges;
   }
 }

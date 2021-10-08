@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {EMPTY, Observable} from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable} from 'rxjs';
 import { combineLatest } from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
@@ -32,7 +32,6 @@ export class DatasetNetworkPageComponent implements OnInit {
     if (element) {
       this.collapsible = element;
       // here you get access only when element is rendered (or destroyed)
-      console.log(element);
     }
   }
 
@@ -45,6 +44,8 @@ export class DatasetNetworkPageComponent implements OnInit {
   networkName$: Observable<string>;
   similarDatasets: MatTableDataSource<GPLEDGE>;
   tableData$: Observable<GPLEDGE[]>;
+  private limitGenesSubject = new BehaviorSubject(100);
+  readonly limitGenes$ = this.limitGenesSubject.asObservable();
 
   limitGenes = 100;
   limits: number[] = [100, 500, 1000, 2000];
@@ -70,7 +71,6 @@ export class DatasetNetworkPageComponent implements OnInit {
   }
 
   public requestDataFiles(): string {
-    console.log('heee');
     return this.apiService
       .getStudiesFilesURL(this.similarDatasets.data.map<string>(edge => edge.to as string), 'annotation');
   }
@@ -97,6 +97,7 @@ export class DatasetNetworkPageComponent implements OnInit {
     this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
     this.selectedNode$ = this.datasetNetworkService.selectedNode$;
     this.datasetNetworkService.technology$.subscribe((technology) => {
+      // TODO: complete with other colors
       if (!technology) { return; }
       switch (technology) {
         case 'GPL96': this.groupColors = groupsGPL96; break;
@@ -112,13 +113,41 @@ export class DatasetNetworkPageComponent implements OnInit {
       this.datasetNetworkService.updateSelectedNode(selectedNode);
     });
 
+
+    // If a limit for genes or an edge is selected request Best Explaining Genes
+    combineLatest([this.selectedEdge$, this.limitGenes$])
+      .pipe(switchMap(([selectedEdge]) => {
+        if (!selectedEdge) { return EMPTY; }
+        return this.apiService.getPlatformGenes(this.datasetNetworkService.technologyValue, selectedEdge);
+      })).subscribe((geneData) => {
+        let arr = [];
+        switch (this.limitGenes) {
+          case 100:
+            arr = geneData.thres100;
+            break;
+          case 500:
+            arr = geneData.thres500;
+            break;
+          case 1000:
+            arr = geneData.thres1000;
+            break;
+          case 2000:
+            arr = geneData.thres2000;
+            break;
+          default: break;
+        }
+        this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
+    });
+
     this.selectedNode$.pipe(
       switchMap((node: GPLNODE) => {
         if (!node) { return EMPTY; }
         return this._filterNeighbors(node);
-      }),
+      })
     ).subscribe((neighbors) => {
-      this.similarDatasets = new MatTableDataSource<GPLEDGE>(neighbors);
+      this.similarDatasets = new MatTableDataSource<GPLEDGE>(
+        neighbors.sort((a, b) => a.value - b.value)
+      );
       this.downloadUrl = this.requestDataFiles();
     });
 
@@ -148,4 +177,8 @@ export class DatasetNetworkPageComponent implements OnInit {
     highlightDisease(id: string): void {
         this.datasetNetworkService.updateDiseaseToBeHighlighted(id);
     }
+
+  fetchGenes(): void {
+    this.limitGenesSubject.next(this.limitGenes);
+  }
 }

@@ -8,7 +8,7 @@ import {DEPTH_DEGREE, GraphFilterBarService} from 'src/app/services/graph-filter
 import {Observable} from 'rxjs';
 import 'src/util/string.extentions';
 import {LoadingService} from 'src/app/services/loading.service';
-import {ElasticModel, PhenonetNode, Source} from 'src/app/models/elastic.model';
+import {DiseaseNode, DiseaseEdge} from 'src/app/models/elastic.model';
 
 
 @Component({
@@ -141,15 +141,14 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     this.filterNodes = graph.nodes.map(({disease}) => disease);
   }
 
-  private mapElasticModelToGraph(data: ElasticModel, cb?: () => void): GRAPH {
-    const results = data.hits.hits.map(({_source}: { _source: Source }) => _source);
+  private mapElasticModelToGraph(diseaseEdges: DiseaseEdge[], cb?: () => void): GRAPH {
 
     const diseaseSet = new Set<string>();
     const nodes = new Array<NODE>();
-    for (const pair of results) {
+    for (const pair of diseaseEdges) {
       const pairNodes = [pair.node1, pair.node2];
 
-      pairNodes.forEach((node: PhenonetNode) => {
+      pairNodes.forEach((node: DiseaseNode) => {
         if (diseaseSet.has(node.disease)) {
           return;
         }
@@ -163,7 +162,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
       });
     }
 
-    const edges = results.map<EDGE>((source: Source) => {
+    const edges = diseaseEdges.map<EDGE>((source: DiseaseEdge) => {
       return {
         from: source.node1.disease,
         to: source.node2.disease,
@@ -183,8 +182,6 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
       cb();
     }
 
-    console.log(results);
-
     return {
       nodes,
       edges
@@ -199,9 +196,14 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     /* Fetch Edges and Nodes */
     this.loadingService
       .showLoaderUntilCompleted(this.apiService.getPhenonetElastic(diseaseId || ''))
-      .subscribe((data: ElasticModel) => {
-        const graph = this.mapElasticModelToGraph(data);
+      .subscribe((edges: DiseaseEdge[]) => {
+        const graph = this.mapElasticModelToGraph(edges);
         this.setMainGraph(graph);
+
+        if (graph.nodes.length === 0) {
+          console.error('Graph has zero nodes');
+          return;
+        }
 
         this.setSliderValues(
           graph.edges[graph.edges.length - 1].weight,
@@ -260,8 +262,8 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     }
     this.apiService
       .getPhenonetElastic(degree === 'all' ? '' : this.mainDisease)
-      .subscribe((data: ElasticModel) => {
-        const graph = this.mapElasticModelToGraph(data);
+      .subscribe((edges: DiseaseEdge[]) => {
+        const graph = this.mapElasticModelToGraph(edges);
         this.setMainGraph(graph);
         this.setSliderValues(
           graph.edges[graph.edges.length - 1].weight,
