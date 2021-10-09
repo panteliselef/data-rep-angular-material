@@ -2,7 +2,7 @@ import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/c
 import {HttpClient} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {SearchService} from 'src/app/services/search.service';
-import {SEARCH_RESULT} from 'src/app/models/search.model';
+import {SearchResult} from 'src/app/models/search.model';
 @Component({
   selector: 'app-homepage-searchbar',
   templateUrl: './homepage-searchbar.component.html',
@@ -18,7 +18,7 @@ export class HomepageSearchbarComponent implements OnInit {
   searchSuggestions: string[];
   isToolbarSearchFocused = false;
 
-  searchResults$: Observable<SEARCH_RESULT[]>;
+  searchResults$: Observable<SearchResult[]>;
 
   @ViewChild('toolbarSearch') toolbarSearch;
 
