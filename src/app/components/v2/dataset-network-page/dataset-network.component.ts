@@ -79,7 +79,7 @@ export class DatasetNetworkPageComponent implements OnInit {
    * Create url for requesting many files at once
    */
   public requestDataFiles(): string {
-    return this.apiService
+    return ApiService
       .getStudiesFilesURL(this.similarDatasets.data.map<string>(edge => edge.to as string), 'annotation');
   }
 

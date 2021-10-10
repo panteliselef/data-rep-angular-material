@@ -13,16 +13,19 @@ export class StudiesTableComponent implements OnInit {
   @Input() studies: MatTableDataSource<DATASET>;
   studiesTableColumns: string[] = ['id', 'samples', 'entity', 'type'];
 
-  constructor(private apiService: ApiService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
+  // TODO: Create a pipe because these functions get called continiously
   requestDownloadData(studies: string[]): string {
-    return this.apiService.getStudiesFilesURL(studies, 'data');
+    console.log('a');
+    return ApiService.getStudiesFilesURL(studies, 'data');
   }
 
   requestDownloadAnnotations(studies: string[]): string {
-    return this.apiService.getStudiesFilesURL(studies, 'annotation');
+    console.log('v');
+    return ApiService.getStudiesFilesURL(studies, 'annotation');
   }
 }

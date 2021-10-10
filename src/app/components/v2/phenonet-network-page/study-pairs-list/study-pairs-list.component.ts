@@ -14,16 +14,18 @@ export class StudyPairsListComponent implements OnInit {
   @Input() primaryDisease: string;
   @Input() secondaryDisease: string;
 
-  constructor(private apiService: ApiService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
   requestDownloadData(studies: string[]): string {
-    return this.apiService.getStudiesFilesURL(studies, 'data');
+    console.log('h');
+    return ApiService.getStudiesFilesURL(studies, 'data');
   }
 
   requestDownloadAnnotations(studies: string[]): string {
-    return this.apiService.getStudiesFilesURL(studies, 'annotation');
+    console.log('b');
+    return ApiService.getStudiesFilesURL(studies, 'annotation');
   }
 }
