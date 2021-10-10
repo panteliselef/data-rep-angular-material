@@ -1,0 +1,15 @@
+version: "3.7"
+
+services:
+  angular-frontend:
+    image: ${APP_NAME}-frontend:${APP_VERSION}-dev
+    build:
+      dockerfile: dev.Dockerfile
+    ports:
+      # Expose frontend port at host machine
+      - ${DEV_FRONTEND_PORT}:4200
+      # Webpack uses a port to do live reload of the application. That port is 49153 by default.
+      #- 49153:49153
+    volumes:
+      # Sync source code
+      - ./src/:/frontend/src

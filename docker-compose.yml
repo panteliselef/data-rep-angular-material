@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  angular-frontend:
+    image: ${APP_NAME}-frontend:${APP_VERSION}-prod
+    container_name: ${APP_NAME}-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    restart: on-failure
+   # environment:
+     # - NODE_ENV=production

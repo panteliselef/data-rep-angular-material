@@ -74,9 +74,11 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
       switch (technology) {
         case 'GPL96': gplConfig.groups = groupsGPL96; break;
         case 'GPL570': gplConfig.groups = groupsGPL570; break;
-        default: return;
+        default:
+          this.visNetworkOptions = gplConfig;
+          return;
       }
-      this.visNetworkOptions = gplConfig;
+
     });
 
     this.filteredGraphSub = this.datasetNetworkService.filteredGraph$.subscribe(this.setGraphData.bind(this));

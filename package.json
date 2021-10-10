@@ -4,7 +4,17 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --poll=1000 --open",
+    "start_headless": "ng serve --host=0.0.0.0 --poll=1000",
     "build": "ng build",
+    "build-prod": "ng build --configuration production",
+    "docker-dev": "docker-compose up",
+    "docker-dev:ri": "docker images -a |  grep -E \"data-rep-frontend.*dev\" | awk '{print $3}' | xargs docker rmi",
+    "docker-dev:rc": "docker ps -a -f status=exited | grep -E \"data-rep-frontend.*dev\" | awk '{print $1}' | xargs docker rm",
+    "docker-dev:build": "docker-compose up --build",
+    "docker-prod": "docker-compose -f docker-compose.yml up",
+    "docker-prod:build": "docker-compose -f docker-compose.yml up --build",
+    "docker-prod:rc": "docker ps -a -f status=exited | grep -E \"data-rep-frontend.*prod\" | awk '{print $1}' | xargs docker rm",
+    "docker-prod:ri": "docker images -a |  grep -E \"data-rep-frontend.*prod\" | awk '{print $3}' | xargs docker rmi",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -24,9 +34,11 @@
     "@types/vis": "^4.21.21",
     "echarts": "^5.0.0",
     "ngx-echarts": "^6.0.0",
-    "ngx-vis": "^3.0.2",
+    "ngx-vis": "3.0.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
+    "vis-data": "6.2.3",
+    "vis-util": "1.1.8",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
