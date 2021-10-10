@@ -107,7 +107,6 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
   }
 
   setGraphData(graph: GplData): void {
-    console.log(graph);
     this.nodes.clear();
     this.nodes.add(graph.nodes);
     this.edges.clear();

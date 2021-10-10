@@ -189,6 +189,83 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
 
+  /**
+   * Only for comparison with elastic
+   * @deprecated use elastic instead
+   */
+  private _onFetchGraph(disease: string, graph: GRAPH): void  {
+    console.log(graph.edges);
+    this.setMainGraph(graph);
+    this.setStudiesForDisease(disease);
+    const d = graph.edges
+      .filter(({from, to}) => {
+        return from === disease || to === disease;
+      })
+      .map(({from, to, ...rest}) => {
+        return {
+          ...rest,
+          // from: disease,
+          from,
+          // to:  from === disease ? to : from,
+          to,
+          node: from === disease ? to : from,
+        };
+      })
+      .sort((a, b) => b.weight - a.weight);
+    this.setMainDiseaseNeighborsCount(d.length); // because 'nodes' include the main disease
+    this.connectedNodes = new MatTableDataSource<ConnectedNode>(d);
+    this.setSliderValues(
+      this.mainDiseaseGraph.edges[0].weight,
+      this.mainDiseaseGraph.edges[this.mainDiseaseGraph.edges.length - 1].weight,
+    );
+  }
+
+  /**
+   * Only for comparison with elastic
+   * @deprecated use elastic instead
+   */
+  fetchDiseaseFromPhenonetOld(disease: string): void {
+    this.loadingService
+      .showLoaderUntilCompleted(this.apiService.getPhenonetDiseaseNeighborsAtDepth(disease, 1))
+      .subscribe(this._onFetchGraph.bind(this, disease));
+  }
+
+
+  /**
+   * Only for comparison with elastic
+   * @deprecated use elastic instead
+   */
+  onParamsChangeOld(params: Params): void {
+    const {diseaseId} = params;
+    this.mainDisease = diseaseId;
+
+    /* Fetch Edges and Nodes */
+    if (!diseaseId) {
+      this.titleService.setTitle('Phenonet');
+      this.graphFilterBarService.updateDepthDegreeDisabled(true);
+      this.apiService.getPhenonet().subscribe((graph: GRAPH) => {
+        this.setMainGraph(graph);
+        console.log(graph.edges);
+        this.setSliderValues(
+          graph.edges[graph.edges.length - 1].weight,
+          graph.edges[0].weight
+        );
+      });
+    } else {
+      this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
+      this.graphFilterBarService.updateDepthDegreeDisabled(false);
+      this.graphFilterBarService.updateDepthDegree(1);
+      this.fetchDiseaseFromPhenonetOld(diseaseId);
+      this.searchBarPhenotype = diseaseId;
+    }
+  }
+
+
+  /**
+   * Fetch new graph for disease in parameters
+   * With elastic API
+   * @param params contains :diseaseId
+   */
   onParamsChange(params: Params): void {
     const {diseaseId} = params;
     this.mainDisease = diseaseId;
@@ -234,7 +311,6 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(this.onParamsChange.bind(this));
     this.connectedNodes = new MatTableDataSource<ConnectedNode>();
     this.studies = new MatTableDataSource<DATASET>();
-
     this.loadingGraphData$ = this.loadingService.loading$;
   }
 
@@ -270,6 +346,16 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
           graph.edges[0].weight
         );
       });
+  }
+
+  /**
+   * @deprecated use onDegreeDepthClick instead
+   * @param degree depth degree to search for
+   */
+  onDegreeDepthClickOld(degree: DEPTH_DEGREE): void {
+    this.apiService.getPhenonetDiseaseNeighborsAtDepth(this.mainDisease, degree).subscribe(
+      this._onFetchGraph.bind(this, this.mainDisease)
+    );
   }
 }
 
