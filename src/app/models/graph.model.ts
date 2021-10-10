@@ -1,13 +1,13 @@
 import {IdType} from 'vis';
 
-export type DATASET_PAIRS = [{ dA: string, dB: string }];
+export type DATASET_PAIR = { dA: string, dB: string };
 
 export interface EDGE {
   from: string;
   to: string;
   value: number;
   weight: number;
-  datasetPairs: DATASET_PAIRS;
+  datasetPairs: DATASET_PAIR[];
 }
 
 export interface DATASET {
@@ -28,11 +28,11 @@ export interface DATASET {
 export interface NODE {
   id: string;
   label: string;
-  size: number;
-  font: any;
+  size?: number;
+  font?: any;
   disease: string;
-  borderWidth: number;
-  datasets: Array<DATASET>;
+  borderWidth?: number;
+  datasets: Array<DATASET> | string[];
 }
 
 export interface ConnectedNode extends EDGE {

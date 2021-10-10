@@ -81,6 +81,17 @@ export const fullPhenonetConfig = {
 };
 
 
+// TODO: if the above config makes nodes move use this
+const temp = {
+  forceAtlas2Based: {
+    gravitationalConstant: -1700,
+    centralGravity: 0.1,
+    springConstant: 1,
+    // avoidOverlap: 0.2
+  }
+};
+
+
 const sPhenonetNodeDefaultColor = {
   background: '#1E352F',
   border: '#A6C36F',

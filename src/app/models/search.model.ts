@@ -1,4 +1,4 @@
-export interface SEARCH_RESULT {
+export interface SearchResult {
   name: string;
   categoryName?: string;
   foundIn?: string;
