@@ -1,11 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatSliderChange} from '@angular/material/slider';
 import {DatasetNetworkService} from '../dataset-network.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-
 @Component({
   selector: 'app-dataset-filter-bar',
   templateUrl: './dataset-filter-bar.component.html',
@@ -14,7 +13,7 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
     '../../phenonet-network-page/graph-filter-bar/graph-filter-bar.component.scss'
   ]
 })
-export class DatasetFilterBarComponent implements OnInit {
+export class DatasetFilterBarComponent implements OnInit, OnDestroy {
 
   minSliderValue$: Observable<number>;
   maxSliderValue$: Observable<number>;
@@ -24,6 +23,7 @@ export class DatasetFilterBarComponent implements OnInit {
   diseasesInGraph: string[];
 
   highlightDiseaseControl = new FormControl();
+  private diseasesSub: Subscription;
 
 
   constructor(private datasetNetworkService: DatasetNetworkService) { }
@@ -46,7 +46,7 @@ export class DatasetFilterBarComponent implements OnInit {
      * Once you get the diseases start listening for when user types and filter
      * those diseases based on the user input
      */
-    this.diseasesInGraph$.subscribe((diseases) => {
+    this.diseasesSub = this.diseasesInGraph$.subscribe((diseases) => {
       this.filteredOptions$ = this.highlightDiseaseControl.valueChanges
         .pipe(
           startWith(''), // this populates array with every disease
@@ -56,6 +56,10 @@ export class DatasetFilterBarComponent implements OnInit {
           })
         );
     });
+  }
+
+  ngOnDestroy(): void{
+    this.diseasesSub.unsubscribe();
   }
 
 

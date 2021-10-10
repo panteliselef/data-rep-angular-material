@@ -5,18 +5,17 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
 import {DEPTH_DEGREE, GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import 'src/util/string.extentions';
 import {LoadingService} from 'src/app/services/loading.service';
 import {DiseaseNode, DiseaseEdge} from 'src/app/models/elastic.model';
-
 
 @Component({
   selector: 'app-phenonet-network',
   templateUrl: './phenonet-network.component.html',
   styleUrls: ['./phenonet-network.component.scss'],
 })
-export class PhenonetNetworkComponent implements OnInit, OnDestroy {
+export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
 
   connectedNodes: MatTableDataSource<ConnectedNode>;
   studies: MatTableDataSource<DATASET>;
@@ -27,6 +26,8 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   mainDiseaseStudiesCount: number;
 
   loadingGraphData$: Observable<boolean>;
+  private loadingServiceSub: Subscription;
+  private routeSub: Subscription;
 
 
   maxGraphEdgeFreq = 0;
@@ -225,7 +226,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
    * @deprecated use elastic instead
    */
   fetchDiseaseFromPhenonetOld(disease: string): void {
-    this.loadingService
+    this.loadingServiceSub = this.loadingService
       .showLoaderUntilCompleted(this.apiService.getPhenonetDiseaseNeighborsAtDepth(disease, 1))
       .subscribe(this._onFetchGraph.bind(this, disease));
   }
@@ -271,7 +272,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     this.mainDisease = diseaseId;
 
     /* Fetch Edges and Nodes */
-    this.loadingService
+    this.loadingServiceSub = this.loadingService
       .showLoaderUntilCompleted(this.apiService.getPhenonetElastic(diseaseId || ''))
       .subscribe((edges: DiseaseEdge[]) => {
         const graph = this.mapElasticModelToGraph(edges);
@@ -308,14 +309,15 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(this.onParamsChange.bind(this));
+    this.routeSub = this.route.params.subscribe(this.onParamsChange.bind(this));
     this.connectedNodes = new MatTableDataSource<ConnectedNode>();
     this.studies = new MatTableDataSource<DATASET>();
     this.loadingGraphData$ = this.loadingService.loading$;
   }
 
   ngOnDestroy(): void {
-
+    this.loadingServiceSub.unsubscribe();
+    this.routeSub.unsubscribe();
   }
 
   onEdgeSelect(edge: ConnectedNode): void {

@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 import {MatSliderChange} from '@angular/material/slider';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {map, startWith} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {DEPTH_DEGREE, DEPTH_DEGREE_ARR, GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
 
 @Component({
@@ -11,7 +11,7 @@ import {DEPTH_DEGREE, DEPTH_DEGREE_ARR, GraphFilterBarService} from 'src/app/ser
   templateUrl: './graph-filter-bar.component.html',
   styleUrls: ['./graph-filter-bar.component.scss']
 })
-export class GraphFilterBarComponent implements OnInit, OnChanges {
+export class GraphFilterBarComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() minGraphEdgeFreq: number;
   @Input() maxGraphEdgeFreq: number;
@@ -32,6 +32,7 @@ export class GraphFilterBarComponent implements OnInit, OnChanges {
   isDisabled$: Observable<boolean>;
 
   isToggleChecked: boolean;
+  private depthDegreeSub: Subscription;
 
   constructor(private graphFilterBarService: GraphFilterBarService) {
   }
@@ -40,9 +41,13 @@ export class GraphFilterBarComponent implements OnInit, OnChanges {
     this.minGraphEdgeFreq = this.currSliderValue;
     this.isDisabled$ = this.graphFilterBarService.isDepthDegreeDisabled$;
     this.depthDegree$ = this.graphFilterBarService.depthDegree$;
-    this.depthDegree$.subscribe((degree: DEPTH_DEGREE) => {
+    this.depthDegreeSub = this.depthDegree$.subscribe((degree: DEPTH_DEGREE) => {
       this.isToggleChecked = degree !== 1;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.depthDegreeSub.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

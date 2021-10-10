@@ -33,7 +33,7 @@
       <!--          <span class="gmail_like"></span>-->
 
       <div class="gmail_like ">
-        <a [href]="requestDownloadData([element.GSE])">
+        <a [href]="[element.GSE] | downloadUrl:'data'">
           <button mat-icon-button
                   aria-label="Download data"
                   matTooltipClass="app-tooltip"
@@ -41,7 +41,7 @@
             <mat-icon class="green-color" fontSet="material-icons-round">file_download</mat-icon>
           </button>
         </a>
-        <a [href]="requestDownloadAnnotations([element.GSE])">
+        <a [href]="[element.GSE] | downloadUrl:'annotation'">
           <button mat-icon-button
                   matTooltip="Download annotation"
                   matTooltipClass="app-tooltip"

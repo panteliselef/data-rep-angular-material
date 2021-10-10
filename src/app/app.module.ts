@@ -54,6 +54,7 @@ import {DatasetTopBarComponent} from './components/v2/dataset-network-page/datas
 import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page/dataset-network-graph/dataset-network-graph.component';
 import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
 import {UrlPipe} from './components/v2/dataset-network-page/url.pipe';
+import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-url.pipe';
 
 export function importingEchart(): void {
   import('echarts');
@@ -86,6 +87,7 @@ export function importingEchart(): void {
     DatasetNetworkGraphComponent,
     DatasetFilterBarComponent,
     UrlPipe,
+    DownloadUrlPipe,
   ],
   imports: [
     CommonModule,

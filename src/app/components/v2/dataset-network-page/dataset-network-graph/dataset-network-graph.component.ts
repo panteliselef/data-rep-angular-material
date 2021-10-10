@@ -25,7 +25,7 @@ import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
   templateUrl: './dataset-network-graph.component.html',
   styleUrls: ['./dataset-network-graph.component.scss']
 })
-export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   graphData$: Observable<GplData>;
   @Input() sliderValue: number;
@@ -51,6 +51,12 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
   private filteredGraphSub: Subscription;
   private selectedEdgeSub: Subscription;
   private selectedNodeSub: Subscription;
+  private clickSub: Subscription;
+  private deselectEdgeSub: Subscription;
+  private hoverNodeSub: Subscription;
+  private blurNodeSub: Subscription;
+  private hoverEdgeSub: Subscription;
+  private blurEdgeSub: Subscription;
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
@@ -99,11 +105,17 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
     });
   }
 
-  ngOnDestroy(): void {
-    this.filteredGraphSub.unsubscribe();
+  ngOnDestroy(): void{
     this.diseaseToBeHighlightedSub.unsubscribe();
+    this.filteredGraphSub.unsubscribe();
     this.selectedEdgeSub.unsubscribe();
     this.selectedNodeSub.unsubscribe();
+    this.clickSub.unsubscribe();
+    this.deselectEdgeSub.unsubscribe();
+    this.hoverNodeSub.unsubscribe();
+    this.blurNodeSub.unsubscribe();
+    this.hoverEdgeSub.unsubscribe();
+    this.blurEdgeSub.unsubscribe();
   }
 
   setGraphData(graph: GplData): void {
@@ -125,37 +137,27 @@ export class DatasetNetworkGraphComponent implements OnInit, OnDestroy, AfterVie
   }
 
   public networkInitialized(): void {
-
-    this.visNetworkService.on(this.visNetwork, 'afterDrawing');
-    this.visNetworkService.afterDrawing.subscribe((eventData: any[]) => {
-      // const [_, ctx] = eventData;
-      // ctx.fillStyle = 'rgb(0,255,255)';
-      // ctx.strokeStyle = 'red';
-      // ctx.stroke();
-      // ctx.fillRect(-200,-200,this.canvas.width,this.canvas.height);
-      // console.log(ctx);
-    });
     // now we can use the service to register on events
     this.visNetworkService.on(this.visNetwork, 'click');
-    this.visNetworkService.click.subscribe(this._onNetworkClick.bind(this));
+    this.clickSub = this.visNetworkService.click.subscribe(this._onNetworkClick.bind(this));
 
     // this.visNetworkService.on(this.visNetwork, 'selectEdge');
     // this.visNetworkService.selectEdge.subscribe(this._onNetworkSelectEdge.bind(this));
 
     this.visNetworkService.on(this.visNetwork, 'deselectEdge');
-    this.visNetworkService.deselectEdge.subscribe(this._onNetworkDeselectEdge.bind(this));
+    this.deselectEdgeSub = this.visNetworkService.deselectEdge.subscribe(this._onNetworkDeselectEdge.bind(this));
 
     this.visNetworkService.on(this.visNetwork, 'hoverNode');
-    this.visNetworkService.hoverNode.subscribe(this._onNetworkHoverNode.bind(this));
+    this.hoverNodeSub = this.visNetworkService.hoverNode.subscribe(this._onNetworkHoverNode.bind(this));
 
     this.visNetworkService.on(this.visNetwork, 'blurNode');
-    this.visNetworkService.blurNode.subscribe(this._onNetworkBlurNode.bind(this));
+    this.blurNodeSub = this.visNetworkService.blurNode.subscribe(this._onNetworkBlurNode.bind(this));
 
     this.visNetworkService.on(this.visNetwork, 'hoverEdge');
-    this.visNetworkService.hoverEdge.subscribe(this._onNetworkHoverEdge.bind(this));
+    this.hoverEdgeSub = this.visNetworkService.hoverEdge.subscribe(this._onNetworkHoverEdge.bind(this));
 
     this.visNetworkService.on(this.visNetwork, 'blurEdge');
-    this.visNetworkService.blurEdge.subscribe(this._onNetworkBlurEdge.bind(this));
+    this.blurEdgeSub = this.visNetworkService.blurEdge.subscribe(this._onNetworkBlurEdge.bind(this));
   }
 
   private _onNetworkHoverNode(eventData: any[]): void {

@@ -1,5 +1,5 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable} from 'rxjs';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {BehaviorSubject, EMPTY, Observable, Subscription} from 'rxjs';
 import {combineLatest} from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
@@ -22,7 +22,7 @@ type GENE = string;
   ],
   providers: [DatasetNetworkService]
 })
-export class DatasetNetworkPageComponent implements OnInit {
+export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
   private studyId: string;
 
   /* Use ViewChild this way
@@ -35,6 +35,14 @@ export class DatasetNetworkPageComponent implements OnInit {
       // here you get access only when element is rendered (or destroyed)
     }
   }
+
+  private routeSub: Subscription;
+  private technologySub: Subscription;
+  private gplGraphSub: Subscription;
+  private networkNameSub: Subscription;
+  private edgeOrGenesSub: Subscription;
+  private selectedNodeSub: Subscription;
+
 
   collapsible: ElementRef;
 
@@ -107,12 +115,12 @@ export class DatasetNetworkPageComponent implements OnInit {
    */
   ngOnInit(): void {
     this.networkName$ = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()));
-    this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => this.studyId = id);
+    this.routeSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => this.studyId = id);
     this.loadingGraphData$ = this.loadingService.loading$;
     this.gplGraph$ = this.datasetNetworkService.filteredGraph$;
     this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
     this.selectedNode$ = this.datasetNetworkService.selectedNode$;
-    this.datasetNetworkService.technology$.subscribe((technology) => {
+    this.technologySub = this.datasetNetworkService.technology$.subscribe((technology) => {
       // TODO: complete with other colors
       if (!technology) {
         return;
@@ -129,7 +137,7 @@ export class DatasetNetworkPageComponent implements OnInit {
       }
     });
 
-    this.gplGraph$.subscribe((graph) => {
+    this.gplGraphSub = this.gplGraph$.subscribe((graph) => {
       if (!graph) {
         return;
       }
@@ -140,7 +148,7 @@ export class DatasetNetworkPageComponent implements OnInit {
 
 
     // If a limit for genes or an edge is selected request Best Explaining Genes
-    combineLatest([this.selectedEdge$, this.limitGenes$])
+    this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
       .pipe(switchMap(([selectedEdge]) => {
         if (!selectedEdge) {
           return EMPTY;
@@ -167,7 +175,7 @@ export class DatasetNetworkPageComponent implements OnInit {
       this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
     });
 
-    this.selectedNode$.pipe(
+    this.selectedNodeSub = this.selectedNode$.pipe(
       switchMap((node: GPLNODE) => {
         if (!node) {
           return EMPTY;
@@ -181,7 +189,7 @@ export class DatasetNetworkPageComponent implements OnInit {
       this.downloadUrl = this.requestDataFiles();
     });
 
-    this.networkName$.subscribe(async (technology) => {
+    this.networkNameSub = this.networkName$.subscribe(async (technology) => {
       // TODO: verify that technology exist
       if (!technology) {
         // TODO: handle behavior when technology parameter doesn't exist
@@ -196,6 +204,16 @@ export class DatasetNetworkPageComponent implements OnInit {
      * @deprecated Now best Explaining genes are being fetched
      */
     // this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
+  }
+
+  ngOnDestroy(): void{
+    this.networkNameSub.unsubscribe();
+    this.selectedNodeSub.unsubscribe();
+    this.edgeOrGenesSub.unsubscribe();
+    this.gplGraphSub.unsubscribe();
+    this.routeSub.unsubscribe();
+    this.technologySub.unsubscribe();
+    this.limitGenesSubject.unsubscribe();
   }
 
 

@@ -18,7 +18,7 @@
       <span>{{studyPair.dB}}</span>
     </div>
     <div style="width:100%;padding-right: 20px;" class="h-flex align-center justify-end">
-      <a [href]="requestDownloadData([studyPair.dA,studyPair.dB])">
+      <a [href]="[studyPair.dA,studyPair.dB] | downloadUrl:'data'">
         <button mat-icon-button aria-label="Download data">
           <mat-icon class="green-color"
                     matTooltip="Download data"
@@ -28,7 +28,7 @@
         </button>
 
       </a>
-      <a [href]="requestDownloadAnnotations([studyPair.dA,studyPair.dB])">
+      <a [href]="[studyPair.dA,studyPair.dB] | downloadUrl:'annotation'">
         <button mat-icon-button aria-label="Download annotation">
           <mat-icon class="green-color"
                     matTooltip="Download annotation"
