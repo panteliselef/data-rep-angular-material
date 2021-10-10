@@ -9,6 +9,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - '80:80'
-    restart: always
+    restart: on-failure
    # environment:
      # - NODE_ENV=production

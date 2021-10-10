@@ -29,16 +29,21 @@ To remove docker container run: `$ npm run docker-dev:rc`
 To remove docker image run: `$ npm run docker-dev:ri`
 
 ### Production
-
-- Run command:
-
-```
-$ docker-compose -f docker-compose.yml up
-```
+- **Option 1 (Prefered)** Run npm commands:
+  - Start `$ npm run docker-prod`
+  - Build `$ npm run docker-prod:build`
+  - Remove container `$ npm run docker-prod:rc`
+  - Remove image `$ npm run docker-prod:ri`
+ 
+  
+- **Option 2** Run immediate command:
+  ```
+  $ docker-compose -f docker-compose.yml up
+  ```
 
 ---
 
-## Usefull docker commands
+## Useful docker commands
 
 - To run the project open a command line on the root folder (where the docker-compose.yml is located) and type the following command. The `-d` attribute is for running the services in detached mode. If it is not provided the full logs from all services will be printed on the screen.
 ```

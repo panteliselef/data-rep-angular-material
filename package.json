@@ -9,8 +9,12 @@
     "build-prod": "ng build --configuration production",
     "docker-dev": "docker-compose up",
     "docker-dev:ri": "docker images -a |  grep -E \"data-rep-frontend.*dev\" | awk '{print $3}' | xargs docker rmi",
-    "docker-dev:rc": "docker ps -a -f status=exited | grep \"data-rep\" | awk '{print $1}' | xargs docker rm",
+    "docker-dev:rc": "docker ps -a -f status=exited | grep -E \"data-rep-frontend.*dev\" | awk '{print $1}' | xargs docker rm",
     "docker-dev:build": "docker-compose up --build",
+    "docker-prod": "docker-compose -f docker-compose.yml up",
+    "docker-prod:build": "docker-compose -f docker-compose.yml up --build",
+    "docker-prod:rc": "docker ps -a -f status=exited | grep -E \"data-rep-frontend.*prod\" | awk '{print $1}' | xargs docker rm",
+    "docker-prod:ri": "docker images -a |  grep -E \"data-rep-frontend.*prod\" | awk '{print $3}' | xargs docker rmi",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
