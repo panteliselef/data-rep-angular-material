@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {EChartsOption} from 'echarts';
 import {HttpClient} from '@angular/common/http';
 import {MatSelectChange} from '@angular/material/select';
@@ -6,6 +6,7 @@ import {MatSliderChange} from '@angular/material/slider';
 import {environment} from '../environments/environment';
 import {VisNetworkService, Data, DataSet, Node, Options, Edge} from 'ngx-vis';
 import {MatTabChangeEvent} from '@angular/material/tabs';
+import FontFaceObserver from 'fontfaceobserver';
 
 interface DATA {
   type?: string;
@@ -84,10 +85,14 @@ export class AppComponent implements OnInit, OnDestroy {
   public edges: DataSet<Edge>;
   public visNetworkOptions: Options;
 
-  public constructor(private httpService: HttpClient, private visNetworkService: VisNetworkService
+  public constructor(private renderer: Renderer2, private httpService: HttpClient, private visNetworkService: VisNetworkService
   ) {
+    const keyword = 'icons-material';
 
-
+    const materialIcons = new FontFaceObserver('Material Icons Round');
+    materialIcons.load(null, 3000)
+      .then(() => this.renderer.addClass(document.body, `${keyword}-loaded`))
+      .catch(() => this.renderer.addClass(document.body, `${keyword}-error`));
   }
 
   public networkInitialized(): void {

@@ -1,4 +1,4 @@
-import {Component, HostListener, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, Inject, OnInit} from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {Title} from '@angular/platform-browser';
 
@@ -9,7 +9,7 @@ import {Title} from '@angular/platform-browser';
 })
 export class HomepageComponent implements OnInit {
 
-  constructor(@Inject(DOCUMENT) private document: Document, private titleService: Title) { }
+  constructor(@Inject(DOCUMENT) private document: Document, private titleService: Title) {}
 
   userHasScrolled = false;
 
