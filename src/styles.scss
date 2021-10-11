@@ -7,6 +7,30 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+$class: 'icons-material';
+
+// don't show mat-icon until font is loaded, unless using a different font set
+:not(.material-icons-loaded) .mat-icon:not([material-icons-round]) {
+  display: none;
+}
+
+.mat-icon:not([material-icons-round]) {
+  display: none;
+  .#{$class}-loaded & {
+    // loaded font successfully
+    display: inline-block;
+  }
+  .#{$class}-error & {
+    // could not load font - show fallback label if available
+    display: inline-block;
+    visibility: hidden;
+    &[data-label]:before {
+      content: attr(data-label);
+      visibility: visible;
+    }
+  }
+}
+
 app-navbar {
   color: #fff;
   position: sticky;

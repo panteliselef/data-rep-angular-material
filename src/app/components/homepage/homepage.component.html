@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="homepage.component.scss">
 <nav  class="navbar-header" [class.scrolled]="userHasScrolled">
   <div style="flex-grow: 1"></div>
-  <a mat-button href="/phenonet" routerLink="phenonet">Phenonet</a>
-  <a mat-button href="/vis" routerLink="vis">Visualisation</a>
+  <a mat-button routerLink="phenonet">Phenonet</a>
+  <a mat-button routerLink="vis">Visualisation</a>
   <a mat-button disabled>Search</a>
   <a mat-button disabled>Download</a>
   <a mat-button disabled>Help</a>
@@ -10,7 +10,8 @@
 
 <div class="top_container">
   <h1>
-    <span style="font-size: inherit" class="material-icons-round">bar_chart</span>
+    <mat-icon fontSet="material-icons-round">bar_chart</mat-icon>
+<!--    <span style="font-size: inherit" class="material-icons-round">bar_chart</span>-->
     Data Repurposing
   </h1>
 
@@ -20,45 +21,53 @@
     <mat-chip-list aria-label="Search examples">
       <a routerLink="/v2/dataset">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">open_in_new</span>
+          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+<!--          <span class="material-icons">open_in_new</span>-->
           v2 Dataset</mat-chip>
       </a>
 
       <a routerLink="/v2/phenonet">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">open_in_new</span>
+          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+<!--          <span class="material-icons-round">open_in_new</span>-->
           v2 Phenonet</mat-chip>
       </a>
 
       <a routerLink="/phenonet">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">open_in_new</span>
+          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+<!--          <span class="material-icons-round">open_in_new</span>-->
           Phenonet</mat-chip>
       </a>
 
       <a routerLink="/disease/sepsis">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">search</span>
+          <mat-icon fontSet="material-icons-round">search</mat-icon>
+<!--          <span class="material-icons-round">search</span>-->
           sepsis</mat-chip>
       </a>
       <a routerLink="/disease/asthma">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">search</span>
+          <mat-icon fontSet="material-icons-round">search</mat-icon>
+<!--          <span class="material-icons-round">search</span>-->
           asthma</mat-chip>
       </a>
-      <a href="/disease/breast cancer" routerLink="/disease/breast cancer">
+      <a routerLink="/disease/breast cancer">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">search</span>
+          <mat-icon fontSet="material-icons-round">search</mat-icon>
+<!--          <span class="material-icons-round">search</span>-->
           breast cancer</mat-chip>
       </a>
-      <a href="/disease/breast cancer" routerLink="/disease/breast cancer">
+      <a routerLink="/disease/breast cancer">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">description</span>
+          <mat-icon fontSet="material-icons-round">description</mat-icon>
+<!--          <span class="material-icons-round">description</span>-->
           GSExxxx</mat-chip>
       </a>
       <a routerLink="/dataset-network">
         <mat-chip color="primary" selected>
-          <span class="material-icons-round">description</span>
+          <mat-icon fontSet="material-icons-round">description</mat-icon>
+<!--          <span class="material-icons-round">description</span>-->
           GPL96</mat-chip>
       </a>
     </mat-chip-list>
@@ -80,13 +89,13 @@
 
     </div>
 
-    <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+    <img alt="network-image" src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
   </div>
 </section>
 
 <section >
   <div class="section_container reverse">
-    <img src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+    <img alt="network-image" src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
     <div style="display: flex;flex-direction: column;">
       <h1>Dataset network</h1>
       <p>In dataset networks, each node represents a dataset. Edges represent similarities between datasets, as distances between two empirical, multivariable, statistical distributions, intuitively implying that molecular quantities measured in the two datasets are inter-correlated in a similar way, i.e., the covariance matrices are similar. Computation in these networks is unsupervised and depends only on the omics data distributions, ignoring any annotation or labeling of each dataset.</p>

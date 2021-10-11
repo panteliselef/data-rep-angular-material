@@ -52,7 +52,10 @@ h1 {
     font-weight: 600;
     color: #1e352f;
 
-    & > span {
+    & > span, & > .mat-icon {
+      font-size: inherit;
+      width:  3.125rem;
+      height:  3.125rem;
       margin-right: 0.5rem;
     }
   }
@@ -68,7 +71,9 @@ h1 {
     color: #1e352f;
     text-decoration: none;
 
-    span {
+    span, .mat-icon {
+      width: 18px;
+      height: 18px;
       font-size: 18px;
     }
     //&:hover {
