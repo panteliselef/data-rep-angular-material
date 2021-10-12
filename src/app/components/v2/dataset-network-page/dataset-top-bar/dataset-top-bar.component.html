@@ -9,8 +9,7 @@
     <mat-icon aria-label="search" style="color:#9AA0A6" fontSet="material-icons-round">search</mat-icon>
     <input (focusin)="searchFocused = true"
            (focusout)="searchFocused = false"
-           (ngModelChange)="onSearch($event)"
-           [(ngModel)]="searchBarValue"
+           [formControl]="searchKeyword"
            type="text"
            placeholder="Search for a Technology or Platform"/>
 
