@@ -130,7 +130,10 @@ a.title, a .title {
 
   transition: all .2s ease;
 
-
+  &_orange {
+    background-color: map-get(v.$orange,20);
+    color: map-get(v.$orange,100);
+  }
 
   &_left_icon {
     padding-left: 4px;
@@ -145,6 +148,10 @@ a.title, a .title {
     background-color: map-get(v.$light-green,30);
   }
 
+  &:active.app_button_orange {
+    border: 1px solid map-get(v.$orange,100);
+    background-color:  map-get(v.$orange,20);
+  }
 }
 
 .mat-flat-button .mat-ripple-element {
@@ -184,6 +191,12 @@ a.title, a .title {
 .mat-ripple.mat-button-ripple {
   .mat-ripple-element {
     background-color: map.get(v.$green, 100);
+  }
+}
+
+.app_button_orange .mat-ripple.mat-button-ripple  {
+  .mat-ripple-element {
+    background-color: map-get(v.$orange,100);
   }
 }
 
