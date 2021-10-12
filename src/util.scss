@@ -79,7 +79,7 @@
 }
 
 .badge-edge{
-  background: v.$yellow-color;
+  background: map-get(v.$orange,100);
 }
 
 .hint-with-badges {
