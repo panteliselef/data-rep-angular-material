@@ -59,6 +59,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
   readonly limitGenes$ = this.limitGenesSubject.asObservable();
   limitGenes = 100;
   limits: number[] = [100, 500, 1000, 2000];
+  genesArray = [] as string[];
 
 
   downloadUrl = '';
@@ -172,6 +173,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
         default:
           break;
       }
+      this.genesArray = arr;
       this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
     });
 
@@ -243,5 +245,9 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
    */
   fetchGenes(): void {
     this.limitGenesSubject.next(this.limitGenes);
+  }
+
+  downloadGenes(): void {
+    this.apiService.downloadGenesAsFile(this.genesArray).subscribe();
   }
 }
