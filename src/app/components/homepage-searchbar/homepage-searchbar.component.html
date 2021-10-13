@@ -1,7 +1,7 @@
 <div class="search_components"  style="margin: 2rem 0 0 0;">
-  <div class="toolbar-search" [ngClass]="{'has_results':(searchResults$ | async) && toolbarSearch.value && isToolbarSearchFocused}">
+  <div class="toolbar-search" [ngClass]="{'has_results':(searchResults$ | async) && toolbarSearchInput.value && isToolbarSearchFocused}">
     <span style="padding:0 .8rem; color: #9aa0a6;" class="material-icons-round">search</span>
-    <input #toolbarSearch
+    <input #toolbarSearchInput
            [ngModel]="searchValue || ''"
            (focus)="isToolbarSearchFocused = true"
            (ngModelChange)="searchDiseases($event)"
@@ -11,9 +11,9 @@
            autocomplete="off"
            matInput type="text" aria-label="Search"/>
   </div>
-  <div class="search_suggestions_container" *ngIf="(searchResults$ | async) && toolbarSearch.value && isToolbarSearchFocused">
+  <div class="search_suggestions_container" *ngIf="(searchResults$ | async) && toolbarSearchInput.value && isToolbarSearchFocused">
     <div class="search_suggestions">
-      <a *ngFor="let suggestion of (searchResults$ | async)" [href]="'/disease/'+suggestion.name" [routerLink]="'/disease/'+suggestion.name">
+      <a (mouseenter)="onSearchResultMouseOver($event, i)" *ngFor="let suggestion of (searchResults$ | async); let i = index" [ngClass]="{'on_focus': cursor === i}" [routerLink]="suggestion | searchResultUrl">
         <span class="suggestion_primary">{{suggestion.name}}</span>
         <ng-template [ngIf]="suggestion?.categoryName">
           <span class="dot">•</span>

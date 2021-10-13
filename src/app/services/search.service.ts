@@ -29,6 +29,14 @@ export class SearchService {
     ).subscribe(results => this.searchResults.next(results));
   }
 
+
+  /**
+   * @returns a snapshot of search results
+   */
+  get searchResultsValue(): SearchResult[] {
+    return this.searchResults.getValue();
+  }
+
   /**
    * @deprecated use searchWithFilters
    */
@@ -38,11 +46,15 @@ export class SearchService {
     });
   }
 
+
+  /**
+   * Pushes parameters to Subjects and as a result a Search request will be performed
+   * Make sure you have subscribed to searchResults$
+   * @param filters array of filters to specify search
+   * @param keyword the term to look for
+   */
   searchWithFilters(filters: SEARCH_FILTER[], keyword: string): void {
     this.searchFilters.next(filters);
     this.searchKeyword.next(keyword);
   }
-
-
-
 }

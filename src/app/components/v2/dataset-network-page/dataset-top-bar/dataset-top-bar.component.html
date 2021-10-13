@@ -15,7 +15,7 @@
 
     <div class="search-results" *ngIf="(searchResults$ | async) as searchResults">
       <div class="search_suggestions">
-        <a *ngFor="let suggestion of searchResults" [routerLink]="suggestion | url">
+        <a *ngFor="let suggestion of searchResults" [routerLink]="suggestion | searchResultUrl">
           <span class="suggestion_primary">{{suggestion.name}}</span>
           <ng-template [ngIf]="suggestion?.categoryName">
             <span class="dot">•</span>
