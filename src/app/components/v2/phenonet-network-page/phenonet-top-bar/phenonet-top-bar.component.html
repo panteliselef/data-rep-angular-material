@@ -14,7 +14,7 @@
            placeholder="Search for a Phenotype"/>
     <div class="search-results" *ngIf="(searchRecommendations$ | async) as searchRecommendations">
       <div class="search_suggestions">
-        <a *ngFor="let suggestion of searchRecommendations" [routerLink]="suggestion | url">
+        <a *ngFor="let suggestion of searchRecommendations" [routerLink]="suggestion | searchResultUrl">
           <span class="suggestion_primary">{{suggestion.name}}</span>
           <ng-template [ngIf]="suggestion?.categoryName">
             <span class="dot">•</span>

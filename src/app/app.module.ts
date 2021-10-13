@@ -29,18 +29,17 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {VisModule} from 'ngx-vis';
 
 
-
 import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {VisualizationsComponent} from './components/visualizations/visualizations.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {HomepageComponent} from './components/homepage/homepage.component';
-import { ToolbarSearchComponent } from './components/toolbar-search/toolbar-search.component';
-import { DiseasePageComponent } from './components/disease-page/disease-page.component';
-import { NodeDetailsComponent } from './components/disease-page/node-details/node-details.component';
-import { EdgeDetailsComponent } from './components/disease-page/edge-details/edge-details.component';
-import { DatasetNetworkComponent } from './components/dataset-network/dataset-network.component';
-import { ToolbarSearchDatasetComponent } from './components/toolbar-search-dataset/toolbar-search-dataset.component';
+import {ToolbarSearchComponent} from './components/toolbar-search/toolbar-search.component';
+import {DiseasePageComponent} from './components/disease-page/disease-page.component';
+import {NodeDetailsComponent} from './components/disease-page/node-details/node-details.component';
+import {EdgeDetailsComponent} from './components/disease-page/edge-details/edge-details.component';
+import {DatasetNetworkComponent} from './components/dataset-network/dataset-network.component';
+import {ToolbarSearchDatasetComponent} from './components/toolbar-search-dataset/toolbar-search-dataset.component';
 import {PhenonetNetworkComponent} from './components/v2/phenonet-network-page/phenonet-network.component';
 import {StudyPairsListComponent} from './components/v2/phenonet-network-page/study-pairs-list/study-pairs-list.component';
 import {NeighborsTableComponent} from './components/v2/phenonet-network-page/neighbors-table/neighbors-table.component';
@@ -53,13 +52,13 @@ import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/
 import {DatasetTopBarComponent} from './components/v2/dataset-network-page/dataset-top-bar/dataset-top-bar.component';
 import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page/dataset-network-graph/dataset-network-graph.component';
 import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
-import {UrlPipe} from './components/v2/dataset-network-page/url.pipe';
 import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-url.pipe';
-import { SearchResultUrlPipe } from './pipes/search-result-url.pipe';
+import {SearchResultUrlPipe} from './pipes/search-result-url.pipe';
 
 export function importingEchart(): void {
   import('echarts');
 }
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -87,7 +86,6 @@ export function importingEchart(): void {
     DatasetTopBarComponent,
     DatasetNetworkGraphComponent,
     DatasetFilterBarComponent,
-    UrlPipe,
     DownloadUrlPipe,
     SearchResultUrlPipe,
   ],
@@ -133,4 +131,5 @@ export function importingEchart(): void {
   bootstrap: [AppComponent]
 })
 
-export class AppModule {}
+export class AppModule {
+}
