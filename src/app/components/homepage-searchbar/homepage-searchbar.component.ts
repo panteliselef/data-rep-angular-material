@@ -4,6 +4,8 @@ import {fromEvent, Observable} from 'rxjs';
 import {SearchService} from 'src/app/services/search.service';
 import {SearchResult} from 'src/app/models/search.model';
 import {filter} from 'rxjs/operators';
+import {Router} from '@angular/router';
+import {SearchResultUrlPipe} from 'src/app/pipes/search-result-url.pipe';
 
 @Component({
   selector: 'app-homepage-searchbar',
@@ -23,7 +25,8 @@ export class HomepageSearchbarComponent implements OnInit {
 
   constructor(private httpService: HttpClient,
               private searchService: SearchService,
-              private eRef: ElementRef) {
+              private eRef: ElementRef,
+              private router: Router) {
   }
 
 
@@ -88,7 +91,9 @@ export class HomepageSearchbarComponent implements OnInit {
     if (index < 0) {
       return;
     }
-    console.log('selecting', this.searchService.searchResultsValue[this.cursor].name);
+    this.router.navigate(
+      [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[this.cursor])]
+    ).then();
   }
 
   ngOnInit(): void {
@@ -98,9 +103,7 @@ export class HomepageSearchbarComponent implements OnInit {
       .pipe(
         filter((event: KeyboardEvent) => {
           return ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Enter', 'Escape'].includes(event.code);
-        }),
-        // tap((event: KeyboardEvent) => event.preventDefault()),
-        // map((event: KeyboardEvent) => event.code)
+        })
       )
       .subscribe((event) => {
         switch (event.code) {
@@ -117,7 +120,6 @@ export class HomepageSearchbarComponent implements OnInit {
             this._onEscape();
             break;
         }
-
       });
 
   }
