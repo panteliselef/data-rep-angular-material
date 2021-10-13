@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import {Observable} from 'rxjs';
@@ -7,7 +7,7 @@ import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {DiseaseEdge, ElasticModel, GeneData, PlatformEdge} from 'src/app/models/elastic.model';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +17,13 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   private apiURL = environment.apiUrl;
+
+  private static invokeBlobDownload(blob: Blob, filename?: string): void {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename || 'file';
+    a.click();
+  }
 
   /**
    * Generate url for requesting download of multiple files
@@ -28,6 +35,16 @@ export class ApiService {
     params = params.append('ids', studyIds.join(','));
     params = params.append('type', fileType);
     return `${environment.apiUrl}files?${params.toString()}`;
+  }
+
+  public downloadGenesAsFile(genes: string[]): Observable<any> {
+    return this.http.post(`${this.apiURL}genes`, {
+      genes
+    }, {
+      responseType: 'blob',
+    }).pipe(
+      tap(ApiService.invokeBlobDownload)
+    );
   }
 
 
