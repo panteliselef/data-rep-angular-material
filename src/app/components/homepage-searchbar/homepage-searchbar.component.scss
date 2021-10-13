@@ -71,10 +71,7 @@
         //border-radius: 100%;
         //display: inline-block;
       }
-
-
-      &:hover {
-        //background-color: hsl(164, 25%, 88%);
+      &.on_focus {
         background: rgba(217, 232, 228, 0.5);
       }
     }
