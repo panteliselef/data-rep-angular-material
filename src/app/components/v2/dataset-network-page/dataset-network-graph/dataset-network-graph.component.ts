@@ -2,14 +2,10 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
   ViewChild
 } from '@angular/core';
-import {ConnectedNode} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, gplConfig, nodeDefaultColor, gplEdgeColor} from 'src/util/utils';
 import {GplData, GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
@@ -28,12 +24,7 @@ import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
 export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   graphData$: Observable<GplData>;
-  @Input() sliderValue: number;
   diseaseToBeHighlighted$: Observable<string>;
-
-  @Output() selectEdge = new EventEmitter<ConnectedNode>();
-  @Output() selectNode = new EventEmitter<string>();
-  @Output() filterNodes = new EventEmitter<string[]>();
 
   @ViewChild('networkCanvas') canvasContainer: ElementRef;
 
@@ -93,10 +84,6 @@ export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDe
       if (!diseaseToBeHighlighted) { return; }
       this._highlightByDisease(diseaseToBeHighlighted);
       console.log('Disease Highlighted: ', diseaseToBeHighlighted);
-    });
-
-    this.selectedEdgeSub = this.datasetNetworkService.selectedEdge$.subscribe((selectedEdge: GPLEDGE) => {
-      console.log('Selected Edge', selectedEdge);
     });
 
     this.selectedNodeSub = this.datasetNetworkService.selectedNode$.subscribe((selectedNode: GPLNODE) => {

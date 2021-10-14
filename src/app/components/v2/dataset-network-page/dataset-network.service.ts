@@ -7,7 +7,6 @@ import {PlatformEdge, PlatformNode} from 'src/app/models/elastic.model';
 /**
  * A service for managing the state of dataset-network page
  */
-
 @Injectable()
 export class DatasetNetworkService {
 
