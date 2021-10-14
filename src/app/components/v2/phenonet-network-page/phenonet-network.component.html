@@ -65,8 +65,8 @@
       <app-study-pairs-list
         style="width: 100%; overflow: hidden"
         [parentComponentName]="'edge-info-panel'"
-        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="mainDisease"
-        [secondaryDisease]="selectedEdge.node"></app-study-pairs-list>
+        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="selectedEdge.from"
+        [secondaryDisease]="selectedEdge.to"></app-study-pairs-list>
 
     </div>
 

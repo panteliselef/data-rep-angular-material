@@ -1,5 +1,3 @@
-import {IdType} from 'vis';
-
 export type DATASET_PAIR = { dA: string, dB: string };
 
 export interface EDGE {
@@ -37,7 +35,7 @@ export interface NODE {
 
 export interface ConnectedNode extends EDGE {
   id?: string;
-  node: string | IdType;
+  node: string;
 }
 
 export interface GRAPH {
