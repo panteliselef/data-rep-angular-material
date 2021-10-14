@@ -41,4 +41,5 @@ export interface ConnectedNode extends EDGE {
 export interface GRAPH {
   edges: Array<EDGE>;
   nodes: Array<NODE>;
+  diseases?: Array<string>;
 }

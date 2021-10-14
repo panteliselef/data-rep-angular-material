@@ -20,8 +20,6 @@ export class DatasetFilterBarComponent implements OnInit, OnDestroy {
   diseasesInGraph$: Observable<string[]>;
   filteredOptions$: Observable<string[]>;
 
-  diseasesInGraph: string[];
-
   highlightDiseaseControl = new FormControl();
   private diseasesSub: Subscription;
 

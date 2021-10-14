@@ -1,89 +1,85 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatSliderChange} from '@angular/material/slider';
 import {FormControl} from '@angular/forms';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {map, startWith} from 'rxjs/operators';
 import {Observable, Subscription} from 'rxjs';
-import {DEPTH_DEGREE, DEPTH_DEGREE_ARR, GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
+import {PhenonetNetworkService} from '../phenonet-network.service';
 
 @Component({
   selector: 'app-graph-filter-bar',
   templateUrl: './graph-filter-bar.component.html',
   styleUrls: ['./graph-filter-bar.component.scss']
 })
-export class GraphFilterBarComponent implements OnInit, OnChanges, OnDestroy {
+export class GraphFilterBarComponent implements OnInit, OnDestroy {
 
-  @Input() minGraphEdgeFreq: number;
-  @Input() maxGraphEdgeFreq: number;
-  @Input() dropdownItems: Array<string>;
-
-  @Output() sliderChange = new EventEmitter<number>();
-  @Output() highlightDisease = new EventEmitter<string>();
-
-  @Output() neighborDegree = new EventEmitter<DEPTH_DEGREE>();
-
-  currSliderValue: number;
-  highlightDiseaseControl = new FormControl();
-  filteredOptions: Observable<string[]>;
-
-  depthDegreeValues = DEPTH_DEGREE_ARR;
-
-  depthDegree$: Observable<DEPTH_DEGREE>;
+  minEdgeFreq$: Observable<number>;
+  maxEdgeFreq$: Observable<number>;
+  diseasesInGraph$: Observable<string[]>;
+  filteredOptions$: Observable<string[]>;
   isDisabled$: Observable<boolean>;
+  displayAll$: Observable<boolean>;
+  highlightDiseaseControl = new FormControl();
 
-  isToggleChecked: boolean;
-  private depthDegreeSub: Subscription;
+  private diseasesSub: Subscription;
 
-  constructor(private graphFilterBarService: GraphFilterBarService) {
+  constructor(
+    private phenonetService: PhenonetNetworkService) {
   }
 
+
+  /**
+   * Subscribe to Observables
+   */
   ngOnInit(): void {
-    this.minGraphEdgeFreq = this.currSliderValue;
-    this.isDisabled$ = this.graphFilterBarService.isDepthDegreeDisabled$;
-    this.depthDegree$ = this.graphFilterBarService.depthDegree$;
-    this.depthDegreeSub = this.depthDegree$.subscribe((degree: DEPTH_DEGREE) => {
-      this.isToggleChecked = degree !== 1;
+
+    this.isDisabled$ = this.phenonetService.isDisplayAllNodesDisabled$;
+    this.displayAll$ = this.phenonetService.displayAllNodes$;
+    this.minEdgeFreq$ = this.phenonetService.minEdgeFreq$;
+    this.maxEdgeFreq$ = this.phenonetService.maxEdgeFreq$;
+
+    // Get diseases that exist in the displayed graph
+    this.diseasesInGraph$ = this.phenonetService.filteredGraph$.pipe(
+      map( (graph) => graph?.diseases)
+    );
+
+    /**
+     * Once you get the diseases start listening for when user types and filter
+     * those diseases based on the user input
+     */
+    this.diseasesSub = this.diseasesInGraph$.subscribe((diseases) => {
+      if (!diseases) { return; }
+      this.filteredOptions$ = this.highlightDiseaseControl.valueChanges
+        .pipe(
+          startWith(''), // this populates array with every disease
+          map((value: string) => {
+            const filterValue = value.toLowerCase();
+            return diseases.filter(option => option.toLowerCase().includes(filterValue));
+          })
+        );
     });
+
   }
 
   ngOnDestroy(): void {
-    this.depthDegreeSub.unsubscribe();
+    this.diseasesSub.unsubscribe();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.dropdownItems.currentValue) {
-      this.filteredOptions = this.highlightDiseaseControl.valueChanges
-        .pipe(
-          startWith(''),
-          map(value => this._filter(value))
-        );
-    }
+  handleSliderInput($event: MatSliderChange | number): void {
+    const limit = $event instanceof MatSliderChange ? $event.value : $event;
+    this.phenonetService.updateCurrEdgeFreq(limit);
   }
 
-  handleSliderInput($event: MatSliderChange): void {
-    let limit: number;
-    if ($event instanceof MatSliderChange) {
-      limit = $event.value;
-    } else {
-      limit = $event;
-    }
-    this.sliderChange.emit(limit);
-  }
-
+  /**
+   * Emit disease to be highlighted to service subscribers
+   * @param $event disease user selected to highlight
+   */
   emitSelectedOption($event: MatAutocompleteSelectedEvent | string): void {
     const diseaseName = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
-    this.highlightDisease.emit(diseaseName);
+    this.phenonetService.updateDiseaseToBeHighlighted(diseaseName);
   }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-    return this.dropdownItems.filter(option => option.toLowerCase().includes(filterValue));
-  }
-
 
   setNeighborDegree($event: boolean): void {
-    const degree = $event === false ? 1 : 'all';
-    this.graphFilterBarService.updateDepthDegree(degree);
-    this.neighborDegree.emit(degree);
+    this.phenonetService.updateDisplayAllNodes($event);
   }
 }
