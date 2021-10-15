@@ -7,14 +7,15 @@
   <div id="jaja" style="position: relative;gap:15px; width: 100%; max-width: 755px" class="h-flex align-center search_components">
     <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 28px"></div>
     <mat-icon aria-label="search" style="color:#9AA0A6" fontSet="material-icons-round">search</mat-icon>
-    <input (focusin)="searchFocused = true"
-           (focusout)="searchFocused = false"
+    <input appMyAutocomplete
+           (focusin)="onFocusIn()"
+           (focusout)="onFocusOut()"
            [formControl]="searchKeyword"
            type="text"
            placeholder="Search for a Phenotype"/>
-    <div class="search-results" *ngIf="(searchRecommendations$ | async) as searchRecommendations">
+    <div (mouseleave)="removeResultMouseOver()" class="search-results" *ngIf="(searchRecommendations$ | async) as searchRecommendations">
       <div class="search_suggestions">
-        <a *ngFor="let suggestion of searchRecommendations" [routerLink]="suggestion | searchResultUrl">
+        <a (mouseenter)="onSearchResultMouseOver($event, i)" *ngFor="let suggestion of searchRecommendations; let i = index" [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
           <span class="suggestion_primary">{{suggestion.name}}</span>
           <ng-template [ngIf]="suggestion?.categoryName">
             <span class="dot">•</span>

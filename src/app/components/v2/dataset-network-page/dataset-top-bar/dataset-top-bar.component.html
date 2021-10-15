@@ -4,18 +4,20 @@
     <mat-icon aria-label="Expand" fontSet="material-icons-round">expand_more</mat-icon>
   </div>
 
-  <div id="jaja" style="position: relative;gap:15px; width: 100%; max-width: 755px" class="h-flex align-center search_components">
+  <div id="jaja" style="position: relative;gap:15px; width: 100%; max-width: 755px"
+       class="h-flex align-center search_components">
     <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 28px"></div>
     <mat-icon aria-label="search" style="color:#9AA0A6" fontSet="material-icons-round">search</mat-icon>
-    <input (focusin)="searchFocused = true"
-           (focusout)="searchFocused = false"
+    <input appMyAutocomplete
+           (focusin)="onFocusIn()"
+           (focusout)="onFocusOut()"
            [formControl]="searchKeyword"
            type="text"
            placeholder="Search for a Technology or Platform"/>
 
-    <div class="search-results" *ngIf="(searchResults$ | async) as searchResults">
+    <div (mouseleave)="removeResultMouseOver()"  class="search-results" *ngIf="(searchResults$ | async) as searchResults">
       <div class="search_suggestions">
-        <a *ngFor="let suggestion of searchResults" [routerLink]="suggestion | searchResultUrl">
+        <a (mouseenter)="onSearchResultMouseOver($event, i)" *ngFor="let suggestion of searchResults; let i = index" [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
           <span class="suggestion_primary">{{suggestion.name}}</span>
           <ng-template [ngIf]="suggestion?.categoryName">
             <span class="dot">•</span>
@@ -29,17 +31,17 @@
       </div>
     </div>
 
-<!--    <div *ngIf="searchRecommendations.length" class="search-results">-->
+    <!--    <div *ngIf="searchRecommendations.length" class="search-results">-->
 
-<!--      <ul>-->
-<!--&lt;!&ndash;        under development&ndash;&gt;-->
-<!--        <li class="search_suggestion" *ngFor="let suggestion of searchRecommendations">-->
-<!--          <a [href]="'/v2/phenonet/'+suggestion" [routerLink]="'/v2/phenonet/'+suggestion">-->
-<!--            {{suggestion}}-->
-<!--          </a>-->
-<!--        </li>-->
-<!--      </ul>-->
-<!--    </div>-->
+    <!--      <ul>-->
+    <!--&lt;!&ndash;        under development&ndash;&gt;-->
+    <!--        <li class="search_suggestion" *ngFor="let suggestion of searchRecommendations">-->
+    <!--          <a [href]="'/v2/phenonet/'+suggestion" [routerLink]="'/v2/phenonet/'+suggestion">-->
+    <!--            {{suggestion}}-->
+    <!--          </a>-->
+    <!--        </li>-->
+    <!--      </ul>-->
+    <!--    </div>-->
   </div>
 
 </div>
