@@ -1,18 +1,21 @@
-import {Directive, ElementRef, Input} from '@angular/core';
-import {fromEvent} from 'rxjs';
+import {Directive, ElementRef, Input, OnDestroy} from '@angular/core';
+import {fromEvent, Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
 import {SearchService} from '../services/search.service';
 
 @Directive({
   selector: '[appMyAutocomplete]',
 })
-export class MyAutocompleteDirective {
+export class MyAutocompleteDirective implements OnDestroy {
 
   cursor = -1;
   @Input() searchValue = '';
+  private keyboardSub: Subscription;
+  private resultsSub: Subscription;
+  private cursorSub: Subscription;
 
   constructor(private el: ElementRef, private searchService: SearchService) {
-    fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown')
+    this.keyboardSub = fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown')
       .pipe(
         filter(() => this.searchService.searchResultsValue.length > 0),
         filter((event: KeyboardEvent) => {
@@ -37,8 +40,14 @@ export class MyAutocompleteDirective {
         }
       });
 
-    this.searchService.searchResults$.subscribe(_ => this.searchService.updateKeyboardCursor(-1));
-    this.searchService.cursor$.subscribe(n => this.cursor = n);
+    this.resultsSub = this.searchService.searchResults$.subscribe(_ => this.searchService.updateKeyboardCursor(-1));
+    this.cursorSub = this.searchService.cursor$.subscribe(n => this.cursor = n);
+  }
+
+  ngOnDestroy(): void{
+    this.keyboardSub.unsubscribe();
+    this.resultsSub.unsubscribe();
+    this.cursorSub.unsubscribe();
   }
 
 
