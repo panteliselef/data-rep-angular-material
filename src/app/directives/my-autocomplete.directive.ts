@@ -37,7 +37,8 @@ export class MyAutocompleteDirective {
         }
       });
 
-    this.searchService.searchCursor$.subscribe(n => this.cursor = n);
+    this.searchService.searchResults$.subscribe(_ => this.searchService.updateKeyboardCursor(-1));
+    this.searchService.cursor$.subscribe(n => this.cursor = n);
   }
 
 
@@ -48,13 +49,13 @@ export class MyAutocompleteDirective {
     if (c + 1 >= l) {
       c = -1;
       this.cursor = c;
-      this.searchService.updateSearchCursor(c);
+      this.searchService.updateKeyboardCursor(c);
       return;
     } else {
       c++;
     }
     this.cursor = c;
-    this.searchService.updateSearchCursor(c);
+    this.searchService.updateKeyboardCursor(c);
   }
 
   private onArrowUp(event): void {
@@ -64,7 +65,7 @@ export class MyAutocompleteDirective {
     if (c - 1 === -1) {
       c = -1;
       this.cursor = c;
-      this.searchService.updateSearchCursor(c);
+      this.searchService.updateKeyboardCursor(c);
       return;
     } else if (c - 1 < 0) {
       c = l - 1;
@@ -72,7 +73,7 @@ export class MyAutocompleteDirective {
       c--;
     }
     this.cursor = c;
-    this.searchService.updateSearchCursor(c);
+    this.searchService.updateKeyboardCursor(c);
   }
 
   private onEnter(event): void {

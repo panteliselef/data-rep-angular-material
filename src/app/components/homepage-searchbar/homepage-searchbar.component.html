@@ -11,7 +11,7 @@
            autocomplete="off"
            matInput type="text" aria-label="Search"/>
   </div>
-  <div class="search_suggestions_container" *ngIf="(searchResults$ | async) && toolbarSearchInput.value && isToolbarSearchFocused">
+  <div (mouseleave)="removeResultMouseOver()" class="search_suggestions_container" *ngIf="(searchResults$ | async) && toolbarSearchInput.value && isToolbarSearchFocused">
     <div class="search_suggestions">
       <a (mouseenter)="onSearchResultMouseOver($event, i)" *ngFor="let suggestion of (searchResults$ | async); let i = index" [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
         <span class="suggestion_primary">{{suggestion.name}}</span>

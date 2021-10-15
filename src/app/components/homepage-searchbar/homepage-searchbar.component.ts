@@ -32,7 +32,7 @@ export class HomepageSearchbarComponent implements OnInit, OnDestroy {
 
   @HostListener('document:click', ['$event'])
   clickOut(event): void {
-    this.searchService.updateSearchCursor(-1);
+    this.searchService.updateKeyboardCursor(-1);
     this.isToolbarSearchFocused = !!this.eRef.nativeElement.contains(event.target);
   }
 
@@ -47,13 +47,13 @@ export class HomepageSearchbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.cursor$ = this.searchService.searchCursor$;
+    this.cursor$ = this.searchService.cursor$;
 
     this.searchResults$ = this.searchService.searchResults$;
 
     this.focusSub = this.searchService.isInFocus$.subscribe(b => this.isToolbarSearchFocused = b);
 
-    this.cursorSub = this.cursor$.subscribe(
+    this.cursorSub = this.searchService.keyboardCursor$.subscribe(
       n => n !== -1
         ? this.searchValue = this.searchService.searchResultsValue[n].name
         : this.searchValue = this.savedSearchValue);
@@ -75,6 +75,10 @@ export class HomepageSearchbarComponent implements OnInit, OnDestroy {
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
-    this.searchService.updateSearchCursor(indexToBeCursor);
+    this.searchService.updateHoverCursor(indexToBeCursor);
+  }
+
+  removeResultMouseOver(): void {
+    this.searchService.updateHoverCursor(-1);
   }
 }

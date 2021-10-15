@@ -1,16 +1,24 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
-import {BehaviorSubject, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
-import {debounceTime, distinctUntilChanged, startWith, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
+
+interface Cursor {
+  value: number;
+  timestamp: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
-  private searchCursor = new BehaviorSubject<number>(-1);
-  readonly searchCursor$ = this.searchCursor.asObservable();
+  private keyboardCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 1});
+  readonly keyboardCursor$ = this.keyboardCursor.asObservable().pipe(map(v => v.value));
+
+  private hoverCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 0});
+  readonly hoverCursor$ = this.hoverCursor.asObservable();
 
   private searchSelectedCursor = new Subject<number>();
   readonly searchSelectedCursor$ = this.searchSelectedCursor.asObservable();
@@ -28,6 +36,9 @@ export class SearchService {
   private searchKeyword = new BehaviorSubject<string>('');
   readonly searchKeyword$ = this.searchKeyword.asObservable();
 
+  readonly cursor$ = combineLatest([this.keyboardCursor.asObservable(), this.hoverCursor.asObservable()])
+    .pipe(map(([$a, $b]) => $a.timestamp > $b.timestamp ? $a.value : $b.value));
+
   constructor(private apiService: ApiService) {
 
     this.searchKeyword$.pipe(
@@ -39,7 +50,7 @@ export class SearchService {
   }
 
   get cursorValue(): number {
-    return this.searchCursor.getValue();
+    return this.keyboardCursor.getValue().value;
   }
 
 
@@ -72,8 +83,18 @@ export class SearchService {
   }
 
 
-  updateSearchCursor(n: number): void {
-    this.searchCursor.next(n);
+  updateKeyboardCursor(value: number): void {
+    this.keyboardCursor.next({
+      value,
+      timestamp: Date.now()
+    });
+  }
+
+  updateHoverCursor(value: number): void {
+    this.hoverCursor.next({
+      value,
+      timestamp: Date.now()
+    });
   }
 
   updateSelectedCursor(n: number): void {
@@ -81,7 +102,7 @@ export class SearchService {
   }
 
 
-  updateFocus(b: boolean): void{
+  updateFocus(b: boolean): void {
     this.isInFocus.next(b);
   }
 }
