@@ -1,13 +1,30 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
-import {debounceTime, distinctUntilChanged, startWith, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
+
+interface Cursor {
+  value: number;
+  timestamp: number;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
+
+  private keyboardCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 1});
+  readonly keyboardCursor$ = this.keyboardCursor.asObservable().pipe(map(v => v.value));
+
+  private hoverCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 0});
+  readonly hoverCursor$ = this.hoverCursor.asObservable();
+
+  private searchSelectedCursor = new Subject<number>();
+  readonly searchSelectedCursor$ = this.searchSelectedCursor.asObservable();
+
+  private isInFocus = new BehaviorSubject<boolean>(false);
+  readonly isInFocus$ = this.isInFocus.asObservable();
 
   private searchFilters = new BehaviorSubject<SEARCH_FILTER[]>(['none']);
   readonly searchFilters$ = this.searchFilters.asObservable();
@@ -19,6 +36,9 @@ export class SearchService {
   private searchKeyword = new BehaviorSubject<string>('');
   readonly searchKeyword$ = this.searchKeyword.asObservable();
 
+  readonly cursor$ = combineLatest([this.keyboardCursor.asObservable(), this.hoverCursor.asObservable()])
+    .pipe(map(([$a, $b]) => $a.timestamp > $b.timestamp ? $a.value : $b.value));
+
   constructor(private apiService: ApiService) {
 
     this.searchKeyword$.pipe(
@@ -27,6 +47,10 @@ export class SearchService {
       distinctUntilChanged(),
       switchMap((searchKeyword) => this.apiService.getGlobalSearchResults(searchKeyword, this.searchFilters.getValue()))
     ).subscribe(results => this.searchResults.next(results));
+  }
+
+  get cursorValue(): number {
+    return this.keyboardCursor.getValue().value;
   }
 
 
@@ -56,5 +80,29 @@ export class SearchService {
   searchWithFilters(filters: SEARCH_FILTER[], keyword: string): void {
     this.searchFilters.next(filters);
     this.searchKeyword.next(keyword);
+  }
+
+
+  updateKeyboardCursor(value: number): void {
+    this.keyboardCursor.next({
+      value,
+      timestamp: Date.now()
+    });
+  }
+
+  updateHoverCursor(value: number): void {
+    this.hoverCursor.next({
+      value,
+      timestamp: Date.now()
+    });
+  }
+
+  updateSelectedCursor(n: number): void {
+    this.searchSelectedCursor.next(n);
+  }
+
+
+  updateFocus(b: boolean): void {
+    this.isInFocus.next(b);
   }
 }

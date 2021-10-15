@@ -2,21 +2,20 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnChanges,
   OnInit,
-  Output, Renderer2,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {ConnectedNode, EDGE, GRAPH} from 'src/app/models/graph.model';
+import {EDGE, GRAPH} from 'src/app/models/graph.model';
 import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {edgeDefaultColor, fullPhenonetConfig, nodeDefaultColor} from 'src/util/utils';
 import {IdType} from 'vis';
-import {GraphFilterBarService} from 'src/app/services/graph-filter-bar.service';
 import {ActivatedRoute} from '@angular/router';
 import {ImageSaver} from 'src/util/ImageSaver';
+import {PhenonetNetworkService} from '../phenonet-network.service';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-network-graph',
@@ -25,14 +24,7 @@ import {ImageSaver} from 'src/util/ImageSaver';
 })
 export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
 
-  @Input() graphData: GRAPH;
   @Input() disease: string;
-  @Input() sliderValue: number;
-  @Input() diseaseToBeHighlighted: string;
-
-  @Output() selectEdge = new EventEmitter<ConnectedNode>();
-  @Output() selectNode = new EventEmitter<string>();
-  @Output() filterNodes = new EventEmitter<string[]>();
 
   @ViewChild('networkCanvas') canvasContainer: ElementRef;
 
@@ -46,12 +38,14 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
   public visNetworkOptions: Options;
   private highlightActive: boolean;
   private lastSelectedEdge: any;
+  private filteredGraphSub: Subscription;
+  private diseaseToBeHighlighted$: Observable<string>;
+  private diseaseToBeHighlightedSub: Subscription;
 
   constructor(
     private visNetworkService: VisNetworkService,
     private route: ActivatedRoute,
-    private graphFilterBarService: GraphFilterBarService,
-    private rd: Renderer2
+    private phenonetService: PhenonetNetworkService
   ) {
     this.nodes = new DataSet<Node>([]);
     this.edges = new DataSet<Edge>([]);
@@ -63,47 +57,23 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.filteredGraphSub = this.phenonetService.filteredGraph$.subscribe(this.setGraphData.bind(this));
+    this.diseaseToBeHighlighted$ = this.phenonetService.diseaseToBeHighlighted$;
+    this.diseaseToBeHighlightedSub = this.diseaseToBeHighlighted$.subscribe((diseaseToBeHighlighted: string) => {
+      if (!diseaseToBeHighlighted) { return; }
+      this._focusNode(diseaseToBeHighlighted);
+      console.log('Disease Highlighted: ', diseaseToBeHighlighted);
+    });
   }
 
   private _onChangeDisease(disease: string): void {
     this.disease = disease;
-    // if (disease === 'phenonet') { // is full Phenonet
     this.visNetworkOptions = fullPhenonetConfig;
-    // }else {
-    //   this.visNetworkOptions = sPhenonetConfig;
-    // }
-  }
-
-  private _onChangeSlider(currentValue: number): void {
-    const finalNodesSet = new Set<string>();
-    const finalEdges = this.graphData.edges.slice().filter((edge: EDGE) => edge.weight >= currentValue);
-    for (const edge of finalEdges) {
-      finalNodesSet.add(edge.from);
-      finalNodesSet.add(edge.to);
-    }
-    const finalNodes = Array.from(finalNodesSet).map(nodeId => this.graphData.nodes.find(node => node.id === nodeId));
-    // this.nodesInGraph = finalNodesSet.size - 1;
-
-    this.setGraphData({
-      nodes: finalNodes,
-      edges: finalEdges
-    });
-    this.filterNodes.emit(Array.from(finalNodesSet));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    const {disease, graphData, sliderValue, diseaseToBeHighlighted} = changes;
+    const {disease} = changes;
     if (disease?.currentValue) {this._onChangeDisease(disease.currentValue); }
-    if (graphData?.currentValue) {
-      this.setGraphData((graphData.currentValue as GRAPH));
-    }
-    if (sliderValue?.currentValue) {
-      this._onChangeSlider(sliderValue.currentValue as number);
-    }
-
-    if (diseaseToBeHighlighted?.currentValue) {
-      this._focusNode(diseaseToBeHighlighted.currentValue);
-    }
   }
 
   setGraphData(graph: GRAPH): void {
@@ -166,7 +136,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   private _onNetworkHoverNode(eventData: any[]): void {
-    const [_, clickData] = eventData;
+    const [, clickData] = eventData;
     const hoveredNode = clickData.node;
     console.log('hoverNode', hoveredNode);
 
@@ -228,7 +198,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     const allEdges = this.edges.get({returnType: 'Object'}) as any;
 
-    const [networkId, clickData] = eventData;
+    const [, clickData] = eventData;
     const hoveredEdge = clickData.edge;
     console.log(hoveredEdge);
     this.highlightActive = true;
@@ -299,7 +269,7 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
     }else if (clickData?.nodes.length > 0) {
       // Node is clicked
       const clickedNode = clickData.nodes[0];
-      this.selectNode.emit(clickedNode);
+      this.phenonetService.updateSelectedNode(clickedNode);
       this._onNetworkDeselectEdge();
     }else {
       this._onNetworkDeselectEdge();
@@ -307,19 +277,20 @@ export class NetworkGraphComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   private _onNetworkSelectEdge(eventData: any[]): void {
-    const [_, clickData] = eventData;
+    const [, clickData] = eventData;
     const clickedEdge = clickData.edges[0];
     const allEdges = this.edges.get({returnType: 'Object'}) as any;
     const cEdge = allEdges[clickedEdge] as EDGE;
-    this.selectEdge.emit({
+    this.phenonetService.updateSelectedEdge({
       ...cEdge,
       node: cEdge.from === this.disease ? cEdge.to : cEdge.from
     });
   }
 
   private _onNetworkDeselectEdge(): void {
-    this.selectEdge.emit(undefined);
+    this.phenonetService.updateSelectedEdge(undefined);
   }
+
 
   private highlightConnectedNodes(selectedNode: string | IdType): void {
     console.log('Node selected');

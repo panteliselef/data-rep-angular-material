@@ -1,5 +1,3 @@
-import {IdType} from 'vis';
-
 export type DATASET_PAIR = { dA: string, dB: string };
 
 export interface EDGE {
@@ -8,6 +6,17 @@ export interface EDGE {
   value: number;
   weight: number;
   datasetPairs: DATASET_PAIR[];
+}
+
+export interface PostgresResponse {
+  main_table: Array<PostgresStudy>;
+}
+
+export interface PostgresStudy {
+  studyid: string;
+  samples: number;
+  studytype: string;
+  studytypedef: string;
 }
 
 export interface DATASET {
@@ -37,10 +46,11 @@ export interface NODE {
 
 export interface ConnectedNode extends EDGE {
   id?: string;
-  node: string | IdType;
+  node: string;
 }
 
 export interface GRAPH {
   edges: Array<EDGE>;
   nodes: Array<NODE>;
+  diseases?: Array<string>;
 }

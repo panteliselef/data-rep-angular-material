@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
-import {Observable} from 'rxjs';
-import {DATASET, GRAPH} from 'src/app/models/graph.model';
+import {forkJoin, Observable} from 'rxjs';
+import {GRAPH, PostgresResponse, PostgresStudy} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {DiseaseEdge, ElasticModel, GeneData, PlatformEdge} from 'src/app/models/elastic.model';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
@@ -14,7 +14,8 @@ import {map, tap} from 'rxjs/operators';
 })
 export class ApiService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   private apiURL = environment.apiUrl;
 
@@ -53,7 +54,7 @@ export class ApiService {
    * Request 1rst degree neighbors of a disease in phenonet
    * @param disease Disease name e.g. sepsis
    */
-  public getPhenonetDiseaseNeighbors(disease: string): Observable<GRAPH>{
+  public getPhenonetDiseaseNeighbors(disease: string): Observable<GRAPH> {
     return this.http.get<GRAPH>(`${this.apiURL}getPhenoNeighbors?q=${disease}`);
   }
 
@@ -62,7 +63,7 @@ export class ApiService {
    * @param disease Disease name e.g. sepsis
    * @param depth Number of levels deep to search for
    */
-  public getPhenonetDiseaseNeighborsAtDepth(disease: string, depth: DEPTH_DEGREE): Observable<GRAPH>{
+  public getPhenonetDiseaseNeighborsAtDepth(disease: string, depth: DEPTH_DEGREE): Observable<GRAPH> {
     return this.http.get<GRAPH>(`${this.apiURL}getPhenoNeighborsAtDepth?q=${disease}&d=${depth}`);
   }
 
@@ -89,7 +90,7 @@ export class ApiService {
   public getPhenonetElastic(disease?: string): Observable<DiseaseEdge[]> {
     return this.http.get<ElasticModel>(`http://snf-880201.vm.okeanos.grnet.gr:8000/get_phenonet_data/${disease ? `?q=${disease}` : ''}`)
       .pipe(
-        map((data) => data.hits.hits.map<DiseaseEdge>( (hitEntity) => hitEntity._source as DiseaseEdge))
+        map((data) => data.hits.hits.map<DiseaseEdge>((hitEntity) => hitEntity._source as DiseaseEdge))
       );
   }
 
@@ -98,8 +99,9 @@ export class ApiService {
    * Get annotation data for studies/datasets
    * @param studyIds Array of studies e.g. GSE123,GSE890
    */
-  public getBiodataomeStudies(studyIds: string[]): Observable<Array<DATASET>> {
-    return this.http.get<Array<DATASET>>(`${environment.apiUrl}biodataome?q=${studyIds.join(':')}`);
+  public getBiodataomeStudies(studyIds: string[]): Observable<Array<PostgresStudy>> {
+    const requests = studyIds.map(id => this.http.get<PostgresResponse>(`http://snf-880201.vm.okeanos.grnet.gr:8000/get_relational_data_json_data/?q=${id}`));
+    return forkJoin(requests).pipe(map(responses => responses.map(r => r.main_table[0])));
   }
 
 
@@ -114,7 +116,7 @@ export class ApiService {
     if (filters) {
       params = params.append('filters', filters.join(','));
     }
-    return this.http.get<SearchResult[]>(`${environment.apiUrl}searchV2`, { params });
+    return this.http.get<SearchResult[]>(`${environment.apiUrl}searchV2`, {params});
   }
 
 

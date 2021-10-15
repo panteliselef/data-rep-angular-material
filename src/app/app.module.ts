@@ -31,13 +31,9 @@ import {VisModule} from 'ngx-vis';
 
 import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
-import {VisualizationsComponent} from './components/visualizations/visualizations.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
 import {HomepageComponent} from './components/homepage/homepage.component';
 import {ToolbarSearchComponent} from './components/toolbar-search/toolbar-search.component';
-import {DiseasePageComponent} from './components/disease-page/disease-page.component';
-import {NodeDetailsComponent} from './components/disease-page/node-details/node-details.component';
-import {EdgeDetailsComponent} from './components/disease-page/edge-details/edge-details.component';
 import {DatasetNetworkComponent} from './components/dataset-network/dataset-network.component';
 import {ToolbarSearchDatasetComponent} from './components/toolbar-search-dataset/toolbar-search-dataset.component';
 import {PhenonetNetworkComponent} from './components/v2/phenonet-network-page/phenonet-network.component';
@@ -54,6 +50,7 @@ import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page
 import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
 import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-url.pipe';
 import {SearchResultUrlPipe} from './pipes/search-result-url.pipe';
+import { MyAutocompleteDirective } from './directives/my-autocomplete.directive';
 
 export function importingEchart(): void {
   import('echarts');
@@ -65,13 +62,9 @@ export function importingEchart(): void {
     HeaderComponent,
     HomepageComponent,
     DiseaseNetworkComponent,
-    VisualizationsComponent,
     NavbarComponent,
     NavbarComponent,
     ToolbarSearchComponent,
-    DiseasePageComponent,
-    NodeDetailsComponent,
-    EdgeDetailsComponent,
     DatasetNetworkComponent,
     ToolbarSearchDatasetComponent,
     PhenonetNetworkComponent,
@@ -88,6 +81,7 @@ export function importingEchart(): void {
     DatasetFilterBarComponent,
     DownloadUrlPipe,
     SearchResultUrlPipe,
+    MyAutocompleteDirective,
   ],
   imports: [
     CommonModule,

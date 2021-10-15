@@ -2,33 +2,19 @@
 
 
 <app-phenonet-top-bar
-  *ngIf="!(loadingGraphData$ | async)"
+  *ngIf="(filteredGraph$ | async)"
   style="width: 100%; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.12);"
   [searchBarPhenotype]="mainDisease"
 >
 </app-phenonet-top-bar>
 
 <!--courseObs | async as course; else loading-->
-<main *ngIf="!(loadingGraphData$ | async) as loadingGraph; else loader " class="app-two-column-grid">
+<main *ngIf="(filteredGraph$ | async) as loadingGraph; else loader " class="app-two-column-grid">
   <div style="gap: 35px;" class="v-flex">
-    <app-graph-filter-bar
-      [minGraphEdgeFreq]="minGraphEdgeFreq"
-      [maxGraphEdgeFreq]="maxGraphEdgeFreq"
-      [dropdownItems]="filterNodes"
-      (sliderChange)="handleSliderInput($event)"
-      (neighborDegree)="onDegreeDepthClick($event)"
-      (highlightDisease)="diseaseToBeHighlighted = $event"
-    ></app-graph-filter-bar>
+    <app-graph-filter-bar></app-graph-filter-bar>
 
     <app-network-graph
       [disease]="mainDisease || 'phenonet'"
-      [graphData]="mainDiseaseGraph"
-      [sliderValue]="currSliderValue"
-      [diseaseToBeHighlighted]="diseaseToBeHighlighted"
-      (selectEdge)="onEdgeSelect($event)"
-      (selectNode)="onNodeSelect($event)"
-      (filterNodes)="filterNodes = $event"
-
     ></app-network-graph>
 
 
@@ -46,7 +32,7 @@
       </div>
     </div>
 
-    <div *ngIf="selectedEdge" style="padding-bottom: 29px" class="v-flex as-card">
+    <div *ngIf="selectedEdge" style="padding-bottom: 19px" class="v-flex as-card">
       <div class="v-flex align-flex-start" style="gap:9px;padding: 17px 17px 0 17px">
         <div class="badge-edge">EDGE</div>
         <div class="flex" style="gap:6px;">
@@ -65,13 +51,13 @@
       <app-study-pairs-list
         style="width: 100%; overflow: hidden"
         [parentComponentName]="'edge-info-panel'"
-        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="mainDisease"
-        [secondaryDisease]="selectedEdge.node"></app-study-pairs-list>
+        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="selectedEdge.from"
+        [secondaryDisease]="selectedEdge.to"></app-study-pairs-list>
 
     </div>
 
 
-    <div *ngIf="mainDisease && !selectedEdge" class="info-panel">
+    <div *ngIf="mainDisease && !selectedEdge && studies$ | async as studies; else sideLoading" class="info-panel">
 
       <div class="info-panel-top-part">
         <div class="v-flex align-flex-start" style="gap:9px;">
@@ -87,7 +73,7 @@
               Neighbors
             </p>
             <p class="stat-value">
-              {{mainDiseaseNeighborsCount}}
+              {{(connectedNodes$ | async).data.length ?? 0}}
             </p>
           </div>
 
@@ -96,7 +82,7 @@
               Studies
             </p>
             <p class="stat-value">
-              {{mainDiseaseStudiesCount}}
+              {{studies?.data.length ?? 0}}
             </p>
           </div>
         </div>
@@ -107,16 +93,16 @@
       <mat-tab-group mat-align-tabs="start">
         <mat-tab label="Neighbors">
           <ng-template mat-tab-label>
-            <span [matBadge]="connectedNodes.data.length" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
+            <span [matBadge]="(connectedNodes$ | async).data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
           </ng-template>
           <div style="height: 100%;width: 100%; overflow: hidden">
             <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
-            <app-neighbors-table [connectedNodes]="connectedNodes" [mainDisease]="mainDisease"></app-neighbors-table>
+            <app-neighbors-table [connectedNodes]="connectedNodes$ | async" [mainDisease]="mainDisease"></app-neighbors-table>
           </div>
         </mat-tab>
         <mat-tab label="Studies">
           <ng-template mat-tab-label>
-            <span [matBadge]="studies.data.length" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
+            <span [matBadge]="studies?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
           </ng-template>
           <div style="height: 100%;width: 100%; overflow: hidden">
             <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
@@ -129,6 +115,51 @@
     </div>
   </div>
 </main>
+
+<ng-template #sideLoading >
+  <div style="gap: 35px;" class="v-flex">
+    <div class="as-card">
+
+      <div class="v-flex" style="padding: 17px;gap: 31px">
+        <div class="h-flex space-between">
+          <div class="v-flex" style="gap: 9px">
+            <div class="l_placeholder" style="width: 49px;height: 14px;"></div>
+            <div class="l_placeholder" style="width: 163px;height: 21px;"></div>
+          </div>
+
+          <div class="h-flex align-flex-start" style="gap: 23px">
+            <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
+            <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
+          </div>
+        </div>
+
+        <div class="h-flex" style="gap: 50px">
+          <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
+          <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
+        </div>
+      </div>
+
+      <div style="width: 100%; height: 1px;border-bottom: 1px solid rgba(0, 0, 0, 0.12);"></div>
+
+      <div class="v-flex" style="padding: 20px 17px; gap: 20px">
+
+        <div class="h-flex align-center space-between">
+          <div class="l_placeholder" style="width: 420px;height: 14px"></div>
+          <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
+        </div>
+
+        <div class="h-flex align-center space-between">
+          <div class="l_placeholder" style="width: 420px;height: 14px"></div>
+          <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
 
 <ng-template #loader>
 
@@ -153,48 +184,7 @@
       </div>
     </div>
 
-    <div style="gap: 35px;" class="v-flex">
-      <div class="as-card">
-
-        <div class="v-flex" style="padding: 17px;gap: 31px">
-          <div class="h-flex space-between">
-            <div class="v-flex" style="gap: 9px">
-              <div class="l_placeholder" style="width: 49px;height: 14px;"></div>
-              <div class="l_placeholder" style="width: 163px;height: 21px;"></div>
-            </div>
-
-            <div class="h-flex align-flex-start" style="gap: 23px">
-              <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
-              <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
-            </div>
-          </div>
-
-          <div class="h-flex" style="gap: 50px">
-            <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
-            <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
-          </div>
-        </div>
-
-        <div style="width: 100%; height: 1px;border-bottom: 1px solid rgba(0, 0, 0, 0.12);"></div>
-
-        <div class="v-flex" style="padding: 20px 17px; gap: 20px">
-
-          <div class="h-flex align-center space-between">
-            <div class="l_placeholder" style="width: 420px;height: 14px"></div>
-            <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
-          </div>
-
-          <div class="h-flex align-center space-between">
-            <div class="l_placeholder" style="width: 420px;height: 14px"></div>
-            <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
-          </div>
-
-        </div>
-
-
-      </div>
-
-    </div>
+    <ng-template [ngTemplateOutlet]="sideLoading"></ng-template>
 
 
   </main>

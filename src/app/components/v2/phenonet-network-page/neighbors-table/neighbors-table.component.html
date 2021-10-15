@@ -14,14 +14,16 @@
 
   <ng-container matColumnDef="connected_node">
     <th mat-header-cell *matHeaderCellDef> Name</th>
-<!--    <td mat-cell *matCellDef="let element"> {{element.node}} - {{element.to}}</td>-->
     <td mat-cell *matCellDef="let element">
-      <span>{{element.node}}</span>
-      <button mat-icon-button
-              (click)="openNewTab(element.node)"
-              aria-label="See more details">
-        <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
-      </button>
+      <div class="h-flex align-center" style="flex-wrap: nowrap">
+        <p>{{element.node}}</p>
+        <button style="margin-right: auto" mat-icon-button
+                (click)="openNewTab(element.node)"
+                aria-label="See more details">
+          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+        </button>
+      </div>
+
     </td>
   </ng-container>
 
@@ -34,7 +36,6 @@
   <ng-container matColumnDef="icon">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let element">
-      <!--              <span style="text-decoration: none" class="material-icons-round">expand_more</span>-->
       <button mat-icon-button
               (click)="expandedElement = expandedElement === element ? null : element"
               aria-label="See more details">
