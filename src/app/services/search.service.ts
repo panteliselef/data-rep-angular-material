@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {ApiService} from './api.service';
-import {BehaviorSubject, Subscription} from 'rxjs';
+import {BehaviorSubject, Subject, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
 import {debounceTime, distinctUntilChanged, startWith, switchMap} from 'rxjs/operators';
 
@@ -8,6 +8,15 @@ import {debounceTime, distinctUntilChanged, startWith, switchMap} from 'rxjs/ope
   providedIn: 'root'
 })
 export class SearchService {
+
+  private searchCursor = new BehaviorSubject<number>(-1);
+  readonly searchCursor$ = this.searchCursor.asObservable();
+
+  private searchSelectedCursor = new Subject<number>();
+  readonly searchSelectedCursor$ = this.searchSelectedCursor.asObservable();
+
+  private isInFocus = new BehaviorSubject<boolean>(false);
+  readonly isInFocus$ = this.isInFocus.asObservable();
 
   private searchFilters = new BehaviorSubject<SEARCH_FILTER[]>(['none']);
   readonly searchFilters$ = this.searchFilters.asObservable();
@@ -27,6 +36,10 @@ export class SearchService {
       distinctUntilChanged(),
       switchMap((searchKeyword) => this.apiService.getGlobalSearchResults(searchKeyword, this.searchFilters.getValue()))
     ).subscribe(results => this.searchResults.next(results));
+  }
+
+  get cursorValue(): number {
+    return this.searchCursor.getValue();
   }
 
 
@@ -56,5 +69,19 @@ export class SearchService {
   searchWithFilters(filters: SEARCH_FILTER[], keyword: string): void {
     this.searchFilters.next(filters);
     this.searchKeyword.next(keyword);
+  }
+
+
+  updateSearchCursor(n: number): void {
+    this.searchCursor.next(n);
+  }
+
+  updateSelectedCursor(n: number): void {
+    this.searchSelectedCursor.next(n);
+  }
+
+
+  updateFocus(b: boolean): void{
+    this.isInFocus.next(b);
   }
 }
