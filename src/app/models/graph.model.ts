@@ -8,6 +8,17 @@ export interface EDGE {
   datasetPairs: DATASET_PAIR[];
 }
 
+export interface PostgresResponse {
+  main_table: Array<PostgresStudy>;
+}
+
+export interface PostgresStudy {
+  studyid: string;
+  samples: number;
+  studytype: string;
+  studytypedef: string;
+}
+
 export interface DATASET {
   DOLink: string;
   DataAnnot: string;

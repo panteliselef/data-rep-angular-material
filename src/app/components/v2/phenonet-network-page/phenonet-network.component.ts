@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiService} from 'src/app/services/api.service';
-import {ConnectedNode, DATASET, GRAPH, NODE} from 'src/app/models/graph.model';
+import {ConnectedNode, GRAPH, NODE, PostgresStudy} from 'src/app/models/graph.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
@@ -20,7 +20,6 @@ import {filter, map, switchMap} from 'rxjs/operators';
 export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
 
   connectedNodes: MatTableDataSource<ConnectedNode>;
-  studies: MatTableDataSource<DATASET>;
   mainDisease = 'sepsis';
   mainDiseaseGraph: GRAPH;
 
@@ -32,7 +31,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
   diseaseToBeHighlighted: string;
   filteredGraph$: Observable<GRAPH>;
   connectedNodes$: Observable<MatTableDataSource<ConnectedNode>>;
-  studies$: Observable<MatTableDataSource<DATASET>>;
+  studies$: Observable<MatTableDataSource<PostgresStudy>>;
 
   constructor(
     private apiService: ApiService,
@@ -145,7 +144,6 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
   ngOnInit(): void {
     this.routeSub = this.route.params.subscribe(this.onParamsChange.bind(this));
     this.connectedNodes = new MatTableDataSource<ConnectedNode>();
-    this.studies = new MatTableDataSource<DATASET>();
 
 
     /*
@@ -178,7 +176,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
     this.studies$ = this.phenonetService.graph$.pipe(
       map(graph => graph.nodes.filter((n: NODE) => n.disease === this.mainDisease)[0].datasets),
       switchMap(datasetIds => this.apiService.getBiodataomeStudies(datasetIds as string[])),
-      map(datasets => new MatTableDataSource<DATASET>(datasets))
+      map(datasets => new MatTableDataSource<PostgresStudy>(datasets))
     );
 
 

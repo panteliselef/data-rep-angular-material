@@ -57,7 +57,7 @@
     </div>
 
 
-    <div *ngIf="mainDisease && !selectedEdge" class="info-panel">
+    <div *ngIf="mainDisease && !selectedEdge && studies$ | async as studies; else sideLoading" class="info-panel">
 
       <div class="info-panel-top-part">
         <div class="v-flex align-flex-start" style="gap:9px;">
@@ -82,7 +82,7 @@
               Studies
             </p>
             <p class="stat-value">
-              {{(studies$ | async)?.data.length ?? 0}}
+              {{studies?.data.length ?? 0}}
             </p>
           </div>
         </div>
@@ -102,11 +102,11 @@
         </mat-tab>
         <mat-tab label="Studies">
           <ng-template mat-tab-label>
-            <span [matBadge]="(studies$ | async)?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
+            <span [matBadge]="studies?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
           </ng-template>
           <div style="height: 100%;width: 100%; overflow: hidden">
             <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
-            <app-studies-table [studies]="studies$ | async"></app-studies-table>
+            <app-studies-table [studies]="studies"></app-studies-table>
           </div>
         </mat-tab>
       </mat-tab-group>
@@ -115,6 +115,51 @@
     </div>
   </div>
 </main>
+
+<ng-template #sideLoading >
+  <div style="gap: 35px;" class="v-flex">
+    <div class="as-card">
+
+      <div class="v-flex" style="padding: 17px;gap: 31px">
+        <div class="h-flex space-between">
+          <div class="v-flex" style="gap: 9px">
+            <div class="l_placeholder" style="width: 49px;height: 14px;"></div>
+            <div class="l_placeholder" style="width: 163px;height: 21px;"></div>
+          </div>
+
+          <div class="h-flex align-flex-start" style="gap: 23px">
+            <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
+            <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
+          </div>
+        </div>
+
+        <div class="h-flex" style="gap: 50px">
+          <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
+          <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
+        </div>
+      </div>
+
+      <div style="width: 100%; height: 1px;border-bottom: 1px solid rgba(0, 0, 0, 0.12);"></div>
+
+      <div class="v-flex" style="padding: 20px 17px; gap: 20px">
+
+        <div class="h-flex align-center space-between">
+          <div class="l_placeholder" style="width: 420px;height: 14px"></div>
+          <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
+        </div>
+
+        <div class="h-flex align-center space-between">
+          <div class="l_placeholder" style="width: 420px;height: 14px"></div>
+          <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+</ng-template>
 
 <ng-template #loader>
 
@@ -139,48 +184,7 @@
       </div>
     </div>
 
-    <div style="gap: 35px;" class="v-flex">
-      <div class="as-card">
-
-        <div class="v-flex" style="padding: 17px;gap: 31px">
-          <div class="h-flex space-between">
-            <div class="v-flex" style="gap: 9px">
-              <div class="l_placeholder" style="width: 49px;height: 14px;"></div>
-              <div class="l_placeholder" style="width: 163px;height: 21px;"></div>
-            </div>
-
-            <div class="h-flex align-flex-start" style="gap: 23px">
-              <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
-              <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
-            </div>
-          </div>
-
-          <div class="h-flex" style="gap: 50px">
-            <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
-            <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
-          </div>
-        </div>
-
-        <div style="width: 100%; height: 1px;border-bottom: 1px solid rgba(0, 0, 0, 0.12);"></div>
-
-        <div class="v-flex" style="padding: 20px 17px; gap: 20px">
-
-          <div class="h-flex align-center space-between">
-            <div class="l_placeholder" style="width: 420px;height: 14px"></div>
-            <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
-          </div>
-
-          <div class="h-flex align-center space-between">
-            <div class="l_placeholder" style="width: 420px;height: 14px"></div>
-            <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
-          </div>
-
-        </div>
-
-
-      </div>
-
-    </div>
+    <ng-template [ngTemplateOutlet]="sideLoading"></ng-template>
 
 
   </main>

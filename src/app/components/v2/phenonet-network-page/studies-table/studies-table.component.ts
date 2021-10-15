@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {DATASET} from 'src/app/models/graph.model';
+import {PostgresStudy} from 'src/app/models/graph.model';
 
 @Component({
   selector: 'app-studies-table',
@@ -9,7 +9,7 @@ import {DATASET} from 'src/app/models/graph.model';
 })
 export class StudiesTableComponent implements OnInit {
 
-  @Input() studies: MatTableDataSource<DATASET>;
+  @Input() studies: MatTableDataSource<PostgresStudy>;
   studiesTableColumns: string[] = ['id', 'samples', 'entity', 'type'];
 
   constructor() { }
