@@ -40,7 +40,6 @@ export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDe
   private lastSelectedEdge: any;
   private diseaseToBeHighlightedSub: Subscription;
   private filteredGraphSub: Subscription;
-  private selectedEdgeSub: Subscription;
   private selectedNodeSub: Subscription;
   private clickSub: Subscription;
   private deselectEdgeSub: Subscription;
@@ -95,7 +94,6 @@ export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDe
   ngOnDestroy(): void{
     this.diseaseToBeHighlightedSub.unsubscribe();
     this.filteredGraphSub.unsubscribe();
-    this.selectedEdgeSub.unsubscribe();
     this.selectedNodeSub.unsubscribe();
     this.clickSub.unsubscribe();
     this.deselectEdgeSub.unsubscribe();

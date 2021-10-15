@@ -50,6 +50,7 @@ import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page
 import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
 import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-url.pipe';
 import {SearchResultUrlPipe} from './pipes/search-result-url.pipe';
+import { MyAutocompleteDirective } from './directives/my-autocomplete.directive';
 
 export function importingEchart(): void {
   import('echarts');
@@ -80,6 +81,7 @@ export function importingEchart(): void {
     DatasetFilterBarComponent,
     DownloadUrlPipe,
     SearchResultUrlPipe,
+    MyAutocompleteDirective,
   ],
   imports: [
     CommonModule,

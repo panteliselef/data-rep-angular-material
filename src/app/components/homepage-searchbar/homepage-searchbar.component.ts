@@ -1,9 +1,7 @@
-import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {fromEvent, Observable} from 'rxjs';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
 import {SearchService} from 'src/app/services/search.service';
 import {SearchResult} from 'src/app/models/search.model';
-import {filter} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {SearchResultUrlPipe} from 'src/app/pipes/search-result-url.pipe';
 
@@ -12,7 +10,7 @@ import {SearchResultUrlPipe} from 'src/app/pipes/search-result-url.pipe';
   templateUrl: './homepage-searchbar.component.html',
   styleUrls: ['./homepage-searchbar.component.scss']
 })
-export class HomepageSearchbarComponent implements OnInit {
+export class HomepageSearchbarComponent implements OnInit, OnDestroy {
 
   @ViewChild('toolbarSearchInput', {static: true}) toolbarSearchInput: ElementRef;
 
@@ -21,10 +19,12 @@ export class HomepageSearchbarComponent implements OnInit {
   searchValue = '';
   savedSearchValue = '';
   isToolbarSearchFocused = false;
-  cursor = -1;
+  cursor$: Observable<number>;
+  private focusSub: Subscription;
+  private cursorSub: Subscription;
+  private selectedCursorSub: Subscription;
 
-  constructor(private httpService: HttpClient,
-              private searchService: SearchService,
+  constructor(private searchService: SearchService,
               private eRef: ElementRef,
               private router: Router) {
   }
@@ -32,104 +32,53 @@ export class HomepageSearchbarComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   clickOut(event): void {
-    this.cursor = -1; // Restart cursor
+    this.searchService.updateKeyboardCursor(-1);
     this.isToolbarSearchFocused = !!this.eRef.nativeElement.contains(event.target);
   }
 
-  private onArrowDown(event): void {
-    event.preventDefault();
-    const l = this.searchService.searchResultsValue.length;
-    let c = this.cursor;
-    if (c === -1) {
-      this.savedSearchValue = this.searchValue;
-    }
-
-    if (c + 1 >= l) {
-      c = -1;
-      this.cursor = c;
-      this.searchValue = this.savedSearchValue;
-      return;
-    } else {
-      c++;
-    }
-    this.cursor = c;
-    this.searchValue = this.searchService.searchResultsValue[c].name;
-  }
-
-  private onArrowUp(event): void {
-    event.preventDefault();
-    const l = this.searchService.searchResultsValue.length;
-    let c = this.cursor;
-    if (c === -1) {
-      this.savedSearchValue = this.searchValue;
-    }
-
-    if (c - 1 === -1) {
-      c = -1;
-      this.cursor = c;
-      this.searchValue = this.savedSearchValue;
-      return;
-    } else if (c - 1 < 0) {
-      c = l - 1;
-    } else {
-      c--;
-    }
-    this.cursor = c;
-    this.searchValue = this.searchService.searchResultsValue[c].name;
-  }
-
-  private onEnter(event): void {
-    event.preventDefault();
-    return this._redirectToSearchResult(this.cursor);
-  }
-
-  private _onEscape(): void {
-    this.isToolbarSearchFocused = false;
-  }
 
   private _redirectToSearchResult(index: number): void {
     if (index < 0) {
       return;
     }
     this.router.navigate(
-      [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[this.cursor])]
+      [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[this.searchService.cursorValue])]
     ).then();
   }
 
   ngOnInit(): void {
+    this.cursor$ = this.searchService.cursor$;
+
     this.searchResults$ = this.searchService.searchResults$;
 
-    fromEvent<KeyboardEvent>(this.toolbarSearchInput.nativeElement, 'keydown')
-      .pipe(
-        filter((event: KeyboardEvent) => {
-          return ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Enter', 'Escape'].includes(event.code);
-        })
-      )
-      .subscribe((event) => {
-        switch (event.code) {
-          case 'ArrowDown':
-            this.onArrowDown(event);
-            break;
-          case 'ArrowUp':
-            this.onArrowUp(event);
-            break;
-          case 'Enter':
-            this.onEnter(event);
-            break;
-          case 'Escape':
-            this._onEscape();
-            break;
-        }
-      });
+    this.focusSub = this.searchService.isInFocus$.subscribe(b => this.isToolbarSearchFocused = b);
 
+    this.cursorSub = this.searchService.keyboardCursor$.subscribe(
+      n => n !== -1
+        ? this.searchValue = this.searchService.searchResultsValue[n].name
+        : this.searchValue = this.savedSearchValue);
+
+    this.selectedCursorSub = this.searchService.searchSelectedCursor$.subscribe(this._redirectToSearchResult.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    this.focusSub.unsubscribe();
+    this.cursorSub.unsubscribe();
+    this.selectedCursorSub.unsubscribe();
   }
 
   searchDiseases($event: string): void {
     this.searchValue = $event;
+    this.savedSearchValue = $event;
+    this.searchService.updateFocus(true);
     this.searchService.searchWithFilter('none', this.searchValue);
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
-    this.cursor = indexToBeCursor;
+    this.searchService.updateHoverCursor(indexToBeCursor);
+  }
+
+  removeResultMouseOver(): void {
+    this.searchService.updateHoverCursor(-1);
   }
 }
