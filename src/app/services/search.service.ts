@@ -4,6 +4,7 @@ import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from 'src/app/models/search.model';
 import {debounceTime, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
 import {SearchResultStudy} from '../models/postgres.model';
+import {DatabaseService} from './database.service';
 
 interface Cursor {
   value: number;
@@ -40,13 +41,13 @@ export class SearchService {
   readonly cursor$ = combineLatest([this.keyboardCursor.asObservable(), this.hoverCursor.asObservable()])
     .pipe(map(([$a, $b]) => $a.timestamp > $b.timestamp ? $a.value : $b.value));
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private db: DatabaseService) {
 
     this.searchKeyword$.pipe(
       startWith('as'),
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((searchKeyword) => this.apiService.getPostgresSearchResults(searchKeyword))
+      switchMap((searchKeyword) => this.db.searchKeyword(searchKeyword))
     ).subscribe(results => {
 
       const f = [

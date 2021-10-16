@@ -3,6 +3,7 @@ import {BehaviorSubject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
 import {PlatformEdge, PlatformNode} from 'src/app/models/elastic.model';
+import {ElasticService} from '../../../services/elastic.service';
 
 /**
  * A service for managing the state of dataset-network page
@@ -34,7 +35,8 @@ export class DatasetNetworkService {
   readonly technology$ = this.technology.asObservable();
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private elastic: ElasticService
   ) {
 
   }
@@ -119,7 +121,7 @@ export class DatasetNetworkService {
     // Uncomment this line to request from Node API
     // this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
 
-    this.apiService.getTechnologyGraphElastic(technology).subscribe((edges: PlatformEdge[]) => {
+    this.elastic.getPlatformGraph(technology).subscribe((edges: PlatformEdge[]) => {
       // TODO: make this private function
       const diseaseSet = new Set<string>();
       const nodes = new Array<GPLNODE>();
