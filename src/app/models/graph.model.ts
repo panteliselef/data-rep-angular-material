@@ -1,8 +1,8 @@
 export type DATASET_PAIR = { dA: string, dB: string };
 
 export interface EDGE {
-  from: string;
-  to: string;
+  from: string | NODE;
+  to: string | NODE;
   value: number;
   weight: number;
   datasetPairs: DATASET_PAIR[];
