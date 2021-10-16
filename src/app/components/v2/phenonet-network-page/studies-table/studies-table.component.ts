@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {PostgresStudy} from 'src/app/models/graph.model';
+import {PostgresStudy} from 'src/app/models/postgres.model';
 
 @Component({
   selector: 'app-studies-table',

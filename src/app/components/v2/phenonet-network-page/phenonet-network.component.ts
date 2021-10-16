@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiService} from 'src/app/services/api.service';
-import {ConnectedNode, GRAPH, NODE, PostgresStudy} from 'src/app/models/graph.model';
+import {ConnectedNode, GRAPH, NODE} from 'src/app/models/graph.model';
+import {PostgresStudy} from 'src/app/models/postgres.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';

@@ -2,12 +2,13 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {environment} from 'src/environments/environment';
 import {forkJoin, Observable} from 'rxjs';
-import {GRAPH, PostgresResponse, PostgresStudy} from 'src/app/models/graph.model';
+import {GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {DiseaseEdge, ElasticModel, GeneData, PlatformEdge} from 'src/app/models/elastic.model';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {map, tap} from 'rxjs/operators';
+import {PostgresResponse, PostgresStudy} from 'src/app/models/postgres.model';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,15 @@ export class ApiService {
       tap(ApiService.invokeBlobDownload)
     );
   }
+
+
+  public getPostgresSearchResults(query: string): Observable<PostgresResponse> {
+    console.log('a', query);
+    let params = new HttpParams();
+    params = params.append('q', `arbitary_term,${query}`);
+    return this.http.get<PostgresResponse>(`http://snf-880201.vm.okeanos.grnet.gr:8000/get_relational_data_json_data/`, {params});
+  }
+
 
 
   /**
@@ -101,7 +111,7 @@ export class ApiService {
    */
   public getBiodataomeStudies(studyIds: string[]): Observable<Array<PostgresStudy>> {
     const requests = studyIds.map(id => this.http.get<PostgresResponse>(`http://snf-880201.vm.okeanos.grnet.gr:8000/get_relational_data_json_data/?q=${id}`));
-    return forkJoin(requests).pipe(map(responses => responses.map(r => r.main_table[0])));
+    return forkJoin(requests).pipe(map(responses => responses.map(r => r.main_table[0] as PostgresStudy)));
   }
 
 
