@@ -6,52 +6,37 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {Data, DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
-import {edgeDefaultColor, gplConfig, nodeDefaultColor, gplEdgeColor} from 'src/util/utils';
-import {GplData, GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
+import {DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
+import { gplConfig, gplEdgeColor} from 'src/util/utils';
+import {GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from '../dataset-network.service';
 import {Observable, Subscription} from 'rxjs';
-import {IdType} from 'vis';
-import {ImageSaver} from 'src/util/ImageSaver';
 import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
 import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
-
+import {GraphComponentComponent} from '../../graph-component/graph-component.component';
 @Component({
   selector: 'app-dataset-network-graph',
   templateUrl: './dataset-network-graph.component.html',
   styleUrls: ['./dataset-network-graph.component.scss']
 })
-export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDestroy {
-
-  graphData$: Observable<GplData>;
+export class DatasetNetworkGraphComponent extends GraphComponentComponent implements OnInit, AfterViewInit, OnDestroy {
   diseaseToBeHighlighted$: Observable<string>;
 
   @ViewChild('networkCanvas') canvasContainer: ElementRef;
 
-  canvas: HTMLCanvasElement;
 
   /* About Vis.js Network Graph */
   public visNetwork = 'datasetNetwork';
-  public visNetworkData: Data;
-  private nodes: DataSet<Node>;
-  private edges: DataSet<Edge>;
   public visNetworkOptions: Options;
-  private highlightActive: boolean;
-  private lastSelectedEdge: any;
   private diseaseToBeHighlightedSub: Subscription;
   private filteredGraphSub: Subscription;
   private selectedNodeSub: Subscription;
-  private clickSub: Subscription;
-  private deselectEdgeSub: Subscription;
-  private hoverNodeSub: Subscription;
-  private blurNodeSub: Subscription;
-  private hoverEdgeSub: Subscription;
-  private blurEdgeSub: Subscription;
 
   constructor(
     private datasetNetworkService: DatasetNetworkService,
-    private visNetworkService: VisNetworkService
+    public visNetworkService: VisNetworkService
   ) {
+    super(visNetworkService);
     this.nodes = new DataSet<Node>([]);
     this.edges = new DataSet<Edge>([]);
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
@@ -62,7 +47,7 @@ export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ngOnInit(): void {
-    // gplConfig.groups = groupsGPL570;
+    super.ngOnInit();
     this.visNetworkOptions = gplConfig;
 
     this.datasetNetworkService.technology$.subscribe((technology) => {
@@ -89,314 +74,18 @@ export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDe
       if (!selectedNode) { return; }
       setTimeout(() => this._focusNode(selectedNode.id), 300);
     });
+
+    this.selectedEdge$
+      .subscribe(edge => this.datasetNetworkService.updateSelectedEdge(edge as GPLEDGE));
+    this.selectedNode$
+      .subscribe(node => this.datasetNetworkService.updateSelectedNode(node as GPLNODE));
   }
 
   ngOnDestroy(): void{
+    super.ngOnDestroy();
     this.diseaseToBeHighlightedSub.unsubscribe();
     this.filteredGraphSub.unsubscribe();
     this.selectedNodeSub.unsubscribe();
-    this.clickSub.unsubscribe();
-    this.deselectEdgeSub.unsubscribe();
-    this.hoverNodeSub.unsubscribe();
-    this.blurNodeSub.unsubscribe();
-    this.hoverEdgeSub.unsubscribe();
-    this.blurEdgeSub.unsubscribe();
-  }
-
-  setGraphData(graph: GplData): void {
-    this.nodes.clear();
-    this.nodes.add(graph.nodes);
-    this.edges.clear();
-    this.edges.add(graph.edges);
-  }
-
-  fitAllNodes(): void {
-    try {
-      this.visNetworkService.fit(this.visNetwork, {animation: true});
-    }catch (e) {
-      this.visNetworkService.blurEdge.emit([]);
-      setTimeout(() => {
-        this.visNetworkService.fit(this.visNetwork, {animation: true});
-      }, 0);
-    }
-  }
-
-  public networkInitialized(): void {
-    // now we can use the service to register on events
-    this.visNetworkService.on(this.visNetwork, 'click');
-    this.clickSub = this.visNetworkService.click.subscribe(this._onNetworkClick.bind(this));
-
-    // this.visNetworkService.on(this.visNetwork, 'selectEdge');
-    // this.visNetworkService.selectEdge.subscribe(this._onNetworkSelectEdge.bind(this));
-
-    this.visNetworkService.on(this.visNetwork, 'deselectEdge');
-    this.deselectEdgeSub = this.visNetworkService.deselectEdge.subscribe(this._onNetworkDeselectEdge.bind(this));
-
-    this.visNetworkService.on(this.visNetwork, 'hoverNode');
-    this.hoverNodeSub = this.visNetworkService.hoverNode.subscribe(this._onNetworkHoverNode.bind(this));
-
-    this.visNetworkService.on(this.visNetwork, 'blurNode');
-    this.blurNodeSub = this.visNetworkService.blurNode.subscribe(this._onNetworkBlurNode.bind(this));
-
-    this.visNetworkService.on(this.visNetwork, 'hoverEdge');
-    this.hoverEdgeSub = this.visNetworkService.hoverEdge.subscribe(this._onNetworkHoverEdge.bind(this));
-
-    this.visNetworkService.on(this.visNetwork, 'blurEdge');
-    this.blurEdgeSub = this.visNetworkService.blurEdge.subscribe(this._onNetworkBlurEdge.bind(this));
-  }
-
-  private _onNetworkHoverNode(eventData: any[]): void {
-    const [, clickData] = eventData;
-    const hoveredNode = clickData.node;
-    console.log('hoverNode', hoveredNode);
-
-    this.highlightConnectedNodes(hoveredNode);
-  }
-
-  private _focusNode(diseaseId: string): void {
-    this.highlightConnectedNodes(diseaseId);
-    const nodePos = this.visNetworkService.getPositions(this.visNetwork, [diseaseId])[diseaseId];
-    this.visNetworkService.selectNodes(this.visNetwork, [diseaseId], false);
-    this.visNetworkService.moveTo(this.visNetwork, {
-      position: nodePos,
-      scale: 1,
-      offset: {
-        x: 0,
-        y: 0
-      },
-      animation: {
-        easingFunction: 'easeInOutCubic',
-        duration: 500
-      }
-    });
-  }
-
-  private _onNetworkBlurNode(eventData: any[]): void {
-    const allNodes = this.nodes.get({returnType: 'Object'}) as any;
-    const allEdges = this.edges.get({returnType: 'Object'}) as any;
-    if (this.highlightActive === true) {
-      console.log('Nothing hovered');
-      // reset all nodes
-      for (const nodeId in allNodes) {
-        if (allNodes.hasOwnProperty(nodeId)) {
-          allNodes[nodeId].color = undefined;
-          if (allNodes[nodeId].hiddenLabel !== undefined) {
-            allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
-            allNodes[nodeId].hiddenLabel = undefined;
-          }
-        }
-
-      }
-
-      if (this.lastSelectedEdge) {
-        this.lastSelectedEdge.color = edgeDefaultColor;
-      }
-      //
-      // mark all nodes as hard to read.
-      for (const edgeId in allEdges) {
-        if (allEdges.hasOwnProperty(edgeId)) {
-          allEdges[edgeId].color = {
-            inherit: false,
-          };
-        }
-      }
-      this.highlightActive = false;
-
-      let updateArray = [];
-      for (const edgeId in allEdges) {
-        if (allEdges.hasOwnProperty(edgeId)) {
-          updateArray.push(allEdges[edgeId]);
-        }
-      }
-
-      this.edges.update(updateArray);
-
-      // transform the object into an array
-      updateArray = [];
-      for (const nodeId in allNodes) {
-        if (allNodes.hasOwnProperty(nodeId)) {
-          updateArray.push(allNodes[nodeId]);
-        }
-      }
-      this.nodes.update(updateArray);
-    }
-  }
-
-  private _onNetworkHoverEdge(eventData: any[]): void {
-    const allNodes = this.nodes.get({returnType: 'Object'}) as any;
-    const allEdges = this.edges.get({returnType: 'Object'}) as any;
-
-    const [, clickData] = eventData;
-    const hoveredEdge = clickData.edge;
-    console.log(hoveredEdge);
-    this.highlightActive = true;
-    const selectedEdge = hoveredEdge;
-    this.lastSelectedEdge = allNodes[selectedEdge];
-
-
-    // mark all nodes as hard to read.
-    for (const nodeId in allNodes) {
-      if (allNodes.hasOwnProperty(nodeId)) {
-        // console.log(allNodes[nodeId]);
-        allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-        if (allNodes[nodeId].hiddenLabel === undefined) {
-          allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-          allNodes[nodeId].label = undefined;
-        }
-      }
-    }
-
-    // mark all nodes as hard to read.
-    for (const edgeId in allEdges) {
-      if (allEdges.hasOwnProperty(edgeId)) {
-        allEdges[edgeId].color = 'rgba(200,200,200,0.5)';
-      }
-    }
-
-    allEdges[selectedEdge].color = edgeDefaultColor;
-
-    const connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, selectedEdge) as any[];
-    connectedNodes.forEach(nodeId => {
-      allNodes[nodeId].color = undefined;
-      allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
-      allNodes[nodeId].hiddenLabel = undefined;
-    });
-
-    let updateArray = [];
-    for (const edgeId in allEdges) {
-      if (allEdges.hasOwnProperty(edgeId)) {
-        updateArray.push(allEdges[edgeId]);
-      }
-    }
-
-    this.edges.update(updateArray);
-
-    // transform the object into an array
-    updateArray = [];
-    for (const nodeId in allNodes) {
-      if (allNodes.hasOwnProperty(nodeId)) {
-        updateArray.push(allNodes[nodeId]);
-      }
-    }
-    this.nodes.update(updateArray);
-  }
-
-  private _onNetworkBlurEdge(eventData: any[]): void {
-    this._onNetworkBlurNode([]);
-  }
-
-  private _onNetworkClick(eventData: any[]): void {
-    const [networkId, clickData] = eventData;
-
-
-    if (networkId !== this.visNetwork) {
-      return;
-    }
-    if (clickData?.nodes?.length === 0 && clickData?.edges?.length === 1) {
-      // Edge is clicked but do nothing because this logic in handled in _onNetworkSelectEdge
-      this._onNetworkSelectEdge(eventData);
-    }else if (clickData?.nodes.length > 0) {
-      // Node is clicked
-      console.log('nodeeee');
-      const clickedNode = clickData.nodes[0];
-      const allNodes = this.nodes.get({returnType: 'Object'}) as any;
-      const cNode = allNodes[clickedNode] as GPLNODE;
-      this.datasetNetworkService.updateSelectedNode(cNode);
-      this._onNetworkDeselectEdge();
-    }else {
-      this.datasetNetworkService.updateSelectedNode(undefined);
-      this._onNetworkDeselectEdge();
-    }
-  }
-
-  private _onNetworkSelectEdge(eventData: any[]): void {
-    const [, clickData] = eventData;
-    const clickedEdge = clickData.edges[0];
-    const allEdges = this.edges.get({returnType: 'Object'}) as any;
-    const cEdge = allEdges[clickedEdge] as GPLEDGE;
-    const allNodes = this.nodes.get({returnType: 'Object'}) as any;
-    cEdge.from = allNodes[cEdge.from as string] as GPLNODE;
-    cEdge.to = allNodes[cEdge.to as string] as GPLNODE;
-    this.datasetNetworkService.updateSelectedEdge(cEdge);
-    this.datasetNetworkService.updateSelectedNode(undefined);
-  }
-
-  private _onNetworkDeselectEdge(): void {
-    this.datasetNetworkService.updateSelectedEdge(undefined);
-  }
-
-  private highlightConnectedNodes(selectedNode: string | IdType): void {
-    console.log('Node selected');
-    const allNodes = this.nodes.get({returnType: 'Object'}) as any;
-    this.highlightActive = true;
-    let i;
-    let j;
-
-
-    const degrees = 2;
-
-    // mark all nodes as hard to read.
-    for (const nodeId in allNodes) {
-      if (allNodes.hasOwnProperty(nodeId)) {
-        // console.log(allNodes[nodeId]);
-        allNodes[nodeId].color = 'rgba(200,200,200,0.5)';
-        if (allNodes[nodeId].hiddenLabel === undefined) {
-          allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-          allNodes[nodeId].label = undefined;
-        }
-      }
-    }
-
-
-    const connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, selectedNode) as any[];
-    let allConnectedNodes = [];
-
-    // get the second degree nodes
-    for (i = 1; i < degrees; i++) {
-      for (j = 0; j < connectedNodes.length; j++) {
-        allConnectedNodes = allConnectedNodes.concat(
-          this.visNetworkService.getConnectedNodes(this.visNetwork, connectedNodes[j] as string)
-        );
-      }
-    }
-
-    // all second degree nodes get a different color and their label back
-    console.log('da', Array.from(new Set([...allConnectedNodes, ...connectedNodes])).sort());
-    for (i = 0; i < allConnectedNodes.length; i++) {
-      allNodes[allConnectedNodes[i]].color = 'rgba(150,150,150,0.5)';
-      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
-        allNodes[allConnectedNodes[i]].label =
-          allNodes[allConnectedNodes[i]].hiddenLabel;
-        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
-      }
-    }
-
-    // all first degree nodes get their own color and their label back
-    console.log('od', Array.from(new Set(connectedNodes)).sort());
-    for (i = 0; i < connectedNodes.length; i++) {
-      allNodes[connectedNodes[i]].color = undefined;
-      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
-        allNodes[connectedNodes[i]].label =
-          allNodes[connectedNodes[i]].hiddenLabel;
-        allNodes[connectedNodes[i]].hiddenLabel = undefined;
-      }
-    }
-
-    // the main node gets its own color and its label back.
-    allNodes[selectedNode].color = nodeDefaultColor;
-    if (allNodes[selectedNode].hiddenLabel !== undefined) {
-      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
-      allNodes[selectedNode].hiddenLabel = undefined;
-    }
-
-    const updateArray = [];
-    for (const nodeId in allNodes) {
-      if (allNodes.hasOwnProperty(nodeId)) {
-        updateArray.push(allNodes[nodeId]);
-      }
-    }
-
-    this.nodes.update(updateArray);
   }
 
   private _highlightByDisease(diseaseName: string): void {
@@ -481,22 +170,6 @@ export class DatasetNetworkGraphComponent implements OnInit, AfterViewInit, OnDe
 
     this.nodes.update(updateArray);
 
-  }
-
-  zoomIn(): void {
-    const scale = this.visNetworkService.getScale(this.visNetwork);
-    this.visNetworkService.moveTo(this.visNetwork, { position: { x: 0, y: 0}, scale: scale + 0.3, animation: true} );
-  }
-
-  zoomOut(): void {
-    const scale = this.visNetworkService.getScale(this.visNetwork);
-    this.visNetworkService.moveTo(this.visNetwork, { position: { x: 0, y: 0}, scale: scale - 0.3, animation: true} );
-  }
-
-  savePNG(): void {
-    const imageSaver = new ImageSaver();
-    imageSaver.fromCanvas(this.canvas);
-    imageSaver.requestDownload('test');
   }
 }
 

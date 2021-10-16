@@ -163,8 +163,8 @@ export class PhenonetNetworkService {
     const finalNodesSet = new Set<string>();
     const finalEdges = graphInstance.edges.slice().filter((edge: EDGE) => edge.weight >= sliderLimit);
     for (const edge of finalEdges) {
-      finalNodesSet.add(edge.from);
-      finalNodesSet.add(edge.to);
+      finalNodesSet.add(edge.from as string);
+      finalNodesSet.add(edge.to as string);
     }
     const finalNodes = Array.from(finalNodesSet).map(nodeId => graphInstance.nodes.find(node => node.id === nodeId));
     return {

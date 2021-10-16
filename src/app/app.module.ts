@@ -51,6 +51,7 @@ import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/da
 import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-url.pipe';
 import {SearchResultUrlPipe} from './pipes/search-result-url.pipe';
 import { MyAutocompleteDirective } from './directives/my-autocomplete.directive';
+import { GraphComponentComponent } from './components/v2/graph-component/graph-component.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -82,6 +83,7 @@ export function importingEchart(): void {
     DownloadUrlPipe,
     SearchResultUrlPipe,
     MyAutocompleteDirective,
+    GraphComponentComponent,
   ],
   imports: [
     CommonModule,

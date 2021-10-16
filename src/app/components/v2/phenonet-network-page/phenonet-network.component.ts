@@ -169,7 +169,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
             ...rest,
             from,
             to,
-            node: from === this.mainDisease ? to : from,
+            node: (from === this.mainDisease ? to : from) as string,
           };
         })
         .sort((a, b) => b.weight - a.weight)),
