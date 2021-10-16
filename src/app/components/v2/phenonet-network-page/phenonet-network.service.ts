@@ -3,6 +3,7 @@ import {ApiService} from 'src/app/services/api.service';
 import {DiseaseEdge, DiseaseNode} from 'src/app/models/elastic.model';
 import {ConnectedNode, DATASET_PAIR, EDGE, GRAPH, NODE} from 'src/app/models/graph.model';
 import {BehaviorSubject, Subscription} from 'rxjs';
+import {ElasticService} from '../../../services/elastic.service';
 
 
 /**
@@ -38,7 +39,8 @@ export class PhenonetNetworkService {
 
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private elastic: ElasticService,
   ) {
   }
 
@@ -113,7 +115,7 @@ export class PhenonetNetworkService {
 
   fetchNetwork(diseaseId?: string): Subscription {
     console.log('fetching', diseaseId);
-    return this.apiService.getPhenonetElastic(diseaseId || '')
+    return this.elastic.getPhenonet(diseaseId || '')
       .subscribe((edges: DiseaseEdge[]) => {
         const graph = this.mapElasticModelToGraph(edges);
         this._setGraph(graph);

@@ -10,6 +10,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ApiService} from 'src/app/services/api.service';
 import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
 import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
+import {ElasticService} from '../../../services/elastic.service';
 
 type GENE = string;
 
@@ -71,6 +72,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
     private datasetNetworkService: DatasetNetworkService,
     private apiService: ApiService,
     private loadingService: LoadingService,
+    private elastic: ElasticService,
     private router: Router,
     private route: ActivatedRoute) {
   }
@@ -154,7 +156,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
         if (!selectedEdge) {
           return EMPTY;
         }
-        return this.apiService.getPlatformGenes(this.datasetNetworkService.technologyValue, selectedEdge);
+        return this.elastic.getPlatformGenes(this.datasetNetworkService.technologyValue, selectedEdge);
       })).subscribe((geneData) => {
       let arr = [];
       switch (this.limitGenes) {

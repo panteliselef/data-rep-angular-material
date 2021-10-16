@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiService} from 'src/app/services/api.service';
-import {ConnectedNode, GRAPH, NODE, PostgresStudy} from 'src/app/models/graph.model';
+import {ConnectedNode, GRAPH, NODE} from 'src/app/models/graph.model';
+import {PostgresStudy} from 'src/app/models/postgres.model';
 import {MatTableDataSource} from '@angular/material/table';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
@@ -10,6 +11,7 @@ import 'src/util/string.extentions';
 import {LoadingService} from 'src/app/services/loading.service';
 import {PhenonetNetworkService} from './phenonet-network.service';
 import {filter, map, switchMap} from 'rxjs/operators';
+import {DatabaseService} from '../../../services/database.service';
 
 @Component({
   selector: 'app-phenonet-network',
@@ -36,6 +38,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
+    private db: DatabaseService,
     private router: Router,
     private loadingService: LoadingService,
     private phenonetService: PhenonetNetworkService,
@@ -175,7 +178,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
 
     this.studies$ = this.phenonetService.graph$.pipe(
       map(graph => graph.nodes.filter((n: NODE) => n.disease === this.mainDisease)[0].datasets),
-      switchMap(datasetIds => this.apiService.getBiodataomeStudies(datasetIds as string[])),
+      switchMap(datasetIds => this.db.getStudiesMetadata(datasetIds as string[])),
       map(datasets => new MatTableDataSource<PostgresStudy>(datasets))
     );
 

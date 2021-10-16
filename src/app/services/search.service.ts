@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
-import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
+import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from 'src/app/models/search.model';
 import {debounceTime, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
+import {SearchResultStudy} from '../models/postgres.model';
+import {DatabaseService} from './database.service';
 
 interface Cursor {
   value: number;
@@ -26,7 +28,7 @@ export class SearchService {
   private isInFocus = new BehaviorSubject<boolean>(false);
   readonly isInFocus$ = this.isInFocus.asObservable();
 
-  private searchFilters = new BehaviorSubject<SEARCH_FILTER[]>(['none']);
+  private searchFilters = new BehaviorSubject<SEARCH_FILTER[]>([]);
   readonly searchFilters$ = this.searchFilters.asObservable();
 
   private searchResults = new BehaviorSubject<SearchResult[]>([]);
@@ -39,14 +41,38 @@ export class SearchService {
   readonly cursor$ = combineLatest([this.keyboardCursor.asObservable(), this.hoverCursor.asObservable()])
     .pipe(map(([$a, $b]) => $a.timestamp > $b.timestamp ? $a.value : $b.value));
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private db: DatabaseService) {
 
     this.searchKeyword$.pipe(
-      startWith(''),
+      startWith('as'),
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap((searchKeyword) => this.apiService.getGlobalSearchResults(searchKeyword, this.searchFilters.getValue()))
-    ).subscribe(results => this.searchResults.next(results));
+      switchMap((searchKeyword) => this.db.searchKeyword(searchKeyword))
+    ).subscribe(results => {
+
+      const f = [
+        ...(this.searchFilters.getValue().length > 0 ? this.searchFilters.getValue() : SEARCH_FILTER_ARR)
+      ];
+
+      const searchResults = [] as SearchResult[];
+
+      if (f.includes('study')) {
+        searchResults.push(...results.main_table.slice(0, 10)
+          .map<SearchResult>((study) => {
+            const s = study as SearchResultStudy;
+            return ({name: s.studyid, foundIn: s.technologyid, categoryName: s.disease}) as SearchResult;
+          }));
+      }
+
+      if (f.includes('phenotype')) {
+        searchResults.push(...results.unique_disease.slice(0, 10).map<SearchResult>(disease => ({name: disease, foundIn: 'phenonet'})));
+      }
+
+      if (f.includes('technology')) {
+        searchResults.push(...results.unique_technologyid.map<SearchResult>(technology => ({name: technology, foundIn: 'technology'})));
+      }
+      this.searchResults.next(searchResults);
+    });
   }
 
   get cursorValue(): number {
