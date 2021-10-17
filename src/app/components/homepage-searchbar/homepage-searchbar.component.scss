@@ -41,6 +41,7 @@
     overflow-y: auto;
     a {
       padding-left: 39px;
+      padding-right: 10px;
       width: 100%;
       text-decoration: none;
       line-height: 30px;
@@ -61,6 +62,9 @@
       .suggestion_secondary {
         font-weight: 400;
         color: #9AA0A6;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
       .dot {
