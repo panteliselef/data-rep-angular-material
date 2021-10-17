@@ -26,7 +26,7 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
 
 
   /* About Vis.js Network Graph */
-  public visNetwork = 'datasetNetwork';
+  public visNetwork = 'dataset'; // Do not change this value
   public visNetworkOptions: Options;
   private diseaseToBeHighlightedSub: Subscription;
   private filteredGraphSub: Subscription;

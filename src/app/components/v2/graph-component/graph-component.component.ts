@@ -204,7 +204,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
 
     const connectedNodes = this.visNetworkService.getConnectedNodes(this.visNetwork, selectedEdge) as any[];
     connectedNodes.forEach(nodeId => {
-      allNodes[nodeId].color = undefined;
+      allNodes[nodeId].color = this.visNetwork === 'phenonet' ? nodeDefaultColor : undefined;
       allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
       allNodes[nodeId].hiddenLabel = undefined;
     });
@@ -277,7 +277,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
     // all first degree nodes get their own color and their label back
     console.log('od', Array.from(new Set(connectedNodes)).sort());
     for (i = 0; i < connectedNodes.length; i++) {
-      allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = this.visNetwork === 'phenonet' ? nodeDefaultColor : undefined;
       if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
         allNodes[connectedNodes[i]].label =
           allNodes[connectedNodes[i]].hiddenLabel;
@@ -310,7 +310,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
       // reset all nodes
       for (const nodeId in allNodes) {
         if (allNodes.hasOwnProperty(nodeId)) {
-          allNodes[nodeId].color = undefined;
+          allNodes[nodeId].color = this.visNetwork === 'phenonet' ? nodeDefaultColor : undefined;
           if (allNodes[nodeId].hiddenLabel !== undefined) {
             allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
             allNodes[nodeId].hiddenLabel = undefined;
@@ -322,7 +322,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
       if (this.lastSelectedEdge) {
         this.lastSelectedEdge.color = edgeDefaultColor;
       }
-      //
+
       // mark all nodes as hard to read.
       for (const edgeId in allEdges) {
         if (allEdges.hasOwnProperty(edgeId)) {
