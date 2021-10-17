@@ -20,7 +20,8 @@
 
   </div>
 
-  <div style="gap: 35px;" class="v-flex">
+  <!--    side panel with separate elements-->
+  <div *ngIf="studies$ | async as studies; else sideLoading" style="gap: 35px;" class="v-flex">
     <div *ngIf="!mainDisease && !selectedEdge" class="as-card with-padding">
       <p class="title title_1">Phenonet</p>
       <div class="hint-with-badges">
@@ -51,13 +52,14 @@
       <app-study-pairs-list
         style="width: 100%; overflow: hidden"
         [parentComponentName]="'edge-info-panel'"
-        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="selectedEdge.from"
-        [secondaryDisease]="selectedEdge.to"></app-study-pairs-list>
+        [studyPairs]="selectedEdge.datasetPairs" [primaryDisease]="selectedEdge.from.id"
+        [secondaryDisease]="selectedEdge.to.id"></app-study-pairs-list>
 
     </div>
 
 
-    <div *ngIf="mainDisease && !selectedEdge && studies$ | async as studies; else sideLoading" class="info-panel">
+
+    <div *ngIf="mainDisease && !selectedEdge && connectedNodes$ | async as connectedNodes" class="info-panel">
 
       <div class="info-panel-top-part">
         <div class="v-flex align-flex-start" style="gap:9px;">
@@ -73,7 +75,7 @@
               Neighbors
             </p>
             <p class="stat-value">
-              {{(connectedNodes$ | async).data.length ?? 0}}
+              {{connectedNodes?.data.length ?? 0}}
             </p>
           </div>
 
@@ -93,11 +95,11 @@
       <mat-tab-group mat-align-tabs="start">
         <mat-tab label="Neighbors">
           <ng-template mat-tab-label>
-            <span [matBadge]="(connectedNodes$ | async).data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
+            <span [matBadge]="connectedNodes?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
           </ng-template>
           <div style="height: 100%;width: 100%; overflow: hidden">
             <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
-            <app-neighbors-table [connectedNodes]="connectedNodes$ | async" [mainDisease]="mainDisease"></app-neighbors-table>
+            <app-neighbors-table [connectedNodes]="connectedNodes" [mainDisease]="mainDisease"></app-neighbors-table>
           </div>
         </mat-tab>
         <mat-tab label="Studies">
