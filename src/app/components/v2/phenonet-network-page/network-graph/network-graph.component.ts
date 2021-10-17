@@ -29,7 +29,7 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
   @ViewChild('networkCanvas') canvasContainer: ElementRef;
 
   /* About Vis.js Network Graph */
-  public visNetwork = 'networkDisease';
+  public visNetwork = 'phenonet'; // Do not change this value
   public visNetworkOptions: Options;
   private filteredGraphSub: Subscription;
   private diseaseToBeHighlighted$: Observable<string>;
@@ -78,15 +78,6 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
     if (disease?.currentValue) {this._onChangeDisease(disease.currentValue); }
   }
 
-  //
-  // private _onNetworkHoverNode(eventData: any[]): void {
-  //   const [, clickData] = eventData;
-  //   const hoveredNode = clickData.node;
-  //   console.log('hoverNode', hoveredNode);
-  //
-  //   this.highlightConnectedNodes(hoveredNode);
-  // }
-  //
   // private _onNetworkBlurNode(eventData: any[]): void {
   //   const allNodes = this.nodes.get({returnType: 'Object'}) as any;
   //   const allEdges = this.edges.get({returnType: 'Object'}) as any;
