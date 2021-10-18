@@ -177,9 +177,12 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
     );
 
     this.studies$ = this.phenonetService.graph$.pipe(
-      map(graph => graph.nodes.filter((n: NODE) => n.disease === this.mainDisease)[0].datasets),
+      map(graph => this.mainDisease ? graph.nodes.filter((n: NODE) => n.disease === this.mainDisease)?.[0]?.datasets : []),
       switchMap(datasetIds => this.db.getStudiesMetadata(datasetIds as string[])),
-      map(datasets => new MatTableDataSource<PostgresStudy>(datasets))
+      map(datasets => {
+        console.log('d', datasets);
+        return new MatTableDataSource<PostgresStudy>(datasets);
+      })
     );
 
 
