@@ -56,16 +56,16 @@ export class SearchService {
 
       const searchResults = [] as SearchResult[];
 
+      if (f.includes('phenotype')) {
+        searchResults.push(...results.unique_disease.slice(0, 10).map<SearchResult>(disease => ({name: disease, foundIn: 'phenonet'})));
+      }
+
       if (f.includes('study')) {
         searchResults.push(...results.main_table.slice(0, 10)
           .map<SearchResult>((study) => {
             const s = study as SearchResultStudy;
             return ({name: s.studyid, foundIn: s.technologyid, categoryName: s.disease}) as SearchResult;
           }));
-      }
-
-      if (f.includes('phenotype')) {
-        searchResults.push(...results.unique_disease.slice(0, 10).map<SearchResult>(disease => ({name: disease, foundIn: 'phenonet'})));
       }
 
       if (f.includes('technology')) {
