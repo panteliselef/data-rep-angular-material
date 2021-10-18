@@ -21,7 +21,7 @@
   </div>
 
   <!--    side panel with separate elements-->
-  <div *ngIf="studies$ | async as studies; else sideLoading" style="gap: 35px;" class="v-flex">
+  <div style="gap: 35px;" class="v-flex">
     <div *ngIf="!mainDisease && !selectedEdge" class="as-card with-padding">
       <p class="title title_1">Phenonet</p>
       <div class="hint-with-badges">
@@ -57,64 +57,67 @@
 
     </div>
 
+    <ng-container *ngIf="mainDisease">
+      <ng-container *ngIf="studies$ | async as studies else sideLoading">
+        <div *ngIf="!selectedEdge && connectedNodes$ | async as connectedNodes" class="info-panel">
+
+          <div class="info-panel-top-part">
+            <div class="v-flex align-flex-start" style="gap:9px;">
+              <div class="badge-node">NODE</div>
+              <p class="title title_1" style="max-width: 270px">{{mainDisease}}</p>
+            </div>
 
 
-    <div *ngIf="mainDisease && !selectedEdge && connectedNodes$ | async as connectedNodes" class="info-panel">
+            <div class="h-flex" style="gap: 32px;margin-right: 10px;">
 
-      <div class="info-panel-top-part">
-        <div class="v-flex align-flex-start" style="gap:9px;">
-          <div class="badge-node">NODE</div>
-          <p class="title title_1" style="max-width: 270px">{{mainDisease}}</p>
+              <div class="statistic-info">
+                <p class="stat-description">
+                  Neighbors
+                </p>
+                <p class="stat-value">
+                  {{connectedNodes?.data.length ?? 0}}
+                </p>
+              </div>
+
+              <div class="statistic-info">
+                <p class="stat-description">
+                  Studies
+                </p>
+                <p class="stat-value">
+                  {{studies?.data.length ?? 0}}
+                </p>
+              </div>
+            </div>
+
+
+          </div>
+
+          <mat-tab-group mat-align-tabs="start">
+            <mat-tab label="Neighbors">
+              <ng-template mat-tab-label>
+                <span [matBadge]="connectedNodes?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
+              </ng-template>
+              <div style="height: 100%;width: 100%; overflow: hidden">
+                <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
+                <app-neighbors-table [connectedNodes]="connectedNodes" [mainDisease]="mainDisease"></app-neighbors-table>
+              </div>
+            </mat-tab>
+            <mat-tab label="Studies">
+              <ng-template mat-tab-label>
+                <span [matBadge]="studies?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
+              </ng-template>
+              <div style="height: 100%;width: 100%; overflow: hidden">
+                <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
+                <app-studies-table [studies]="studies"></app-studies-table>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+
+
         </div>
+      </ng-container>
 
-
-        <div class="h-flex" style="gap: 32px;margin-right: 10px;">
-
-          <div class="statistic-info">
-            <p class="stat-description">
-              Neighbors
-            </p>
-            <p class="stat-value">
-              {{connectedNodes?.data.length ?? 0}}
-            </p>
-          </div>
-
-          <div class="statistic-info">
-            <p class="stat-description">
-              Studies
-            </p>
-            <p class="stat-value">
-              {{studies?.data.length ?? 0}}
-            </p>
-          </div>
-        </div>
-
-
-      </div>
-
-      <mat-tab-group mat-align-tabs="start">
-        <mat-tab label="Neighbors">
-          <ng-template mat-tab-label>
-            <span [matBadge]="connectedNodes?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Neighbors</span>
-          </ng-template>
-          <div style="height: 100%;width: 100%; overflow: hidden">
-            <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
-            <app-neighbors-table [connectedNodes]="connectedNodes" [mainDisease]="mainDisease"></app-neighbors-table>
-          </div>
-        </mat-tab>
-        <mat-tab label="Studies">
-          <ng-template mat-tab-label>
-            <span [matBadge]="studies?.data.length ?? 0" matBadgeSize="small" matBadgeOverlap="false">Studies</span>
-          </ng-template>
-          <div style="height: 100%;width: 100%; overflow: hidden">
-            <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
-            <app-studies-table [studies]="studies"></app-studies-table>
-          </div>
-        </mat-tab>
-      </mat-tab-group>
-
-
-    </div>
+    </ng-container>
   </div>
 </main>
 
