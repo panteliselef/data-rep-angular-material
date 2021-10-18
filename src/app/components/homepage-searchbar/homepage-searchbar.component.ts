@@ -71,7 +71,7 @@ export class HomepageSearchbarComponent implements OnInit, OnDestroy {
     this.searchValue = $event;
     this.savedSearchValue = $event;
     this.searchService.updateFocus(true);
-    this.searchService.searchWithFilter('none', this.searchValue);
+    this.searchService.searchWithFilters([], this.searchValue);
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
