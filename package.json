@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --poll=1000 --open",
     "start_headless": "ng serve --host=0.0.0.0 --poll=1000",
+    "start_no_host": "ng serve --disable-host-check --poll=1000",
     "build": "ng build",
     "build-prod": "ng build --configuration production",
     "docker-dev": "docker-compose up",

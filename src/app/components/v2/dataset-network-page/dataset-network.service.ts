@@ -41,26 +41,8 @@ export class DatasetNetworkService {
 
   }
 
-  /**
-   * Setting Graph, FilteredGraph and slider min max values
-   * @param graph
-   * @private
-   */
-  private _setGraph(graph: GplData): void {
-    console.warn('setting');
-    this.graph.next(graph);
-    this.filteredGraph.next(graph);
-    this.minSliderValue.next(10);
-    this.maxSliderValue.next(graph.edges.length);
-  }
-
-  /**
-   * Set top k edges from graph and corresponding nodes as a new filtered graph
-   * @param sliderLimit
-   * @private
-   */
-  private _filterOriginalGraph(sliderLimit: number): GplData {
-    const graphInstance = this.graph.getValue();
+  filterGraph(graph: GplData, sliderLimit: number): GplData {
+    const graphInstance = graph;
     const finalNodesSet = new Set<string>();
     const finalCategoriesSet = new Set<string>();
 
@@ -88,6 +70,30 @@ export class DatasetNetworkService {
     };
   }
 
+
+  /**
+   * Setting Graph, FilteredGraph and slider min max values
+   * @param graph
+   * @private
+   */
+  private _setGraph(graph: GplData): void {
+    console.warn('setting');
+    this.graph.next(graph);
+    this.filteredGraph.next(graph);
+    this.minSliderValue.next(10);
+    this.maxSliderValue.next(graph.edges.length);
+  }
+
+  /**
+   * Set top k edges from graph and corresponding nodes as a new filtered graph
+   * @param sliderLimit
+   * @private
+   */
+  private _filterOriginalGraph(sliderLimit: number): GplData {
+    const graphInstance = this.graph.getValue();
+    return this.filterGraph(graphInstance, sliderLimit);
+  }
+
   /**
    * Setting selected slider value
    * @param count
@@ -95,6 +101,18 @@ export class DatasetNetworkService {
    */
   private _setSlider(count: number): void {
     this.sliderEdgeLimit.next(count);
+  }
+
+  get graphSnapshot(): GplData {
+    return this.graph.getValue();
+  }
+
+  get sliderValues(): {min: number, max: number, current: number} {
+    return {
+      min: this.minSliderValue.getValue(),
+      max: this.maxSliderValue.getValue(),
+      current: this.sliderEdgeLimit.getValue()
+    };
   }
 
   /**

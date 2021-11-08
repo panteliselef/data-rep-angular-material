@@ -1,11 +1,11 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subscription} from 'rxjs';
+import {BehaviorSubject, EMPTY, Observable, Subscription, zip} from 'rxjs';
 import {combineLatest} from 'rxjs';
 import {LoadingService} from 'src/app/services/loading.service';
 import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {DatasetNetworkService} from './dataset-network.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {ApiService} from 'src/app/services/api.service';
 import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
@@ -158,26 +158,26 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
         }
         return this.elastic.getPlatformGenes(this.datasetNetworkService.technologyValue, selectedEdge);
       })).subscribe((geneData) => {
-      let arr = [];
-      switch (this.limitGenes) {
-        case 100:
-          arr = geneData.thres100;
-          break;
-        case 500:
-          arr = geneData.thres500;
-          break;
-        case 1000:
-          arr = geneData.thres1000;
-          break;
-        case 2000:
-          arr = geneData.thres2000;
-          break;
-        default:
-          break;
-      }
-      this.genesArray = arr;
-      this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
-    });
+        let arr = [];
+        switch (this.limitGenes) {
+          case 100:
+            arr = geneData.thres100;
+            break;
+          case 500:
+            arr = geneData.thres500;
+            break;
+          case 1000:
+            arr = geneData.thres1000;
+            break;
+          case 2000:
+            arr = geneData.thres2000;
+            break;
+          default:
+            break;
+        }
+        this.genesArray = arr;
+        this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
+      });
 
     this.selectedNodeSub = this.selectedNode$.pipe(
       switchMap((node: GPLNODE) => {
@@ -208,9 +208,12 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
      * @deprecated Now best Explaining genes are being fetched
      */
     // this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
+
+
+    this.findWhenEdgeIsVisibleBetween('GSE5327', 'GSE1456');
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.networkNameSub.unsubscribe();
     this.selectedNodeSub.unsubscribe();
     this.edgeOrGenesSub.unsubscribe();
@@ -218,6 +221,81 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
     this.routeSub.unsubscribe();
     this.technologySub.unsubscribe();
     this.limitGenesSubject.unsubscribe();
+  }
+
+  private findWhenEdgeIsVisibleBetween(nodeId1: string, nodeId2: string): void {
+
+    function areTheyConnected(graph: GplData): boolean {
+
+      function getNeighbors(nodeId: string): [string] {
+        return graph.edges
+          .filter(edge => (edge.to === nodeId || edge.from === nodeId))
+          .map(edge => nodeId === edge.to ? edge.from : edge.to) as [string];
+      }
+
+      const node1Neigh = getNeighbors(nodeId1);
+      console.log(nodeId1, node1Neigh);
+      const node2Neigh = getNeighbors(nodeId2);
+      console.log(nodeId2, node2Neigh);
+      let foundNode;
+      if (node1Neigh.length > node2Neigh.length) {
+        foundNode = node2Neigh.find(node => nodeId1 === node);
+      } else {
+        foundNode = node1Neigh.find(node => nodeId2 === node);
+      }
+      return !!foundNode;
+    }
+
+
+    this.datasetNetworkService.maxSliderValue$.pipe(withLatestFrom(this.datasetNetworkService.minSliderValue$))
+      .subscribe(([max, min]) => {
+
+
+        const graphSnapShot = this.datasetNetworkService.graphSnapshot;
+        if (!graphSnapShot) {
+          return;
+        }
+        const isConnected = areTheyConnected(graphSnapShot);
+        if (!isConnected) {
+          // TODO: the are not ever connected
+          return;
+        }
+        console.log('Found', isConnected);
+
+
+        const binarySearch = (original: number, left: number, filteredGraph: GplData): void => {
+
+          console.log('searching in', left, original);
+          const area = Math.floor((original - left) / 2);
+          if (area === 0) {
+            console.log('finally found at', left, original);
+            return ;
+          }
+          const fGraph = this.datasetNetworkService.filterGraph(filteredGraph, left);
+
+          const found = areTheyConnected(fGraph);
+          // if (right <= left) {
+          //   return ;
+          // }
+
+
+          if (found) {
+            return binarySearch(left, left - area, filteredGraph);
+          }else {
+            console.log('sum', left, area, left + area);
+            // debugger;
+            return binarySearch(original, left + area, filteredGraph);
+            console.log('first not found at', left);
+          }
+
+        };
+
+        binarySearch(max, 0, graphSnapShot); // 85
+
+
+
+      });
+
   }
 
 
