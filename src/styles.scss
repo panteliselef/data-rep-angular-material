@@ -5,7 +5,7 @@
 @import "~vis-network/styles/vis-network.css";
 * { box-sizing: border-box}
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: v.$primaryFontFamily, Roboto, "Helvetica Neue", sans-serif; }
 
 $class: 'icons-material';
 
@@ -31,7 +31,22 @@ $class: 'icons-material';
   }
 }
 
-app-navbar {
+app-root {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+app-navigation-bar {
+  height: 52px;
+  flex: 0 0 52px;
+}
+
+
+app-navbar,
+app-navigation-bar{
   color: #fff;
   position: sticky;
   top: 0;

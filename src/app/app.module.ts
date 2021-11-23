@@ -52,6 +52,9 @@ import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-ur
 import {SearchResultUrlPipe} from './pipes/search-result-url.pipe';
 import { MyAutocompleteDirective } from './directives/my-autocomplete.directive';
 import { GraphComponentComponent } from './components/v2/graph-component/graph-component.component';
+import { NavigationBarComponent } from './components/v3/navigation-bar/navigation-bar.component';
+import { TestingPageComponent } from './components/v3/testing-page/testing-page.component';
+import { SearchBarComponent } from './components/v3/search-bar/search-bar.component';
 
 export function importingEchart(): void {
   import('echarts');
@@ -84,6 +87,9 @@ export function importingEchart(): void {
     SearchResultUrlPipe,
     MyAutocompleteDirective,
     GraphComponentComponent,
+    NavigationBarComponent,
+    TestingPageComponent,
+    SearchBarComponent,
   ],
   imports: [
     CommonModule,

@@ -1,63 +1,11 @@
-<!--<app-header></app-header>-->
-<router-outlet></router-outlet>
+<section *ngIf="!isLoaded else router" class="loading-container v-flex align-center center">
+  <img src="assets/one.svg" alt="loading-spinner">
+</section>
 
-<!--<section class="container">-->
-
-
-
-<!--  <h1>Graph Demo</h1>-->
-
-<!--  <div>-->
-<!--    <mat-form-field appearance="outline">-->
-<!--      <mat-label>Network</mat-label>-->
-<!--&lt;!&ndash;      <mat-select (selectionChange)="getEchartsNetworkData($event)">&ndash;&gt;-->
-<!--&lt;!&ndash;        <mat-option *ngFor="let network of networks" [value]="network">&ndash;&gt;-->
-<!--&lt;!&ndash;          {{network}}&ndash;&gt;-->
-<!--&lt;!&ndash;        </mat-option>&ndash;&gt;-->
-<!--&lt;!&ndash;      </mat-select>&ndash;&gt;-->
-
-<!--      <mat-select (selectionChange)="currentTab === 0 ? getVisNetworkData($event): getEchartsNetworkData($event)">-->
-<!--        <mat-option *ngFor="let network of networks" [value]="network">-->
-<!--          {{network}}-->
-<!--        </mat-option>-->
-<!--      </mat-select>-->
-<!--    </mat-form-field>-->
-<!--  </div>-->
-
-<!--  <mat-slider min="20" [max]="maxSliderValue" step="1" [(value)]="currSliderValue" thumbLabel-->
-<!--              tickInterval="1" (change)="handleSliderChange($event)"></mat-slider>-->
-<!--  <mat-form-field appearance="standard">-->
-<!--    &lt;!&ndash;  <mat-label>Standard form field</mat-label>&ndash;&gt;-->
-<!--    <input matInput [min]="10" [max]="maxSliderValue" type="number" (ngModelChange)="handleSliderChange($event)" [(ngModel)]="currSliderValue">-->
-<!--    &lt;!&ndash;  <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>&ndash;&gt;-->
-<!--    &lt;!&ndash;  <mat-hint>Hint</mat-hint>&ndash;&gt;-->
-<!--  </mat-form-field>-->
-<!--  <mat-tab-group (selectedTabChange)="changeTab($event)">-->
-<!--    <mat-tab label="Vis.js">-->
-<!--      <div *ngIf="visNetworkData">-->
-<!--        <h2>Network</h2>-->
-<!--&lt;!&ndash;        <h3>Basic usage</h3>&ndash;&gt;-->
-
-<!--        <h4 *ngIf="lastSelectedNode">Last Selected Node: {{lastSelectedNode}}</h4>-->
-<!--        <div-->
-<!--          class="network-canvas"-->
-<!--          [visNetwork]="visNetwork"-->
-<!--          [visNetworkData]="visNetworkData"-->
-<!--          [visNetworkOptions]="visNetworkOptions"-->
-<!--          (initialized)="networkInitialized()"-->
-<!--        ></div>-->
-<!--        &lt;!&ndash;    <button type="button" class="btn btn-default" (click)="addNode()">Add node</button>&ndash;&gt;-->
-<!--&lt;!&ndash;        <p><strong>Note:</strong> Open your dev tools to see the console output when the network receives click events.</p>&ndash;&gt;-->
-<!--      </div>-->
-<!--    </mat-tab>-->
-<!--    <mat-tab label="E-charts">-->
-<!--      <div echarts [options]="chartOption" (chartDataZoom)="onChartRendered($event)" [initOpts]="myInitOpts" class="demo-chart"></div>-->
-<!--    </mat-tab>-->
-<!--  </mat-tab-group>-->
-
-
-
-<!--</section>-->
+<ng-template #router>
+  <app-navigation-bar></app-navigation-bar>
+  <router-outlet></router-outlet>
+</ng-template>
 
 
 

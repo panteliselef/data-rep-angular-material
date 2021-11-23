@@ -3,17 +3,37 @@ $green: (
   100: #1e352f
 );
 
+$green-sec: (
+  100: #33574C
+);
+
 $light-green: (
   100: #4D7267,
   30: rgba(77, 114, 103, 0.3),
   20: rgba(77, 114, 103, 0.2),
+  10: rgba(77, 114, 103, 0.1),
   5: rgba(77, 114, 103, 0.05)
+);
+
+$black: (
+  100: #000,
+  87: rgba(0,0,0, 0.87),
+  54: rgba(0,0,0, 0.54),
+  12: rgba(0,0,0, 0.12),
+  8: rgba(0,0,0, 0.08)
+);
+
+$grey: (
+  100: #d9d9d9,
+  35: rgba(217,217,217, 0.35)
 );
 
 $orange: (
   100: #E1954F,
   20: #E1954F34,
 );
+
+$search-2: #757575;
 
 
 
@@ -37,6 +57,8 @@ $green-transparent-3: rgba(77, 114, 103, 0.05);
 
 $drop-shadow-1: 0px 1px 6px rgba(32, 33, 36, 0.28);
 
+
+$app-bg-color: #fff;
 
 
 $primaryFontFamily: 'Manrope', sans-serif;
