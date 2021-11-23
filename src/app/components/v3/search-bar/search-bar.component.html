@@ -1,0 +1,35 @@
+<div class="search-container v-flex" [ngClass]="{'has_results': (searchResults$ | async)?.length > 0 && searchInput.value}">
+  <div class="search-bar-container h-flex align-center">
+    <span class="material-icons-round">search</span>
+    <input #searchInput
+           appMyAutocomplete
+           (focusin)="isToolbarSearchFocused = true"
+           [ngModel]="searchValue || ''"
+           (ngModelChange)="searchDiseases($event)"
+           class="search-bar-input"
+           autocorrect="off"
+           spellcheck="false"
+           placeholder="Search phenotypes, studies, platforms"
+           autocomplete="off"
+           type="text" aria-label="Search"/>
+  </div>
+
+  <div (mouseleave)="removeResultMouseOver()" class="search_suggestions_container" *ngIf="(searchResults$ | async)?.length > 0 && searchInput.value && isToolbarSearchFocused">
+    <div class="search_suggestions">
+      <a (mouseenter)="onSearchResultMouseOver($event, i)" *ngFor="let suggestion of (searchResults$ | async); let i = index" [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
+        <span class="suggestion_primary">{{suggestion.name}}</span>
+        <ng-template [ngIf]="suggestion?.categoryName">
+          <span class="dot">•</span>
+          <span class="suggestion_secondary">{{suggestion?.categoryName}}</span>
+        </ng-template>
+        <ng-template [ngIf]="suggestion?.foundIn">
+          <span class="dot">•</span>
+          <span class="suggestion_secondary">{{suggestion?.foundIn}}</span>
+        </ng-template>
+      </a>
+    </div>
+  </div>
+
+
+
+</div>

@@ -1,0 +1,57 @@
+@use 'src/variables' as v;
+@use 'src/util' as u;
+
+.navbar-header {
+  display: flex;
+  height: 52px;
+  align-items: center;
+  padding: 0 1rem 0 20px;
+  background-color: v.$app-bg-color;
+  color: map-get(v.$green-sec, 100);
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-bottom: 1px solid map-get(v.$black, 8);
+  font-family: v.$primaryFontFamily;
+  gap: 1rem;
+
+  a.logo {
+    flex: 0 0 auto;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    transition: .2s color ease-out;
+
+    &:hover {
+      text-decoration: none;
+      color: map-get(v.$light-green, 100);
+    }
+  }
+
+  .nav-item-container {
+    height: 100%;
+    flex: 0 0 auto;
+    gap: .4rem;
+  }
+
+  a.nav-item {
+    text-decoration: none;
+    color: map-get(v.$light-green, 100);
+    font-weight: 700;
+    height: 100%;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid transparent;
+
+    &:hover {
+      border-bottom-color: map-get(v.$light-green, 100);
+    }
+
+    &.nav-item-active {
+      border-bottom-color: map-get(v.$light-green, 100);
+    }
+  }
+}
+
