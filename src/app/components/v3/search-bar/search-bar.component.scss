@@ -8,17 +8,17 @@
 .search-container {
   width: 100%;
   height: auto;
-  //margin: auto;
   max-width: 594px;
   background-color: v.$app-bg-color;
-  //padding: 5px;
   transition: 0.2s all ease-in-out;
   border-radius: 11px 11px;
 
-  &:focus-within {
+  &:focus-within,
+  &.focused{
     box-shadow: v.$drop-shadow-1;
-    &.has_results {
-      border-radius: 11px 11px 0 0;
+    border-radius: 11px 11px 0 0;
+    &.focused_no_value {
+      border-radius: 11px 11px;
     }
   }
 
@@ -35,7 +35,10 @@
     transition: 0.2s all ease-in-out;
     background-color: map-get(v.$light-green, 10);
 
-    &:focus-within {
+
+
+    &:focus-within,
+    &.focused{
       border-color: map-get(v.$grey, 100);
       background-color: transparent;
     }
@@ -78,13 +81,38 @@
 }
 
 .search_suggestions_container {
-  display: none;
+  display: flex;
   background-color: inherit;
   margin-top: -2px;
   box-shadow: 0 4px 6px rgb(32 33 36 / 28%);
   border-radius: 0 0 11px 11px;
   padding: 5px;
   flex-direction: column;
+
+  .search_empty_suggestion {
+    height: 252px;
+    gap: 15px;
+    padding: 20px;
+
+    img.illustration {
+      width: 150px;
+    }
+
+    p.search-issue {
+      color: map-get(v.$black, 87);
+      font-weight: 600;
+      font-size: u.toRem(14);
+    }
+
+    p.search-issue-suggestion {
+      color: map-get(v.$black, 54);
+      font-weight: 500;
+      font-size: u.toRem(12);
+    }
+
+
+
+  }
 
 
   .search_suggestions {
@@ -95,7 +123,6 @@
 
   .search_suggestions {
     list-style: none;
-    //padding: u.toRem(7) 5px 0 u.toRem(13);
     margin: 0;
     height: inherit;
     overflow-y: auto;
@@ -128,15 +155,9 @@
       }
 
       .dot {
-        //height: 3px;
-        //aspect-ratio: 1/1;
-        //width: 5px;
         color: #bbb;
-        //border-radius: 100%;
-        //display: inline-block;
       }
       &.on_focus {
-        //background: rgba(217, 232, 228, 0.5);
         background-color: map-get(v.$light-green, 5);
       }
     }

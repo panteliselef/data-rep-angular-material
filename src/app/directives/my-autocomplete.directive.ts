@@ -85,7 +85,7 @@ export class MyAutocompleteDirective implements OnDestroy {
     this.searchService.updateKeyboardCursor(c);
   }
 
-  private onEnter(event): void {
+  private onEnter(event: KeyboardEvent): void {
     event.preventDefault();
     return this.searchService.updateSelectedCursor(this.cursor);
   }

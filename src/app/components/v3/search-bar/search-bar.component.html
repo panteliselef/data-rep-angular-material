@@ -1,11 +1,13 @@
-<div class="search-container v-flex" [ngClass]="{'has_results': (searchResults$ | async)?.length > 0 && searchInput.value}">
-  <div class="search-bar-container h-flex align-center">
+<div *ngIf="(searchResults$ | async) as searchResults" class="search-container v-flex"
+     [ngClass]="{'focused_no_value': searchInput.value.trim() === '', 'focused': isToolbarSearchFocused}">
+  <div class="search-bar-container h-flex align-center" [ngClass]="{'focused': isToolbarSearchFocused}">
     <span class="material-icons-round">search</span>
     <input #searchInput
            appMyAutocomplete
            (focusin)="isToolbarSearchFocused = true"
            [ngModel]="searchValue || ''"
            (ngModelChange)="searchDiseases($event)"
+           value=""
            class="search-bar-input"
            autocorrect="off"
            spellcheck="false"
@@ -14,9 +16,31 @@
            type="text" aria-label="Search"/>
   </div>
 
-  <div (mouseleave)="removeResultMouseOver()" class="search_suggestions_container" *ngIf="(searchResults$ | async)?.length > 0 && searchInput.value && isToolbarSearchFocused">
+  <div class="search_suggestions_container" *ngIf="searchResults.length === 0 && searchInput.value && isToolbarSearchFocused">
+
+    <div class="search_empty_suggestion v-flex align-center center">
+
+      <img class="illustration" src="../../assets/empty_search_results.svg" alt="empty results illustration"/>
+
+
+      <div class="v-flex align-center center" style="gap: 10px">
+
+        <p class="search-issue">No results found in our datasets</p>
+
+        <p class="search-issue-suggestion">Check your spelling or try a different term</p>
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+  <div (mouseleave)="removeResultMouseOver()" class="search_suggestions_container"
+       *ngIf="searchResults.length > 0 && searchInput.value && isToolbarSearchFocused">
     <div class="search_suggestions">
-      <a (mouseenter)="onSearchResultMouseOver($event, i)" *ngFor="let suggestion of (searchResults$ | async); let i = index" [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
+      <a (mouseenter)="onSearchResultMouseOver($event, i)" (click)="selectResult(suggestion.name)" *ngFor="let suggestion of searchResults let i = index"
+         [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
         <span class="suggestion_primary">{{suggestion.name}}</span>
         <ng-template [ngIf]="suggestion?.categoryName">
           <span class="dot">•</span>
@@ -29,7 +53,6 @@
       </a>
     </div>
   </div>
-
 
 
 </div>

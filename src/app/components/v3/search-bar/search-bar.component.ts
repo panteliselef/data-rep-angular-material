@@ -1,4 +1,11 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {SearchService} from 'src/app/services/search.service';
 import {Router} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
@@ -11,7 +18,7 @@ import {SearchResultUrlPipe} from 'src/app/pipes/search-result-url.pipe';
   styleUrls: ['./search-bar.component.scss']
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
-  @ViewChild('searchInput', {static: true}) searchInput: ElementRef;
+  @ViewChild('searchInput', {static: false}) searchInput: ElementRef<HTMLInputElement>;
 
   searchResults$: Observable<SearchResult[]>;
 
@@ -31,7 +38,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   clickOut(event): void {
     this.searchService.updateKeyboardCursor(-1);
-    this.isToolbarSearchFocused = (this.eRef.nativeElement.firstChild.firstChild.children[1] === event.target);
+    const componentChildren = Array.from<HTMLElement>(this.eRef.nativeElement.firstChild.children);
+
+    console.log(componentChildren, event.target);
+
+    const isChildArray = componentChildren.map(child => child.contains(event.target));
+
+    console.log(isChildArray);
+    this.isToolbarSearchFocused = isChildArray.includes(true);
   }
 
   private _redirectToSearchResult(index: number): void {
@@ -39,7 +53,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate(
-      [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[this.searchService.cursorValue])]
+      [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[index])]
     ).then();
   }
 
@@ -55,7 +69,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         ? this.searchValue = this.searchService.searchResultsValue[n].name
         : this.searchValue = this.savedSearchValue);
 
-    this.selectedCursorSub = this.searchService.searchSelectedCursor$.subscribe(this._redirectToSearchResult.bind(this));
+    this.selectedCursorSub = this.searchService.searchSelectedCursor$.subscribe((index: number) => {
+      /*
+      * When user selects search results from keyboard
+      * lose focus
+      * */
+
+      this.searchValue = this.searchService.searchResultsValue[index]?.name;
+      this.savedSearchValue = this.searchService.searchResultsValue[index]?.name;
+      this.searchService.updateFocus(false);
+      this.searchInput.nativeElement.blur();
+
+      this._redirectToSearchResult(index);
+    });
   }
 
 
@@ -79,5 +105,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   removeResultMouseOver(): void {
     this.searchService.updateHoverCursor(-1);
+  }
+
+
+  selectResult(name: string): void {
+    this.searchService.updateFocus(false);
+    this.searchValue = name;
+    this.savedSearchValue = name;
   }
 }
