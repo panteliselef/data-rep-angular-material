@@ -55,6 +55,7 @@ import { GraphComponentComponent } from './components/v2/graph-component/graph-c
 import { NavigationBarComponent } from './components/v3/navigation-bar/navigation-bar.component';
 import { TestingPageComponent } from './components/v3/testing-page/testing-page.component';
 import { SearchBarComponent } from './components/v3/search-bar/search-bar.component';
+import { ShortNumberPipe } from './pipes/short-number.pipe';
 
 export function importingEchart(): void {
   import('echarts');
@@ -90,6 +91,7 @@ export function importingEchart(): void {
     NavigationBarComponent,
     TestingPageComponent,
     SearchBarComponent,
+    ShortNumberPipe,
   ],
   imports: [
     CommonModule,

@@ -87,6 +87,7 @@
   box-shadow: 0 4px 6px rgb(32 33 36 / 28%);
   border-radius: 0 0 11px 11px;
   padding: 5px;
+  gap: 10px;
   flex-direction: column;
 
   .search_empty_suggestion {
@@ -116,7 +117,6 @@
 
 
   .search_suggestions {
-    padding: 5px 0;
     display: flex;
     flex-direction: column;
   }

@@ -38,6 +38,26 @@
 
   <div (mouseleave)="removeResultMouseOver()" class="search_suggestions_container"
        *ngIf="searchResults.length > 0 && searchInput.value && isToolbarSearchFocused">
+
+    <div>
+
+      <mat-chip-list aria-label="Search examples">
+        <mat-chip color="primary" class="outline_button" selected>
+          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+          <!--          <span class="material-icons">open_in_new</span>-->
+          v2 Dataset</mat-chip>
+
+        <mat-chip color="primary" class="outline_button" selected>
+          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+          <!--          <span class="material-icons">open_in_new</span>-->
+          v2 Dataset</mat-chip>
+
+      </mat-chip-list>
+
+
+    </div>
+
+
     <div class="search_suggestions">
       <a (mouseenter)="onSearchResultMouseOver($event, i)" (click)="selectResult(suggestion.name)" *ngFor="let suggestion of searchResults let i = index"
          [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
@@ -52,6 +72,11 @@
         </ng-template>
       </a>
     </div>
+    <button class="outline_button with-radius">
+      <span class="material-icons-round">manage_search</span>
+<!--      TODO: use the actual number of results  -->
+      View all {{102001 | shortNumber}} results
+    </button>
   </div>
 
 

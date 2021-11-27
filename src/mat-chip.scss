@@ -1,0 +1,28 @@
+@use "util" as u;
+@forward "buttons";
+
+
+.outline_button.mat-chip.mat-standard-chip {
+  user-select: none;
+  font-weight: normal;
+  font-size: u.toRem(12);
+  &.mat-chip-selected.mat-primary{
+    @extend .outline_button;
+    height: auto;
+  }
+
+  &:not(.mat-chip-disabled):active{
+    box-shadow: none;
+  }
+
+  /* Overrides an absolute layer that messes with background of my chips */
+  &::after {
+    background: transparent;
+  }
+  &:hover {
+    &::after {
+      opacity: 0;
+    }
+  }
+
+}
