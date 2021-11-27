@@ -1,17 +1,35 @@
 @use "util" as u;
-@forward "buttons";
+@use "variables" as v;
+@use "buttons" as b;
 
 
-.outline_button.mat-chip.mat-standard-chip {
+.app-chip.mat-chip.mat-standard-chip {
   user-select: none;
   font-weight: normal;
-  font-size: u.toRem(12);
-  &.mat-chip-selected.mat-primary{
-    @extend .outline_button;
+  font-size: u.toRem(13);
+  text-transform: capitalize;
+
+  &.mat-chip-selected.mat-primary {
+    @include b.outline_button;
     height: auto;
+
+    &.app-chip-selected {
+      @include b.outline_button_pressed;
+      &:hover {
+        background: map-get(v.$light-green,30)
+      }
+    }
+
+    &:hover {
+      @include b.outline_button_hovered;
+    }
+
+    &:active {
+      @include b.outline_button_pressed;
+    }
   }
 
-  &:not(.mat-chip-disabled):active{
+  &:not(.mat-chip-disabled):active {
     box-shadow: none;
   }
 
@@ -22,6 +40,24 @@
   &:hover {
     &::after {
       opacity: 0;
+    }
+  }
+
+
+  /* Overriding mat-icon inside mat-chip */
+  .mat-icon {
+    width: 0;
+    margin-left: -5px;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 20px; /* icon-size */
+    transform: scale(0);
+    height: 20px; /* container-height */
+  }
+
+  &.app-chip-selected {
+    .mat-icon {
+      width: 20px; /* container-width */
+      transform: scale(1);
     }
   }
 

@@ -16,67 +16,60 @@
            type="text" aria-label="Search"/>
   </div>
 
-  <div class="search_suggestions_container" *ngIf="searchResults.length === 0 && searchInput.value && isToolbarSearchFocused">
+  <div class="search_suggestions_container" *ngIf="searchInput.value && isToolbarSearchFocused">
 
-    <div class="search_empty_suggestion v-flex align-center center">
+    <div class="search_filters_container h-flex align-center">
 
-      <img class="illustration" src="../../assets/empty_search_results.svg" alt="empty results illustration"/>
+      <span>Filters: </span>
 
-
-      <div class="v-flex align-center center" style="gap: 10px">
-
-        <p class="search-issue">No results found in our datasets</p>
-
-        <p class="search-issue-suggestion">Check your spelling or try a different term</p>
-
-      </div>
-
-    </div>
-
-
-  </div>
-
-  <div (mouseleave)="removeResultMouseOver()" class="search_suggestions_container"
-       *ngIf="searchResults.length > 0 && searchInput.value && isToolbarSearchFocused">
-
-    <div>
-
-      <mat-chip-list aria-label="Search examples">
-        <mat-chip color="primary" class="outline_button" selected>
-          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
-          <!--          <span class="material-icons">open_in_new</span>-->
-          v2 Dataset</mat-chip>
-
-        <mat-chip color="primary" class="outline_button" selected>
-          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
-          <!--          <span class="material-icons">open_in_new</span>-->
-          v2 Dataset</mat-chip>
-
+      <mat-chip-list aria-label="Search Autocomplete Filters">
+        <mat-chip *ngFor="let searchOption of searchFiltersAvailable" (click)="toggleFilter(searchOption)"
+                  color="primary" class="app-chip"
+                  [ngClass]="{'app-chip-selected': searchFiltersInUse?.includes(searchOption) }" selected>
+          <mat-icon fontSet="material-icons-round">done</mat-icon>
+          {{searchOption}}
+        </mat-chip>
       </mat-chip-list>
 
-
     </div>
 
 
-    <div class="search_suggestions">
-      <a (mouseenter)="onSearchResultMouseOver($event, i)" (click)="selectResult(suggestion.name)" *ngFor="let suggestion of searchResults let i = index"
-         [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
-        <span class="suggestion_primary">{{suggestion.name}}</span>
-        <ng-template [ngIf]="suggestion?.categoryName">
-          <span class="dot">•</span>
-          <span class="suggestion_secondary">{{suggestion?.categoryName}}</span>
-        </ng-template>
-        <ng-template [ngIf]="suggestion?.foundIn">
-          <span class="dot">•</span>
-          <span class="suggestion_secondary">{{suggestion?.foundIn}}</span>
-        </ng-template>
-      </a>
+    <div class="search_empty_suggestion v-flex align-center center" *ngIf="searchResults.length === 0">
+      <img class="illustration" src="../../assets/empty_search_results.svg" alt="empty results illustration"/>
+
+      <div class="v-flex align-center center" style="gap: 10px">
+        <p class="search-issue">No results found in our datasets</p>
+        <p class="search-issue-suggestion">Check your spelling or try a different term</p>
+      </div>
     </div>
-    <button class="outline_button with-radius">
-      <span class="material-icons-round">manage_search</span>
-<!--      TODO: use the actual number of results  -->
-      View all {{102001 | shortNumber}} results
-    </button>
+
+    <ng-container *ngIf="searchResults.length > 0">
+
+      <div (mouseleave)="removeResultMouseOver()" class="search_suggestions">
+        <a (mouseenter)="onSearchResultMouseOver($event, i)" (click)="selectResult(suggestion.name)"
+           *ngFor="let suggestion of searchResults let i = index"
+           [ngClass]="{'on_focus': (cursor$ | async) === i}" [routerLink]="suggestion | searchResultUrl">
+
+          <span class="suggestion_primary">{{suggestion.name}}</span>
+
+          <ng-template [ngIf]="suggestion?.categoryName">
+            <span class="dot">•</span>
+            <span class="suggestion_secondary">{{suggestion?.categoryName}}</span>
+          </ng-template>
+
+          <ng-template [ngIf]="suggestion?.foundIn">
+            <span class="dot">•</span>
+            <span class="suggestion_secondary">{{suggestion?.foundIn}}</span>
+          </ng-template>
+        </a>
+      </div>
+
+      <button class="outline_button with-radius">
+        <span class="material-icons-round">manage_search</span>
+        <!--      TODO: use the actual number of results  -->
+        View all {{102001 | shortNumber}} results
+      </button>
+    </ng-container>
   </div>
 
 

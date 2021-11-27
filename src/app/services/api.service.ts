@@ -88,7 +88,7 @@ export class ApiService {
   public getGlobalSearchResults(query: string, filters?: SEARCH_FILTER[]): Observable<SearchResult[]> {
     let params = new HttpParams();
     params = params.append('q', query);
-    if (filters) {
+    if (filters && filters.length > 0) {
       params = params.append('filters', filters.join(','));
     }
     return this.http.get<SearchResult[]>(`${environment.apiUrl}searchV2`, {params});

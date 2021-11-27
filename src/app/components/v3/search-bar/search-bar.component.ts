@@ -9,7 +9,7 @@ import {
 import {SearchService} from 'src/app/services/search.service';
 import {Router} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
-import {SearchResult} from 'src/app/models/search.model';
+import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from 'src/app/models/search.model';
 import {SearchResultUrlPipe} from 'src/app/pipes/search-result-url.pipe';
 
 @Component({
@@ -26,6 +26,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   savedSearchValue = '';
   isToolbarSearchFocused = false;
   cursor$: Observable<number>;
+
+
+  /*
+    Variables for filtering options
+   */
+  readonly searchFiltersAvailable = SEARCH_FILTER_ARR;
+  searchFiltersInUse = [] as SEARCH_FILTER[];
+
   private focusSub: Subscription;
   private cursorSub: Subscription;
   private selectedCursorSub: Subscription;
@@ -38,13 +46,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   clickOut(event): void {
     this.searchService.updateKeyboardCursor(-1);
+
+    /**
+     * Making sure that if user clicks inside the component, the component will not lose focus
+     */
     const componentChildren = Array.from<HTMLElement>(this.eRef.nativeElement.firstChild.children);
-
-    console.log(componentChildren, event.target);
-
     const isChildArray = componentChildren.map(child => child.contains(event.target));
-
-    console.log(isChildArray);
     this.isToolbarSearchFocused = isChildArray.includes(true);
   }
 
@@ -70,16 +77,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         : this.searchValue = this.savedSearchValue);
 
     this.selectedCursorSub = this.searchService.searchSelectedCursor$.subscribe((index: number) => {
+
       /*
       * When user selects search results from keyboard
       * lose focus
       * */
-
       this.searchValue = this.searchService.searchResultsValue[index]?.name;
       this.savedSearchValue = this.searchService.searchResultsValue[index]?.name;
       this.searchService.updateFocus(false);
       this.searchInput.nativeElement.blur();
 
+      /*
+       * Then navigate to the results
+       */
       this._redirectToSearchResult(index);
     });
   }
@@ -95,8 +105,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.searchValue = $event;
     this.savedSearchValue = $event;
     this.searchService.updateFocus(true);
-    // this.searchService.searchWithFilters([], this.searchValue);
-    this.searchService.searchWithFilter('none', this.searchValue);
+
+    // Using the old Api and considering filtering options
+    this.searchService.searchWithFiltersOldApi(this.searchFiltersInUse, this.searchValue);
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
@@ -112,5 +123,16 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.searchService.updateFocus(false);
     this.searchValue = name;
     this.savedSearchValue = name;
+  }
+
+  toggleFilter(filter: SEARCH_FILTER): void {
+    if (this.searchFiltersInUse.includes(filter)) {
+      this.searchFiltersInUse = this.searchFiltersInUse.filter(f => f !== filter);
+    } else {
+      this.searchFiltersInUse = [...this.searchFiltersInUse, filter];
+    }
+
+    // Perform a new search with the up-to-date filters
+    this.searchService.searchWithFiltersOldApi(this.searchFiltersInUse, this.searchValue);
   }
 }

@@ -1,6 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, Renderer2} from '@angular/core';
 import {interval, Subscription} from 'rxjs';
 import {take} from 'rxjs/operators';
+import FontFaceObserver from 'fontfaceobserver';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,18 @@ import {take} from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+
+  constructor(private renderer: Renderer2){
+
+    /**
+     * Importing material icons for acquiring space for the icons
+     */
+    const keyword = 'icons-material';
+    const materialIcons = new FontFaceObserver('Material Icons Round');
+    materialIcons.load(null, 3000)
+      .then(() => this.renderer.addClass(document.body, `${keyword}-loaded`))
+      .catch(() => this.renderer.addClass(document.body, `${keyword}-error`));
+  }
 
   isLoaded = false;
   private loadingSub: Subscription;

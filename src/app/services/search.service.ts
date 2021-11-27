@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
 import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from 'src/app/models/search.model';
-import {debounceTime, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
+import {debounceTime, delay, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
 import {SearchResultStudy} from '../models/postgres.model';
 import {DatabaseService} from './database.service';
 
@@ -92,6 +92,17 @@ export class SearchService {
    */
   searchWithFilter(filter: SEARCH_FILTER, keyword: string): Subscription {
     return this.apiService.getGlobalSearchResults(keyword).subscribe((results) => {
+      this.searchResults.next(results);
+    });
+  }
+
+  /**
+   * @deprecated use searchWithFilters
+   */
+  searchWithFiltersOldApi(filters: SEARCH_FILTER[], keyword: string): Subscription {
+    return this.apiService.getGlobalSearchResults(keyword, filters)
+      .pipe(delay(1000)) // mimicking slow internet connection
+      .subscribe((results) => {
       this.searchResults.next(results);
     });
   }
