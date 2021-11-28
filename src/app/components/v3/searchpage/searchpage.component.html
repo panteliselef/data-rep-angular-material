@@ -1,0 +1,17 @@
+<main class="search-page-container">
+
+  <section class="filters-section v-flex"></section>
+  <section class="results-section v-flex">
+    <div class="v-flex" style="gap: 10px">
+      <h1>Search Results</h1>
+      <h4>Data Repurposing Dataset: 2k+ results found for "ad" in all categories </h4>
+    </div>
+
+    <h2>Phenotypes</h2>
+
+    <p>{{searchResults$ | async | json}}</p>
+
+
+  </section>
+
+</main>

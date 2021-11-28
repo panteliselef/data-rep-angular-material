@@ -37,6 +37,8 @@ export class SearchService {
   private searchResults = new BehaviorSubject<SearchResult[]>([]);
   readonly searchResults$ = this.searchResults.asObservable();
 
+  private searchResultsAutocomplete = new BehaviorSubject<SearchResult[]>([]);
+  readonly searchResultsAutocomplete$ = this.searchResultsAutocomplete.asObservable();
 
   private searchKeyword = new BehaviorSubject<string>('');
   readonly searchKeyword$ = this.searchKeyword.asObservable();
@@ -92,6 +94,10 @@ export class SearchService {
   }
 
 
+  get searchKeywordValue(): string {
+    return this.searchKeyword.getValue();
+  }
+
   /**
    * @returns a snapshot of search results
    */
@@ -108,17 +114,30 @@ export class SearchService {
     });
   }
 
+
+  private _searchOldApi(filters: SEARCH_FILTER[], keyword: string, subjectToUpdate: BehaviorSubject<SearchResult[]>): Subscription {
+    this.loadingSearchResults.next(true);
+    this.searchKeyword.next(keyword);
+    return this.apiService.getGlobalSearchResults(keyword, filters)
+      .pipe(delay(1000)) // mimicking slow internet connection
+      .subscribe((results) => {
+        this.loadingSearchResults.next(false);
+        subjectToUpdate.next(results);
+      });
+  }
+
   /**
    * @deprecated use searchWithFilters
    */
-  searchWithFiltersOldApi(filters: SEARCH_FILTER[], keyword: string): Subscription {
-    this.loadingSearchResults.next(true);
-    return this.apiService.getGlobalSearchResults(keyword, filters)
-      .pipe(delay(3000)) // mimicking slow internet connection
-      .subscribe((results) => {
-        this.loadingSearchResults.next(false);
-        this.searchResults.next(results);
-      });
+  searchOldApi(filters: SEARCH_FILTER[], keyword: string): Subscription {
+    return this._searchOldApi(filters, keyword, this.searchResults);
+  }
+
+  /**
+   * @deprecated use searchWithFilters
+   */
+  searchOldApiAutocomplete(filters: SEARCH_FILTER[], keyword: string): Subscription {
+    return this._searchOldApi(filters, keyword, this.searchResultsAutocomplete);
   }
 
 

@@ -2,8 +2,14 @@
 @use "variables" as v;
 @use "sass:map";
 @forward "util";
+
+/* Design System */
 @forward "buttons";
-@forward "mat-chip";
+@forward "chip";
+@forward "typography";
+
+
+
 @import "~vis-network/styles/vis-network.css";
 * { box-sizing: border-box}
 html, body { height: 100%; }

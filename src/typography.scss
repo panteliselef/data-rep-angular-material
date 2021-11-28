@@ -1,0 +1,37 @@
+@use "variables" as v;
+@use "util" as u;
+
+
+/* Headings and sub headings */
+h1, .mat-typography h1,
+h2, .mat-typography h2,
+h4, .mat-typography h4,
+.sub-headline-1{
+  font-family: v.$primaryFontFamily;
+  font-style: normal;
+  margin: 0;
+}
+
+h1, .mat-typography h1 {
+  font-weight: 700;
+  font-size: u.toRem(24);
+  line-height: u.toRem(33);
+  color: map-get(v.$green, 100)
+}
+
+h2, .mat-typography h2 {
+  font-weight: 700;
+  font-size: u.toRem(18);
+  line-height: u.toRem(25);
+  color: map-get(v.$green, 100)
+}
+
+h4, .mat-typography h4,
+.sub-headline-1{
+  font-weight: normal;
+  font-size: u.toRem(14);
+  line-height: u.toRem(19);
+  color: map-get(v.$black, 54)
+}
+
+/* END: Headings and sub headings */

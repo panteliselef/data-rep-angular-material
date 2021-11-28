@@ -1,0 +1,34 @@
+@use "src/util" as u;
+
+main.search-page-container {
+  display: grid;
+  grid-template-columns: 320px auto;
+  max-width: 1224px;
+  width: 100%;
+  margin: auto;
+
+
+  .results-section,
+  .filters-section {
+    padding: u.toRem(32);
+  }
+
+  .filters-section {
+
+  }
+
+  .results-section {
+
+  }
+
+  >div {
+    height: 90vh;
+    width: 100%;
+    background: grey;
+  }
+
+  >div:nth-child(1) {
+    background: red;
+    height: 400px;
+  }
+}

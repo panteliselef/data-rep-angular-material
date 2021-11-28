@@ -67,11 +67,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.searchService.searchKeyword$.subscribe(keyword => this.savedSearchValue = this.searchValue = keyword);
+
     this.loadingSearchResults$ = this.searchService.loadingSearchResults$;
 
     this.cursor$ = this.searchService.cursor$;
 
-    this.searchResults$ = this.searchService.searchResults$;
+    this.searchResults$ = this.searchService.searchResultsAutocomplete$;
 
     this.focusSub = this.searchService.isInFocus$.subscribe(b => this.isToolbarSearchFocused = b);
 
@@ -111,7 +113,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.searchService.updateFocus(true);
 
     // Using the old Api and considering filtering options
-    this.searchService.searchWithFiltersOldApi(this.searchFiltersInUse, this.searchValue);
+    this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue);
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
@@ -137,6 +139,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     // Perform a new search with the up-to-date filters
-    this.searchService.searchWithFiltersOldApi(this.searchFiltersInUse, this.searchValue);
+    this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue);
   }
 }

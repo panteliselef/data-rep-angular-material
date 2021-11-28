@@ -5,7 +5,6 @@ import {HomepageComponent} from './components/homepage/homepage.component';
 import {DatasetNetworkComponent} from './components/dataset-network/dataset-network.component';
 import {PhenonetNetworkComponent} from './components/v2/phenonet-network-page/phenonet-network.component';
 import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/dataset-network.component';
-import {TestingPageComponent} from './components/v3/testing-page/testing-page.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent, },
@@ -19,12 +18,15 @@ const routes: Routes = [
   {path: 'v2/dataset', component: DatasetNetworkPageComponent, },
   {path: 'v2/dataset/:technology', component: DatasetNetworkPageComponent, },
   {path: 'v2/dataset/:technology/:study', component: DatasetNetworkPageComponent, },
-  {path: 'v3', component: TestingPageComponent, },
+  {
+    path: 'v3',
+    loadChildren: () => import('./components/v3/v3.module').then(m => m.V3Module)
+  }
   // {path: 'vis', component: VisualizationsComponent}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, {relativeLinkResolution: 'legacy'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
