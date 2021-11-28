@@ -34,7 +34,25 @@
     </div>
 
 
-    <div class="search_empty_suggestion v-flex align-center center" *ngIf="searchResults.length === 0">
+
+    <content-loader
+      *ngIf="loadingSearchResults$ | async"
+      viewBox="0 0 400 130"
+      speed="1"
+      backgroundColor="#eef1f0"
+      foregroundColor="#dbe3e1"
+    >
+      <svg:circle cx="18" cy="17" r="10" />
+      <svg:rect x="38" y="10" rx="7" ry="7" width="167" height="14" />
+      <svg:circle cx="18" cy="48" r="10" />
+      <svg:rect x="38" y="41" rx="7" ry="7" width="242" height="14" />
+      <svg:circle cx="18" cy="80" r="10" />
+      <svg:rect x="38" y="73" rx="7" ry="7" width="125" height="14" />
+      <svg:circle cx="18" cy="112" r="10" />
+      <svg:rect x="38" y="105" rx="7" ry="7" width="154" height="14" />
+    </content-loader>
+
+    <div class="search_empty_suggestion v-flex align-center center" *ngIf="searchResults.length === 0 && !(loadingSearchResults$ | async)">
       <img class="illustration" src="../../assets/empty_search_results.svg" alt="empty results illustration"/>
 
       <div class="v-flex align-center center" style="gap: 10px">
@@ -43,7 +61,7 @@
       </div>
     </div>
 
-    <ng-container *ngIf="searchResults.length > 0">
+    <ng-container *ngIf="searchResults.length > 0 && !(loadingSearchResults$ | async)">
 
       <div (mouseleave)="removeResultMouseOver()" class="search_suggestions">
         <a (mouseenter)="onSearchResultMouseOver($event, i)" (click)="selectResult(suggestion.name)"

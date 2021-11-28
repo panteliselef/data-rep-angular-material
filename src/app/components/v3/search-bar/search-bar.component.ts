@@ -38,6 +38,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private cursorSub: Subscription;
   private selectedCursorSub: Subscription;
 
+  loadingSearchResults$: Observable<boolean>;
+
   constructor(private searchService: SearchService,
               private eRef: ElementRef,
               private router: Router) {
@@ -65,6 +67,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.loadingSearchResults$ = this.searchService.loadingSearchResults$;
+
     this.cursor$ = this.searchService.cursor$;
 
     this.searchResults$ = this.searchService.searchResults$;

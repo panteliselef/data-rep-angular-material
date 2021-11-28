@@ -11,6 +11,8 @@
 
   &.mat-chip-selected.mat-primary {
     @include b.outline_button;
+    background: map-get(v.$light-green,5);
+    color: map-get(v.$green-sec,100);
     height: auto;
 
     &.app-chip-selected {
@@ -22,6 +24,7 @@
 
     &:hover {
       @include b.outline_button_hovered;
+      background: map-get(v.$light-green,20);
     }
 
     &:active {

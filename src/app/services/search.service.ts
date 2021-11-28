@@ -16,6 +16,9 @@ interface Cursor {
 })
 export class SearchService {
 
+  private loadingSearchResults = new BehaviorSubject<boolean>(false);
+  readonly loadingSearchResults$ = this.loadingSearchResults.asObservable();
+
   private keyboardCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 1});
   readonly keyboardCursor$ = this.keyboardCursor.asObservable().pipe(map(v => v.value));
 
@@ -47,6 +50,7 @@ export class SearchService {
       startWith('as'),
       debounceTime(300),
       distinctUntilChanged(),
+      // tap(() => this.loadingSearchResults.next(true)),
       switchMap((searchKeyword) => this.db.searchKeyword(searchKeyword))
     ).subscribe(results => {
 
@@ -57,7 +61,10 @@ export class SearchService {
       const searchResults = [] as SearchResult[];
 
       if (f.includes('phenotype')) {
-        searchResults.push(...results.unique_disease.slice(0, 10).map<SearchResult>(disease => ({name: disease, foundIn: 'phenonet'})));
+        searchResults.push(...results.unique_disease.slice(0, 10).map<SearchResult>(disease => ({
+          name: disease,
+          foundIn: 'phenonet'
+        })));
       }
 
       if (f.includes('study')) {
@@ -69,8 +76,13 @@ export class SearchService {
       }
 
       if (f.includes('technology')) {
-        searchResults.push(...results.unique_technologyid.map<SearchResult>(technology => ({name: technology, foundIn: 'technology'})));
+        searchResults.push(...results.unique_technologyid.map<SearchResult>(technology => ({
+          name: technology,
+          foundIn: 'technology'
+        })));
       }
+
+      // this.loadingSearchResults.next(false);
       this.searchResults.next(searchResults);
     });
   }
@@ -100,11 +112,13 @@ export class SearchService {
    * @deprecated use searchWithFilters
    */
   searchWithFiltersOldApi(filters: SEARCH_FILTER[], keyword: string): Subscription {
+    this.loadingSearchResults.next(true);
     return this.apiService.getGlobalSearchResults(keyword, filters)
-      .pipe(delay(1000)) // mimicking slow internet connection
+      .pipe(delay(3000)) // mimicking slow internet connection
       .subscribe((results) => {
-      this.searchResults.next(results);
-    });
+        this.loadingSearchResults.next(false);
+        this.searchResults.next(results);
+      });
   }
 
 
