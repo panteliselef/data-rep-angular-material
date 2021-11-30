@@ -106,6 +106,13 @@ export class SearchService {
   }
 
   /**
+   * @returns a snapshot of search results
+   */
+  get searchResultsAutoCompleteValue(): SearchResult[] {
+    return this.searchResultsAutocomplete.getValue();
+  }
+
+  /**
    * @deprecated use searchWithFilters
    */
   searchWithFilter(filter: SEARCH_FILTER, keyword: string): Subscription {

@@ -1,0 +1,28 @@
+@use "variables" as v;
+
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: map-get(v.$black, 12);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 100px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  transition: all 1s ease-in-out;
+  background: map-get(v.$light-green, 100);
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 100px;
+}
+
+/* Handle on hover */
+//::-webkit-scrollbar-thumb:hover {
+//  background: map-get(v.$light-green, 100);
+//}

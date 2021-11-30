@@ -17,13 +17,12 @@ export class MyAutocompleteDirective implements OnDestroy {
   constructor(private el: ElementRef, private searchService: SearchService) {
     this.keyboardSub = fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown')
       .pipe(
-        filter(() => this.searchService.searchResultsValue.length > 0),
+        filter(() => this.searchService.searchResultsAutoCompleteValue.length > 0),
         filter((event: KeyboardEvent) => {
           return ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Enter', 'Escape'].includes(event.code);
         })
       )
       .subscribe((event) => {
-        console.log(this.searchValue);
         switch (event.code) {
           case 'ArrowDown':
             this.onArrowDown(event);
@@ -40,11 +39,11 @@ export class MyAutocompleteDirective implements OnDestroy {
         }
       });
 
-    this.resultsSub = this.searchService.searchResults$.subscribe(_ => this.searchService.updateKeyboardCursor(-1));
+    this.resultsSub = this.searchService.searchResultsAutocomplete$.subscribe(_ => this.searchService.updateKeyboardCursor(-1));
     this.cursorSub = this.searchService.cursor$.subscribe(n => this.cursor = n);
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.keyboardSub.unsubscribe();
     this.resultsSub.unsubscribe();
     this.cursorSub.unsubscribe();
@@ -53,7 +52,7 @@ export class MyAutocompleteDirective implements OnDestroy {
 
   private onArrowDown(event): void {
     event.preventDefault();
-    const l = this.searchService.searchResultsValue.length;
+    const l = this.searchService.searchResultsAutoCompleteValue.length;
     let c = this.cursor;
     if (c + 1 >= l) {
       c = -1;
@@ -69,7 +68,7 @@ export class MyAutocompleteDirective implements OnDestroy {
 
   private onArrowUp(event): void {
     event.preventDefault();
-    const l = this.searchService.searchResultsValue.length;
+    const l = this.searchService.searchResultsAutoCompleteValue.length;
     let c = this.cursor;
     if (c - 1 === -1) {
       c = -1;
@@ -87,7 +86,10 @@ export class MyAutocompleteDirective implements OnDestroy {
 
   private onEnter(event: KeyboardEvent): void {
     event.preventDefault();
-    return this.searchService.updateSelectedCursor(this.cursor);
+    console.log(this.searchValue.trim());
+    if (this.searchValue.trim() !== '') {
+      this.searchService.updateSelectedCursor(this.cursor);
+    }
   }
 
   private _onEscape(): void {

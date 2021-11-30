@@ -4,6 +4,7 @@
     <span class="material-icons-round">search</span>
     <input #searchInput
            appMyAutocomplete
+           [searchValue]="searchValue"
            (focusin)="isToolbarSearchFocused = true"
            [ngModel]="searchValue || ''"
            (ngModelChange)="searchDiseases($event)"
@@ -82,7 +83,7 @@
         </a>
       </div>
 
-      <button class="outline_button with-radius">
+      <button (click)="performSearch()" class="outline_button with-radius">
         <span class="material-icons-round">manage_search</span>
         <!--      TODO: use the actual number of results  -->
         View all {{102001 | shortNumber}} results

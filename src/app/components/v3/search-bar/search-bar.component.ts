@@ -59,11 +59,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   private _redirectToSearchResult(index: number): void {
     if (index < 0) {
-      return;
+      this.redirectToSearchPage(this.searchValue);
+    } else {
+      this.router.navigate(
+        [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[index])]
+      ).then();
     }
-    this.router.navigate(
-      [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[index])]
-    ).then();
   }
 
   ngOnInit(): void {
@@ -79,7 +80,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.cursorSub = this.searchService.keyboardCursor$.subscribe(
       n => n !== -1
-        ? this.searchValue = this.searchService.searchResultsValue[n].name
+        ? this.searchValue = this.searchService.searchResultsAutoCompleteValue[n].name
         : this.searchValue = this.savedSearchValue);
 
     this.selectedCursorSub = this.searchService.searchSelectedCursor$.subscribe((index: number) => {
@@ -88,8 +89,12 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       * When user selects search results from keyboard
       * lose focus
       * */
-      this.searchValue = this.searchService.searchResultsValue[index]?.name;
-      this.savedSearchValue = this.searchService.searchResultsValue[index]?.name;
+      if (index > 0) {
+        this.searchValue = this.searchService.searchResultsAutoCompleteValue[index]?.name;
+        this.savedSearchValue = this.searchService.searchResultsAutoCompleteValue[index]?.name;
+      } else {
+        this.searchValue = this.savedSearchValue;
+      }
       this.searchService.updateFocus(false);
       this.searchInput.nativeElement.blur();
 
@@ -112,8 +117,10 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.savedSearchValue = $event;
     this.searchService.updateFocus(true);
 
-    // Using the old Api and considering filtering options
-    this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue);
+    if (this.searchValue.trim() !== '') {
+      // Using the old Api and considering filtering options
+      this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue.trim());
+    }
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
@@ -140,5 +147,19 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     // Perform a new search with the up-to-date filters
     this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue);
+  }
+
+  private redirectToSearchPage(term: string): void {
+    this.router.navigate(['/v3/search'], {
+      queryParams: {
+        q: term
+      },
+      queryParamsHandling: ''
+    });
+  }
+
+  performSearch(): void {
+    this.searchService.updateFocus(false);
+    this.redirectToSearchPage(this.searchValue);
   }
 }

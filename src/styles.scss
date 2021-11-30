@@ -3,6 +3,8 @@
 @use "sass:map";
 @forward "util";
 
+@forward "scrollbar";
+
 /* Design System */
 @forward "buttons";
 @forward "chip";
@@ -13,7 +15,7 @@
 @import "~vis-network/styles/vis-network.css";
 * { box-sizing: border-box}
 html, body { height: 100%; }
-body { margin: 0; font-family: v.$primaryFontFamily, Roboto, "Helvetica Neue", sans-serif; }
+body { overflow: hidden; margin: 0; font-family: v.$primaryFontFamily, Roboto, "Helvetica Neue", sans-serif; }
 
 $class: 'icons-material';
 
@@ -37,6 +39,11 @@ $class: 'icons-material';
       visibility: visible;
     }
   }
+}
+
+app-searchpage {
+  height: calc(100vh - 52px);
+  overflow: auto;
 }
 
 app-root {

@@ -28,10 +28,11 @@ h2, .mat-typography h2 {
 
 h4, .mat-typography h4,
 .sub-headline-1{
-  font-weight: normal;
+  font-weight: 500;
   font-size: u.toRem(14);
   line-height: u.toRem(19);
-  color: map-get(v.$black, 54)
+  color: map-get(v.$black, 54);
+  word-spacing: 1px;
 }
 
 /* END: Headings and sub headings */

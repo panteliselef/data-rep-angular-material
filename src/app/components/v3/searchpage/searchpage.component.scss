@@ -1,4 +1,5 @@
 @use "src/util" as u;
+@use "src/variables" as v;
 
 main.search-page-container {
   display: grid;
@@ -6,6 +7,7 @@ main.search-page-container {
   max-width: 1224px;
   width: 100%;
   margin: auto;
+  font-family: v.$primaryFontFamily;
 
 
   .results-section,
@@ -14,20 +16,140 @@ main.search-page-container {
   }
 
   .filters-section {
+    gap: 20px;
+
+    .filter_by_text,
+    .filter-name {
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .filter_by_text {
+      font-size: u.toRem(14);
+      line-height: 1.2;
+      height: 38px;
+      color: map-get(v.$light-green, 100)
+    }
+
+    .filter-name,
+    .filter-item {
+      font-size: u.toRem(12);
+      line-height: u.toRem(16);
+    }
+
+    .filter-name {
+      color: v.$search-2;
+    }
+
+    .filter-action {
+      color: map-get(v.$light-green, 100);
+      font-size: u.toRem(12);
+      cursor: pointer;
+      background: v.$app-bg-color;
+      border: none;
+    }
+
+    .filter-items {
+      display: flex;
+      flex-direction: column;
+      gap: u.toRem(8);
+    }
+
+    .filter-item {
+      display: flex;
+      align-items: center;
+      padding: u.toRem(8);
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all .2s ease-out;
+      user-select: none;
+      border: 1px solid transparent;
+
+      .mat-icon {
+        color: map-get(v.$black, 54);
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+        transition: color .2s ease-out;
+      }
+
+      .filter-item-name {
+        color: map-get(v.$black, 87);
+        margin-left: 5px;
+      }
+
+      .filter-item-count {
+        margin-left: auto;
+        color: map-get(v.$black, 54);
+      }
+
+      &:hover {
+        background-color: map-get(v.$light-green, 10);
+      }
+
+      &__selected {
+        background-color: map-get(v.$light-green, 20);
+        border-color: map-get(v.$green-sec, 100);
+
+        .filter-item-name {
+          font-weight: 700;
+        }
+      }
+
+      &__other_selected {
+        pointer-events: none;
+
+        .mat-icon,
+        .filter-item-name,
+        .filter-item-count {
+          color: v.$disabled-color !important;
+        }
+      }
+
+    }
 
   }
 
   .results-section {
+    gap: 30px;
+
+    .results-section-divider {
+      height: 1px;
+      background: map-get(v.$black, 12);
+      width: 100%;
+    }
+
+    .search-result {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      word-spacing: 1px;
+
+      .search-result-name {
+        text-transform: capitalize;
+        font-family: inherit;
+        font-weight: 700;
+        color: map-get(v.$light-green, 100);
+        font-size: u.toRem(14);
+      }
+
+      .search-result-details {
+        text-transform: capitalize;
+        font-weight: 500;
+        color: map-get(v.$black, 54);
+        font-size: u.toRem(13);
+      }
+    }
 
   }
 
-  >div {
+  > div {
     height: 90vh;
     width: 100%;
     background: grey;
   }
 
-  >div:nth-child(1) {
+  > div:nth-child(1) {
     background: red;
     height: 400px;
   }
