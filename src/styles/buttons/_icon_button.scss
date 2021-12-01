@@ -1,0 +1,32 @@
+@use 'src/variables' as v;
+@use 'src/util' as u;
+@use 'outline_button' as o;
+
+/*
+* Icon Button
+ */
+@mixin icon_button_pressed {
+  @include o.outline_button_pressed;
+}
+
+@mixin icon_button_hovered {
+  @include o.outline_button_hovered;
+}
+
+@mixin icon_button {
+  @include o.outline_button;
+}
+
+
+.icon_button {
+  @include icon_button;
+  width: 48px;
+
+  &:hover {
+    @include icon_button_hovered;
+  }
+
+  &:active {
+    @include icon_button_pressed;
+  }
+}

@@ -1,0 +1,34 @@
+@use 'src/variables' as v;
+@use 'src/util' as u;
+@use 'base_button' as b;
+
+/*
+* Solid Button
+ */
+@mixin solid_button_pressed {
+  background-color: map-get(v.$light-green, 40);
+}
+
+@mixin solid_button_hovered {
+  background-color: map-get(v.$light-green, 30);
+}
+
+@mixin solid_button {
+  @include b.button_base;
+  border: none;
+  background-color: map-get(v.$light-green, 20);
+  color: map-get(v.$green-sec, 100);
+}
+
+
+.solid_button {
+  @include solid_button;
+
+  &:hover {
+    @include solid_button_hovered;
+  }
+
+  &:active {
+    @include solid_button_pressed;
+  }
+}

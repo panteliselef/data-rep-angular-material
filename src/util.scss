@@ -17,9 +17,11 @@
 .justify-end {
   justify-content: flex-end;
 }
+
 .space-between {
   justify-content: space-between;
 }
+
 .center {
   justify-content: center;
 }
@@ -28,10 +30,12 @@
   @extend .flex;
   flex-direction: row;
 }
+
 .v-flex {
   @extend .flex;
   flex-direction: column;
 }
+
 /* END: Flexbox classes*/
 
 
@@ -59,16 +63,20 @@
   font-family: v.$primaryFontFamily;
 }
 
-.with-radius {
+@mixin with_radius {
   border-radius: 11px;
+}
+
+.with-radius {
+  @include with_radius;
 }
 
 .with-pointer {
   cursor: pointer;
 }
 
-.badge-node,.badge-edge{
-  font-family: 'Roboto',sans-serif;
+.badge-node, .badge-edge {
+  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: .75rem;
   line-height: 11px;
@@ -78,8 +86,8 @@
   border-radius: 2px;
 }
 
-.badge-edge{
-  background: map-get(v.$orange,100);
+.badge-edge {
+  background: map-get(v.$orange, 100);
 }
 
 .hint-with-badges {
@@ -91,9 +99,11 @@
   gap: 4px;
   padding: 0;
   height: 49px;
-  p{
+
+  p {
     margin: 0;
   }
+
   .text {
     font-family: v.$primaryFontFamily;
     font-style: normal;
@@ -103,7 +113,6 @@
     color: v.$text-black-1
   }
 }
-
 
 
 /* END:Layout */
@@ -138,6 +147,7 @@
     font-size: 1.125rem;
     font-weight: 700;
   }
+
   &_4 {
     font-size: 15px;
     font-weight: 600;
@@ -153,6 +163,7 @@
 
 .subtitle {
   font-family: 'Roboto', sans-serif;
+
   &_1 {
     font-weight: 500;
     font-size: 0.875rem;
@@ -164,7 +175,7 @@
 
 
 /* Colors */
-.mat-icon.green-color, .text-light-green{
+.mat-icon.green-color, .text-light-green {
   color: v.$green-light-1;
 }
 

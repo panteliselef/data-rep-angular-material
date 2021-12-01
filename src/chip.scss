@@ -1,6 +1,6 @@
 @use "util" as u;
 @use "variables" as v;
-@use "buttons" as b;
+@use "styles/buttons/buttons" as b;
 
 
 .app-chip.mat-chip.mat-standard-chip {
@@ -14,6 +14,7 @@
     background: map-get(v.$light-green,5);
     color: map-get(v.$green-sec,100);
     height: auto;
+    border-radius: 16px;
 
     &.app-chip-selected {
       @include b.outline_button_pressed;

@@ -1,7 +1,10 @@
 @use 'src/variables' as v;
 @use 'src/util' as u;
+@use 'base_button' as b;
 
-
+/*
+* Outline Button
+ */
 @mixin outline_button_pressed {
   border-color: map-get(v.$green-sec, 100);
   background-color: map-get(v.$light-green, 20);
@@ -13,21 +16,10 @@
 }
 
 @mixin outline_button {
-  font-family: inherit;
-  padding: 3px 12px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  height: 38px;
-  cursor: pointer;
-
+  @include b.button_base;
   border: .1rem solid map-get(v.$light-green, 20);
   background-color: transparent;
   color: map-get(v.$light-green, 100);
-
-  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .outline_button {

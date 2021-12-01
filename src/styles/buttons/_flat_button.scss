@@ -1,0 +1,37 @@
+@use 'src/variables' as v;
+@use 'src/util' as u;
+@use 'base_button' as b;
+
+
+/*
+* Flat Button
+ */
+@mixin flat_button_pressed {
+  background-color: map-get(v.$light-green, 20);
+  border-color: map-get(v.$green-sec, 100);
+}
+
+@mixin flat_button_hovered {
+  background-color: map-get(v.$light-green, 10);
+}
+
+@mixin flat_button {
+  @include b.button_base;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: map-get(v.$green-sec, 100);
+}
+
+
+.flat_button {
+  @include flat_button;
+
+  &:hover {
+    @include flat_button_hovered;
+  }
+
+  &:active {
+    @include flat_button_pressed;
+  }
+}
+
