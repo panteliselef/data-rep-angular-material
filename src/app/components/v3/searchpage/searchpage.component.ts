@@ -20,6 +20,7 @@ export class SearchpageComponent implements OnInit, OnDestroy {
   phenotypeResults = [] as SearchResult[];
   studyResults = [] as SearchResult[];
   platformResults = [] as SearchResult[];
+  loadingSearchResults$: Observable<boolean>;
 
 
   constructor(
@@ -61,6 +62,8 @@ export class SearchpageComponent implements OnInit, OnDestroy {
 
     this.searchKeyword$ = this.searchService.searchKeyword$;
     this.searchResults$ = this.searchService.searchResults$;
+
+    this.loadingSearchResults$ = this.searchService.loadingSearchResults$;
 
     this.routeSub = this.route.queryParamMap
       .pipe(

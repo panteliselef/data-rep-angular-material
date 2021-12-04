@@ -54,8 +54,8 @@ import {MyAutocompleteDirective} from './directives/my-autocomplete.directive';
 import {GraphComponentComponent} from './components/v2/graph-component/graph-component.component';
 import {NavigationBarComponent} from './components/v3/navigation-bar/navigation-bar.component';
 import {SearchBarComponent} from './components/v3/search-bar/search-bar.component';
-import {ShortNumberPipe} from './pipes/short-number.pipe';
 import {ContentLoaderModule} from '@ngneat/content-loader';
+import {SharedModule} from './shared/shared.module';
 
 export function importingEchart(): void {
   import('echarts');
@@ -90,7 +90,6 @@ export function importingEchart(): void {
     GraphComponentComponent,
     NavigationBarComponent,
     SearchBarComponent,
-    ShortNumberPipe,
   ],
   imports: [
     CommonModule,
@@ -98,6 +97,7 @@ export function importingEchart(): void {
     BrowserAnimationsModule,
     BrowserModule,
     HttpClientModule,
+    SharedModule,
     MatFormFieldModule,
     MatSelectModule,
     MatSliderModule,

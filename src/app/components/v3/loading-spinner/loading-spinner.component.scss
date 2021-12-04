@@ -1,0 +1,23 @@
+@use "src/variables" as v;
+
+.loading-spinner {
+  border: 3px solid map-get(v.$light-green, 100);
+  border-bottom-color:  map-get(v.$grey, 100);
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  margin: 0 1rem;
+  animation: spin 1s linear infinite;
+}
+
+
+@keyframes spin {
+
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+
+}

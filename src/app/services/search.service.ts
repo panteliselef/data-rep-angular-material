@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
-import {BehaviorSubject, combineLatest, Subject, Subscription} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subject, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from 'src/app/models/search.model';
 import {debounceTime, delay, distinctUntilChanged, map, startWith, switchMap} from 'rxjs/operators';
 import {SearchResultStudy} from '../models/postgres.model';
@@ -18,6 +18,9 @@ export class SearchService {
 
   private loadingSearchResults = new BehaviorSubject<boolean>(false);
   readonly loadingSearchResults$ = this.loadingSearchResults.asObservable();
+
+  private loadingSearchResultsAutocomplete = new BehaviorSubject<boolean>(false);
+  readonly loadingSearchResultsAutocomplete$ = this.loadingSearchResultsAutocomplete.asObservable();
 
   private keyboardCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 1});
   readonly keyboardCursor$ = this.keyboardCursor.asObservable().pipe(map(v => v.value));
@@ -122,29 +125,36 @@ export class SearchService {
   }
 
 
-  private _searchOldApi(filters: SEARCH_FILTER[], keyword: string, subjectToUpdate: BehaviorSubject<SearchResult[]>): Subscription {
-    this.loadingSearchResults.next(true);
+  private _searchOldApi(filters: SEARCH_FILTER[], keyword: string): Observable<SearchResult[]> {
     this.searchKeyword.next(keyword);
     return this.apiService.getGlobalSearchResults(keyword, filters)
-      .pipe(delay(1000)) // mimicking slow internet connection
-      .subscribe((results) => {
-        this.loadingSearchResults.next(false);
-        subjectToUpdate.next(results);
-      });
+      .pipe(delay(1000)); // mimicking slow internet connection
   }
 
   /**
    * @deprecated use searchWithFilters
    */
   searchOldApi(filters: SEARCH_FILTER[], keyword: string): Subscription {
-    return this._searchOldApi(filters, keyword, this.searchResults);
+    this.loadingSearchResults.next(true);
+    return this._searchOldApi(filters, keyword)
+      .subscribe(results => {
+        this.searchResults.next(results);
+        this.loadingSearchResults.next(false);
+      });
   }
 
   /**
    * @deprecated use searchWithFilters
    */
   searchOldApiAutocomplete(filters: SEARCH_FILTER[], keyword: string): Subscription {
-    return this._searchOldApi(filters, keyword, this.searchResultsAutocomplete);
+    this.loadingSearchResultsAutocomplete.next(true);
+    this.searchKeyword.next(keyword);
+    return this.apiService.getQuickSearchRecommendations(keyword, filters)
+      .pipe(delay(1000))// mimicking slow internet connection
+      .subscribe(results => {
+        this.searchResultsAutocomplete.next(results);
+        this.loadingSearchResultsAutocomplete.next(false);
+      });
   }
 
 

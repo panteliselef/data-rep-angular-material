@@ -16,7 +16,12 @@ main.search-page-container {
   }
 
   .filters-section {
-    gap: 20px;
+    .filters-section-inner {
+      gap: 20px;
+      top: 32px;
+      position: sticky;
+    }
+
 
     .filter_by_text,
     .filter-name {
@@ -106,6 +111,15 @@ main.search-page-container {
         }
       }
 
+
+      &.disabled {
+        pointer-events: none;
+
+        * {
+          color: map-get(v.$grey, 100);
+        }
+      }
+
     }
 
   }
@@ -138,6 +152,18 @@ main.search-page-container {
         font-weight: 500;
         color: map-get(v.$black, 54);
         font-size: u.toRem(13);
+      }
+
+      button {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      &:hover {
+        button {
+          opacity: 1;
+          visibility: visible;
+        }
       }
     }
 

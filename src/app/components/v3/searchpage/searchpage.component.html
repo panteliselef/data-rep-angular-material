@@ -1,131 +1,156 @@
 <main class="search-page-container">
 
-  <section class="filters-section v-flex">
-    <span class="filter_by_text flex align-center">Filter by</span>
+  <section class="filters-section">
+    <div class="filters-section-inner v-flex">
+      <span class="filter_by_text flex align-center">Filter by</span>
 
-    <div class="h-flex align-center space-between">
-      <span class="filter-name">Type</span>
-      <button *ngIf="appliedFilter" class="filter-action" (click)="removeFilter()">Clear</button>
-    </div>
+      <div class="h-flex align-center space-between">
+        <span class="filter-name">Type</span>
+        <button *ngIf="appliedFilter" class="filter-action" (click)="removeFilter()">Clear</button>
+      </div>
 
-    <div class="filter-items">
-      <div (click)="toggleFilter('phenotype')"
-           [ngClass]="{
+      <div class="filter-items">
+        <div (click)="toggleFilter('phenotype')"
+             [ngClass]="{
                'filter-item__selected': appliedFilter === 'phenotype',
-               'filter-item__other_selected': appliedFilter && appliedFilter !== 'phenotype'
+               'filter-item__other_selected': appliedFilter && appliedFilter !== 'phenotype',
+               'disabled': phenotypeResults.length === 0
            }"
-           class="filter-item">
-        <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
-        <span class="filter-item-name">Phenotype</span>
-        <span class="filter-item-count">250</span>
-      </div>
+             class="filter-item">
+          <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
+          <span class="filter-item-name">Phenotype</span>
+          <span class="filter-item-count">{{ phenotypeResults.length | shortNumber }}</span>
+        </div>
 
-      <div (click)="toggleFilter('study')"
-           [ngClass]="{
+        <div (click)="toggleFilter('study')"
+             [ngClass]="{
                'filter-item__selected': appliedFilter === 'study',
-               'filter-item__other_selected': appliedFilter && appliedFilter !== 'study'
+               'filter-item__other_selected': appliedFilter && appliedFilter !== 'study',
+                'disabled': studyResults.length === 0
            }"
-           class="filter-item">
-        <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
-        <span class="filter-item-name">Studies</span>
-        <span class="filter-item-count">1.2k</span>
-      </div>
+             class="filter-item">
+          <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
+          <span class="filter-item-name">Studies</span>
+          <span class="filter-item-count">{{ studyResults.length | shortNumber }}</span>
+        </div>
 
-      <div (click)="toggleFilter('technology')"
-           [ngClass]="{
+        <div (click)="toggleFilter('technology')"
+             [ngClass]="{
                'filter-item__selected': appliedFilter === 'technology',
-               'filter-item__other_selected': appliedFilter && appliedFilter !== 'technology'
+               'filter-item__other_selected': appliedFilter && appliedFilter !== 'technology',
+                'disabled': platformResults.length === 0
            }"
-           class="filter-item">
-        <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
-        <span class="filter-item-name">Platforms</span>
-        <span class="filter-item-count">6</span>
+             class="filter-item">
+          <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
+          <span class="filter-item-name">Platforms</span>
+          <span class="filter-item-count">{{ platformResults.length | shortNumber }}</span>
+        </div>
       </div>
     </div>
 
 
   </section>
-  <section class="results-section v-flex">
-    <div class="v-flex" style="gap: 10px">
-      <h1>Search Results</h1>
-      <h4>Data Repurposing Dataset: 2k+
-
-        <ng-container *ngIf="!appliedFilter">
-          results
-        </ng-container>
-        <ng-container *ngIf="appliedFilter==='phenotype'">
-          phenotypes
-        </ng-container>
-        <ng-container *ngIf="appliedFilter==='study'">
-          studies
-        </ng-container>
-        <ng-container *ngIf="appliedFilter==='technology'">
-          platforms
-        </ng-container>
-        found for "{{searchKeyword$ | async}}"
-
-      </h4>
-    </div>
-
-
-    <ng-container *ngIf="phenotypeResults.length > 0">
-      <div class="results-section-divider"></div>
-      <h2>Phenotypes</h2>
-      <div *ngFor="let r of phenotypeResults" class="search-result">
-        <div class="v-flex" style="gap: 10px">
-          <div class="search-result-name">
-            {{r.name}}
-          </div>
-
-          <div class="h-flex" style="gap: 10px">
-            <div class="search-result-details">22 direct neighbours</div>
-            <div class="search-result-details">&bull;</div>
-            <div class="search-result-details">10 studies</div>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="studyResults.length > 0">
-      <div class="results-section-divider"></div>
-      <h2>Studies</h2>
-      <div *ngFor="let r of studyResults" class="search-result">
-        <div class="v-flex" style="gap: 10px">
-          <div class="search-result-name">
-            {{r.name}}
-          </div>
-
-          <div class="h-flex" style="gap: 10px">
-            <div class="search-result-details">{{r.categoryName}}</div>
-            <div class="search-result-details">&bull;</div>
-            <div class="search-result-details">{{r.foundIn}}</div>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="platformResults.length > 0">
-      <div class="results-section-divider"></div>
-      <h2>Studies</h2>
-      <div *ngFor="let r of platformResults" class="search-result">
-        <div class="v-flex" style="gap: 10px">
-          <div class="search-result-name">
-            {{r.name}}
-          </div>
-
-          <div class="h-flex" style="gap: 10px">
-            <div class="search-result-details">107 edges</div>
-            <div class="search-result-details">&bull;</div>
-            <div class="search-result-details">40 phenotypes</div>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-
-
-    <!--    <p>{{searchResults$ | async | json}}</p>-->
-
-
+  <section *ngIf="loadingSearchResults$ | async else resultsSection"
+           style="width: 100%; height: calc(100vh - 52px); display: flex; align-items:center; justify-content: center">
+    <app-loading-spinner></app-loading-spinner>
   </section>
+
+  <ng-template #resultsSection>
+    <section class="results-section v-flex">
+      <div class="v-flex" style="gap: 10px">
+        <h1>Search Results</h1>
+        <h4>Data Repurposing Dataset: {{(searchResults$ | async)?.length | shortNumber}}
+
+          <ng-container *ngIf="!appliedFilter">
+            results
+          </ng-container>
+          <ng-container *ngIf="appliedFilter==='phenotype'">
+            phenotypes
+          </ng-container>
+          <ng-container *ngIf="appliedFilter==='study'">
+            studies
+          </ng-container>
+          <ng-container *ngIf="appliedFilter==='technology'">
+            platforms
+          </ng-container>
+          found for "{{searchKeyword$ | async}}"
+
+        </h4>
+      </div>
+
+      <ng-container *ngIf="phenotypeResults.length > 0 && (!appliedFilter || appliedFilter === 'phenotype')">
+        <div class="results-section-divider"></div>
+        <h2>Phenotypes</h2>
+        <div *ngFor="let r of phenotypeResults" class="search-result">
+          <div class="v-flex" style="gap: 10px">
+            <div class="search-result-name">
+              {{r.name}}
+            </div>
+
+            <div class="h-flex" style="gap: 5px">
+              <div class="search-result-details">22 direct neighbours</div>
+              <div class="search-result-details">&bull;</div>
+              <div class="search-result-details">10 studies</div>
+            </div>
+          </div>
+          <div class="h-flex">
+            <button class="solid_button">View in Graph</button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="studyResults.length > 0 && (!appliedFilter || appliedFilter === 'study')">
+        <div class="results-section-divider"></div>
+        <h2>Studies</h2>
+        <div *ngFor="let r of studyResults" class="search-result">
+          <div class="v-flex" style="gap: 10px">
+            <div class="search-result-name">
+              {{r.name}}
+            </div>
+
+            <div class="h-flex" style="gap: 5px">
+              <div class="search-result-details">{{r.categoryName}}</div>
+              <div class="search-result-details">&bull;</div>
+              <div class="search-result-details">{{r.foundIn}}</div>
+            </div>
+          </div>
+          <div class="h-flex" style="gap: 10px">
+            <button class="outline_button">
+              <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+              Download Study
+            </button>
+            <button class="solid_button">View in Graph</button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="platformResults.length > 0 && (!appliedFilter || appliedFilter === 'technology')">
+        <div class="results-section-divider"></div>
+        <h2>Platforms</h2>
+        <div *ngFor="let r of platformResults" class="search-result">
+          <div class="v-flex" style="gap: 10px">
+            <div class="search-result-name">
+              {{r.name}}
+            </div>
+
+            <div class="h-flex" style="gap: 5px">
+              <div class="search-result-details">107 edges</div>
+              <div class="search-result-details">&bull;</div>
+              <div class="search-result-details">40 phenotypes</div>
+            </div>
+          </div>
+          <div class="h-flex">
+            <button class="solid_button">View Graph</button>
+          </div>
+        </div>
+      </ng-container>
+
+
+      <!--    <p>{{searchResults$ | async | json}}</p>-->
+
+
+    </section>
+  </ng-template>
+
 
 </main>

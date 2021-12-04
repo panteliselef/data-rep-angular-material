@@ -8,7 +8,7 @@ export class ShortNumberPipe implements PipeTransform {
   transform(n: number, args?: any): any {
     if (isNaN(n)) { return null; } // will only work value is a number
     if (n === null) { return null; }
-    if (n === 0) { return null; }
+    if (n === 0) { return '0'; }
     let abs = Math.abs(n);
     const rounder = Math.pow(10, 1);
     const isNegative = n < 0; // will also work for Negetive numbers

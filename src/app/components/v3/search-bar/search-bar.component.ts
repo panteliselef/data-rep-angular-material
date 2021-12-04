@@ -70,7 +70,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.searchService.searchKeyword$.subscribe(keyword => this.savedSearchValue = this.searchValue = keyword);
 
-    this.loadingSearchResults$ = this.searchService.loadingSearchResults$;
+    this.loadingSearchResults$ = this.searchService.loadingSearchResultsAutocomplete$;
 
     this.cursor$ = this.searchService.cursor$;
 

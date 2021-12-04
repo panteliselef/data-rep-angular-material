@@ -79,6 +79,16 @@ export class ApiService {
   }
 
 
+  private getSearchResults(url: string, query: string, filters?: SEARCH_FILTER[]): Observable<SearchResult[]> {
+    let params = new HttpParams();
+    params = params.append('q', query);
+    if (filters && filters.length > 0) {
+      params = params.append('filters', filters.join(','));
+    }
+    return this.http.get<SearchResult[]>(url, {params});
+  }
+
+
 
   /**
    * Search a keyword and apply filters to limit your search options
@@ -86,12 +96,16 @@ export class ApiService {
    * @param filters Optional filtering that limits your search
    */
   public getGlobalSearchResults(query: string, filters?: SEARCH_FILTER[]): Observable<SearchResult[]> {
-    let params = new HttpParams();
-    params = params.append('q', query);
-    if (filters && filters.length > 0) {
-      params = params.append('filters', filters.join(','));
-    }
-    return this.http.get<SearchResult[]>(`${environment.apiUrl}searchV2`, {params});
+    return this.getSearchResults(`${environment.apiUrl}search/v2`, query, filters);
+  }
+
+  /**
+   * Search a keyword and apply filters to limit your search options
+   * @param query keyword to look up
+   * @param filters Optional filtering that limits your search
+   */
+  public getQuickSearchRecommendations(query: string, filters?: SEARCH_FILTER[]): Observable<SearchResult[]> {
+    return this.getSearchResults(`${environment.apiUrl}search/quick`, query, filters);
   }
 
 
