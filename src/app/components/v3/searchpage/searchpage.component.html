@@ -12,7 +12,7 @@
       <div class="filter-items">
         <div (click)="toggleFilter('phenotype')"
              [ngClass]="{
-               'filter-item__selected': appliedFilter === 'phenotype',
+               'filter-item__selected': appliedFilter === 'phenotype' && phenotypeResults.length > 0,
                'filter-item__other_selected': appliedFilter && appliedFilter !== 'phenotype',
                'disabled': phenotypeResults.length === 0
            }"
@@ -24,7 +24,7 @@
 
         <div (click)="toggleFilter('study')"
              [ngClass]="{
-               'filter-item__selected': appliedFilter === 'study',
+               'filter-item__selected': appliedFilter === 'study' && studyResults.length > 0,
                'filter-item__other_selected': appliedFilter && appliedFilter !== 'study',
                 'disabled': studyResults.length === 0
            }"
@@ -36,7 +36,7 @@
 
         <div (click)="toggleFilter('technology')"
              [ngClass]="{
-               'filter-item__selected': appliedFilter === 'technology',
+               'filter-item__selected': appliedFilter === 'technology' && platformResults.length > 0,
                'filter-item__other_selected': appliedFilter && appliedFilter !== 'technology',
                 'disabled': platformResults.length === 0
            }"
@@ -59,7 +59,7 @@
     <section class="results-section v-flex">
       <div class="v-flex" style="gap: 10px">
         <h1>Search Results</h1>
-        <h4>Data Repurposing Dataset: {{(searchResults$ | async)?.length | shortNumber}}
+        <h4>Data Repurposing Database: {{(searchResults$ | async)?.length | shortNumber}}
 
           <ng-container *ngIf="!appliedFilter">
             results
@@ -78,23 +78,31 @@
         </h4>
       </div>
 
+      <app-empty-illustration
+        *ngIf="phenotypeResults.length === 0 && platformResults.length ===0 && studyResults.length === 0"
+        issueText="No results found in our datasets"
+        solutionText="Check your spelling or try a different term"
+      ></app-empty-illustration>
+
       <ng-container *ngIf="phenotypeResults.length > 0 && (!appliedFilter || appliedFilter === 'phenotype')">
         <div class="results-section-divider"></div>
         <h2>Phenotypes</h2>
-        <div *ngFor="let r of phenotypeResults" class="search-result">
-          <div class="v-flex" style="gap: 10px">
-            <div class="search-result-name">
-              {{r.name}}
-            </div>
+        <div class="v-flex" style="gap: 5px">
+          <div *ngFor="let r of phenotypeResults" class="search-result">
+            <div class="v-flex" style="gap: 10px">
+              <div class="search-result-name">
+                {{r.name}}
+              </div>
 
-            <div class="h-flex" style="gap: 5px">
-              <div class="search-result-details">22 direct neighbours</div>
-              <div class="search-result-details">&bull;</div>
-              <div class="search-result-details">10 studies</div>
+              <div class="h-flex" style="gap: 5px">
+                <div class="search-result-details">22 direct neighbours</div>
+                <div class="search-result-details">&bull;</div>
+                <div class="search-result-details">10 studies</div>
+              </div>
             </div>
-          </div>
-          <div class="h-flex">
-            <button class="solid_button">View in Graph</button>
+            <div class="h-flex">
+              <button class="solid_button">View in Graph</button>
+            </div>
           </div>
         </div>
       </ng-container>
@@ -102,24 +110,26 @@
       <ng-container *ngIf="studyResults.length > 0 && (!appliedFilter || appliedFilter === 'study')">
         <div class="results-section-divider"></div>
         <h2>Studies</h2>
-        <div *ngFor="let r of studyResults" class="search-result">
-          <div class="v-flex" style="gap: 10px">
-            <div class="search-result-name">
-              {{r.name}}
-            </div>
+        <div class="v-flex" style="gap: 5px">
+          <div *ngFor="let r of studyResults" class="search-result">
+            <div class="v-flex" style="gap: 10px">
+              <div class="search-result-name">
+                {{r.name}}
+              </div>
 
-            <div class="h-flex" style="gap: 5px">
-              <div class="search-result-details">{{r.categoryName}}</div>
-              <div class="search-result-details">&bull;</div>
-              <div class="search-result-details">{{r.foundIn}}</div>
+              <div class="h-flex" style="gap: 5px">
+                <div class="search-result-details">{{r.categoryName}}</div>
+                <div class="search-result-details">&bull;</div>
+                <div class="search-result-details">{{r.foundIn}}</div>
+              </div>
             </div>
-          </div>
-          <div class="h-flex" style="gap: 10px">
-            <button class="outline_button">
-              <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
-              Download Study
-            </button>
-            <button class="solid_button">View in Graph</button>
+            <div class="h-flex" style="gap: 10px">
+              <button class="outline_button">
+                <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+                Download Study
+              </button>
+              <button class="solid_button">View in Graph</button>
+            </div>
           </div>
         </div>
       </ng-container>
@@ -127,20 +137,22 @@
       <ng-container *ngIf="platformResults.length > 0 && (!appliedFilter || appliedFilter === 'technology')">
         <div class="results-section-divider"></div>
         <h2>Platforms</h2>
-        <div *ngFor="let r of platformResults" class="search-result">
-          <div class="v-flex" style="gap: 10px">
-            <div class="search-result-name">
-              {{r.name}}
-            </div>
+        <div class="v-flex" style="gap: 5px">
+          <div *ngFor="let r of platformResults" class="search-result">
+            <div class="v-flex" style="gap: 10px">
+              <div class="search-result-name">
+                {{r.name}}
+              </div>
 
-            <div class="h-flex" style="gap: 5px">
-              <div class="search-result-details">107 edges</div>
-              <div class="search-result-details">&bull;</div>
-              <div class="search-result-details">40 phenotypes</div>
+              <div class="h-flex" style="gap: 5px">
+                <div class="search-result-details">107 edges</div>
+                <div class="search-result-details">&bull;</div>
+                <div class="search-result-details">40 phenotypes</div>
+              </div>
             </div>
-          </div>
-          <div class="h-flex">
-            <button class="solid_button">View Graph</button>
+            <div class="h-flex">
+              <button class="solid_button">View Graph</button>
+            </div>
           </div>
         </div>
       </ng-container>

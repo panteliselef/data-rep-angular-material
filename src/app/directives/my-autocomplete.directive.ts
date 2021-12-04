@@ -17,7 +17,9 @@ export class MyAutocompleteDirective implements OnDestroy {
   constructor(private el: ElementRef, private searchService: SearchService) {
     this.keyboardSub = fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown')
       .pipe(
-        filter(() => this.searchService.searchResultsAutoCompleteValue.length > 0),
+        // This line was preventing for user to search on Enter if the array was empty
+        // user should be able to search on enter at any time, he will see an error message later
+        // filter(() => this.searchService.searchResultsAutoCompleteValue.length > 0),
         filter((event: KeyboardEvent) => {
           return ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Enter', 'Escape'].includes(event.code);
         })
@@ -85,6 +87,7 @@ export class MyAutocompleteDirective implements OnDestroy {
   }
 
   private onEnter(event: KeyboardEvent): void {
+    console.log('enter', this.cursor);
     event.preventDefault();
     console.log(this.searchValue.trim());
     if (this.searchValue.trim() !== '') {

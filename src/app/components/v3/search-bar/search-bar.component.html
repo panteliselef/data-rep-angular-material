@@ -53,14 +53,11 @@
       <svg:rect x="38" y="105" rx="7" ry="7" width="154" height="14" />
     </content-loader>
 
-    <div class="search_empty_suggestion v-flex align-center center" *ngIf="searchResults.length === 0 && !(loadingSearchResults$ | async)">
-      <img class="illustration" src="../../assets/empty_search_results.svg" alt="empty results illustration"/>
-
-      <div class="v-flex align-center center" style="gap: 10px">
-        <p class="search-issue">No results found in our datasets</p>
-        <p class="search-issue-suggestion">Check your spelling or try a different term</p>
-      </div>
-    </div>
+    <app-empty-illustration
+      *ngIf="searchResults.length === 0 && !(loadingSearchResults$ | async)"
+      issueText="No results found in our datasets"
+      solutionText="Check your spelling or try a different term"
+    ></app-empty-illustration>
 
     <ng-container *ngIf="searchResults.length > 0 && !(loadingSearchResults$ | async)">
 

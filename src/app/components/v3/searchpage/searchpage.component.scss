@@ -1,18 +1,29 @@
 @use "src/util" as u;
 @use "src/variables" as v;
+@use "src/styles/helpers/breakpoints" as brk;
 
 main.search-page-container {
   display: grid;
   grid-template-columns: 320px auto;
   max-width: 1224px;
+  height: 100%;
   width: 100%;
   margin: auto;
   font-family: v.$primaryFontFamily;
+
+  @include brk.tablet {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%
+  }
 
 
   .results-section,
   .filters-section {
     padding: u.toRem(32);
+    @include brk.tablet {
+      padding: 1.5rem;
+    }
   }
 
   .filters-section {
@@ -20,6 +31,10 @@ main.search-page-container {
       gap: 20px;
       top: 32px;
       position: sticky;
+
+      @include brk.tablet {
+        gap: 10px;
+      }
     }
 
 
@@ -58,6 +73,9 @@ main.search-page-container {
       display: flex;
       flex-direction: column;
       gap: u.toRem(8);
+      @include brk.tablet {
+        flex-direction: row;
+      }
     }
 
     .filter-item {
@@ -81,6 +99,7 @@ main.search-page-container {
       .filter-item-name {
         color: map-get(v.$black, 87);
         margin-left: 5px;
+        margin-right: 10px;
       }
 
       .filter-item-count {
@@ -138,6 +157,7 @@ main.search-page-container {
       justify-content: space-between;
       align-items: center;
       word-spacing: 1px;
+      padding: 0.8rem 0;
 
       .search-result-name {
         text-transform: capitalize;

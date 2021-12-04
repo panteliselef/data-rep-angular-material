@@ -1,0 +1,30 @@
+@use 'src/variables' as v;
+@use 'src/util' as u;
+
+
+:host {
+  height: 100%;
+}
+
+.search_empty_suggestion {
+  height: 100%;
+  gap: 15px;
+  padding: 20px;
+
+  img.illustration {
+    width: 150px;
+  }
+
+  p.search-issue {
+    color: map-get(v.$black, 87);
+    font-weight: 600;
+    font-size: u.toRem(14);
+  }
+
+  p.search-issue-suggestion {
+    color: map-get(v.$black, 54);
+    font-weight: 500;
+    font-size: u.toRem(12);
+  }
+
+}
