@@ -19,18 +19,38 @@ export class SearchService {
   private loadingSearchResults = new BehaviorSubject<boolean>(false);
   readonly loadingSearchResults$ = this.loadingSearchResults.asObservable();
 
+  /**
+   * @deprecated
+   * @private
+   */
   private loadingSearchResultsAutocomplete = new BehaviorSubject<boolean>(false);
   readonly loadingSearchResultsAutocomplete$ = this.loadingSearchResultsAutocomplete.asObservable();
 
+  /**
+   * @deprecated
+   * @private
+   */
   private keyboardCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 1});
   readonly keyboardCursor$ = this.keyboardCursor.asObservable().pipe(map(v => v.value));
 
+  /**
+   * @deprecated
+   * @private
+   */
   private hoverCursor = new BehaviorSubject<Cursor>({value: -1, timestamp: 0});
   readonly hoverCursor$ = this.hoverCursor.asObservable();
 
+  /**
+   * @deprecated
+   * @private
+   */
   private searchSelectedCursor = new Subject<number>();
   readonly searchSelectedCursor$ = this.searchSelectedCursor.asObservable();
 
+  /**
+   * @deprecated
+   * @private
+   */
   private isInFocus = new BehaviorSubject<boolean>(false);
   readonly isInFocus$ = this.isInFocus.asObservable();
 
@@ -40,12 +60,22 @@ export class SearchService {
   private searchResults = new BehaviorSubject<SearchResult[]>([]);
   readonly searchResults$ = this.searchResults.asObservable();
 
+
+  /**
+   * @deprecated
+   * @private
+   */
   private searchResultsAutocomplete = new BehaviorSubject<SearchResult[]>([]);
   readonly searchResultsAutocomplete$ = this.searchResultsAutocomplete.asObservable();
 
   private searchKeyword = new BehaviorSubject<string>('');
   readonly searchKeyword$ = this.searchKeyword.asObservable();
 
+
+  /**
+   * @deprecated
+   * @private
+   */
   readonly cursor$ = combineLatest([this.keyboardCursor.asObservable(), this.hoverCursor.asObservable()])
     .pipe(map(([$a, $b]) => $a.timestamp > $b.timestamp ? $a.value : $b.value));
 
@@ -92,14 +122,13 @@ export class SearchService {
     });
   }
 
+  /**
+   * @deprecated
+   */
   get cursorValue(): number {
     return this.keyboardCursor.getValue().value;
   }
 
-
-  get searchKeywordValue(): string {
-    return this.searchKeyword.getValue();
-  }
 
   /**
    * @returns a snapshot of search results
@@ -108,12 +137,6 @@ export class SearchService {
     return this.searchResults.getValue();
   }
 
-  /**
-   * @returns a snapshot of search results
-   */
-  get searchResultsAutoCompleteValue(): SearchResult[] {
-    return this.searchResultsAutocomplete.getValue();
-  }
 
   /**
    * @deprecated use searchWithFilters
@@ -156,6 +179,9 @@ export class SearchService {
   }
 
 
+  /**
+   * @deprecated
+   */
   updateKeyboardCursor(value: number): void {
     this.keyboardCursor.next({
       value,
@@ -163,6 +189,9 @@ export class SearchService {
     });
   }
 
+  /**
+   * @deprecated
+   */
   updateHoverCursor(value: number): void {
     this.hoverCursor.next({
       value,
@@ -170,11 +199,10 @@ export class SearchService {
     });
   }
 
-  updateSelectedCursor(n: number): void {
-    this.searchSelectedCursor.next(n);
-  }
 
-
+  /**
+   * @deprecated
+   */
   updateFocus(b: boolean): void {
     this.isInFocus.next(b);
   }
