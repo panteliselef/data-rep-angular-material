@@ -56,6 +56,7 @@ import {NavigationBarComponent} from './components/v3/navigation-bar/navigation-
 import {SearchBarComponent} from './components/v3/search-bar/search-bar.component';
 import {ContentLoaderModule} from '@ngneat/content-loader';
 import {SharedModule} from './shared/shared.module';
+import {SearchAutocompleteService} from './services/search-autocomplete.service';
 
 export function importingEchart(): void {
   import('echarts');
@@ -127,6 +128,7 @@ export function importingEchart(): void {
     ContentLoaderModule
   ],
   providers: [
+    SearchAutocompleteService
     // {
     //   provide: MAT_TABS_CONFIG,
     //   useValue: { animationDuration: 1000, fitInkBarToContent: true }

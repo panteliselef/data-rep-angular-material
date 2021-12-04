@@ -143,20 +143,6 @@ export class SearchService {
       });
   }
 
-  /**
-   * @deprecated use searchWithFilters
-   */
-  searchOldApiAutocomplete(filters: SEARCH_FILTER[], keyword: string): Subscription {
-    this.loadingSearchResultsAutocomplete.next(true);
-    this.searchKeyword.next(keyword);
-    return this.apiService.getQuickSearchRecommendations(keyword, filters)
-      .pipe(delay(1000))// mimicking slow internet connection
-      .subscribe(results => {
-        this.searchResultsAutocomplete.next(results);
-        this.loadingSearchResultsAutocomplete.next(false);
-      });
-  }
-
 
   /**
    * Pushes parameters to Subjects and as a result a Search request will be performed

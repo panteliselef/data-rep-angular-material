@@ -1,0 +1,12 @@
+<div [ngClass]="{
+               'filter-item__selected': selectedFilter === filter && resultsCount > 0,
+               'filter-item__other_selected': selectedFilter && selectedFilter !== filter,
+               'disabled': resultsCount === 0
+           }"
+     class="filter-item">
+  <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
+  <span class="filter-item-name">
+    <ng-content></ng-content>
+  </span>
+  <span class="filter-item-count">{{ resultsCount | shortNumber }}</span>
+</div>

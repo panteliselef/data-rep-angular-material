@@ -6,16 +6,16 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {SearchService} from 'src/app/services/search.service';
 import {Router} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
 import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from 'src/app/models/search.model';
 import {SearchResultUrlPipe} from 'src/app/pipes/search-result-url.pipe';
+import {SearchAutocompleteService} from '../../../services/search-autocomplete.service';
 
 @Component({
   selector: 'app-search-bar',
   templateUrl: './search-bar.component.html',
-  styleUrls: ['./search-bar.component.scss']
+  styleUrls: ['./search-bar.component.scss'],
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
   @ViewChild('searchInput', {static: false}) searchInput: ElementRef<HTMLInputElement>;
@@ -40,14 +40,14 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   loadingSearchResults$: Observable<boolean>;
 
-  constructor(private searchService: SearchService,
+  constructor(private autocompleteService: SearchAutocompleteService,
               private eRef: ElementRef,
               private router: Router) {
   }
 
   @HostListener('document:click', ['$event'])
   clickOut(event): void {
-    this.searchService.updateKeyboardCursor(-1);
+    this.autocompleteService.updateKeyboardCursor(-1);
 
     /**
      * Making sure that if user clicks inside the component, the component will not lose focus
@@ -62,40 +62,40 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       this.redirectToSearchPage(this.searchValue);
     } else {
       this.router.navigate(
-        [new SearchResultUrlPipe().transform(this.searchService.searchResultsValue[index])]
+        [new SearchResultUrlPipe().transform(this.autocompleteService.recommendationsValue[index])]
       ).then();
     }
   }
 
   ngOnInit(): void {
-    this.searchService.searchKeyword$.subscribe(keyword => this.savedSearchValue = this.searchValue = keyword);
+    this.autocompleteService.searchKeyword$.subscribe(keyword => this.savedSearchValue = this.searchValue = keyword);
 
-    this.loadingSearchResults$ = this.searchService.loadingSearchResultsAutocomplete$;
+    this.loadingSearchResults$ = this.autocompleteService.isLoading$;
 
-    this.cursor$ = this.searchService.cursor$;
+    this.cursor$ = this.autocompleteService.cursor$;
 
-    this.searchResults$ = this.searchService.searchResultsAutocomplete$;
+    this.searchResults$ = this.autocompleteService.recommendations$;
 
-    this.focusSub = this.searchService.isInFocus$.subscribe(b => this.isToolbarSearchFocused = b);
+    this.focusSub = this.autocompleteService.isInFocus$.subscribe(b => this.isToolbarSearchFocused = b);
 
-    this.cursorSub = this.searchService.keyboardCursor$.subscribe(
+    this.cursorSub = this.autocompleteService.keyboardCursor$.subscribe(
       n => n !== -1
-        ? this.searchValue = this.searchService.searchResultsAutoCompleteValue[n].name
+        ? this.searchValue = this.autocompleteService.recommendationsValue[n].name
         : this.searchValue = this.savedSearchValue);
 
-    this.selectedCursorSub = this.searchService.searchSelectedCursor$.subscribe((index: number) => {
+    this.selectedCursorSub = this.autocompleteService.searchSelectedCursor$.subscribe((index: number) => {
 
       /*
       * When user selects search results from keyboard
       * lose focus
       * */
       if (index > 0) {
-        this.searchValue = this.searchService.searchResultsAutoCompleteValue[index]?.name;
-        this.savedSearchValue = this.searchService.searchResultsAutoCompleteValue[index]?.name;
+        this.searchValue = this.autocompleteService.recommendationsValue[index]?.name;
+        this.savedSearchValue = this.autocompleteService.recommendationsValue[index]?.name;
       } else {
         this.searchValue = this.savedSearchValue;
       }
-      this.searchService.updateFocus(false);
+      this.autocompleteService.updateFocus(false);
       this.searchInput.nativeElement.blur();
 
       /*
@@ -115,25 +115,25 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   searchDiseases($event: string): void {
     this.searchValue = $event;
     this.savedSearchValue = $event;
-    this.searchService.updateFocus(true);
+    this.autocompleteService.updateFocus(true);
 
     if (this.searchValue.trim() !== '') {
       // Using the old Api and considering filtering options
-      this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue.trim());
+      this.autocompleteService.getRecommendations(this.searchFiltersInUse, this.searchValue.trim());
     }
   }
 
   onSearchResultMouseOver($event: MouseEvent, indexToBeCursor: number): void {
-    this.searchService.updateHoverCursor(indexToBeCursor);
+    this.autocompleteService.updateHoverCursor(indexToBeCursor);
   }
 
   removeResultMouseOver(): void {
-    this.searchService.updateHoverCursor(-1);
+    this.autocompleteService.updateHoverCursor(-1);
   }
 
 
   selectResult(name: string): void {
-    this.searchService.updateFocus(false);
+    this.autocompleteService.updateFocus(false);
     this.searchValue = name;
     this.savedSearchValue = name;
   }
@@ -146,7 +146,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     // Perform a new search with the up-to-date filters
-    this.searchService.searchOldApiAutocomplete(this.searchFiltersInUse, this.searchValue);
+    this.autocompleteService.getRecommendations(this.searchFiltersInUse, this.searchValue);
   }
 
   private redirectToSearchPage(term: string): void {
@@ -159,7 +159,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   performSearch(): void {
-    this.searchService.updateFocus(false);
+    this.autocompleteService.updateFocus(false);
     this.redirectToSearchPage(this.searchValue);
   }
 }

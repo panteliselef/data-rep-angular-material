@@ -4,11 +4,13 @@ import {Observable, Subscription} from 'rxjs';
 import {SearchService} from '../../../services/search.service';
 import {SEARCH_FILTER, SEARCH_FILTER_ARR, SearchResult} from '../../../models/search.model';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {SearchAutocompleteService} from '../../../services/search-autocomplete.service';
 
 @Component({
   selector: 'app-searchpage',
   templateUrl: './searchpage.component.html',
-  styleUrls: ['./searchpage.component.scss']
+  styleUrls: ['./searchpage.component.scss'],
+  providers: [SearchService]
 })
 export class SearchpageComponent implements OnInit, OnDestroy {
   private routeSub: Subscription;
@@ -26,7 +28,8 @@ export class SearchpageComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private searchService: SearchService
+    private searchService: SearchService,
+    private autocompleteService: SearchAutocompleteService
   ) {
   }
 
@@ -53,7 +56,7 @@ export class SearchpageComponent implements OnInit, OnDestroy {
     if (q) {
       const filterArr = this.appliedFilter ? [this.appliedFilter] : [];
       this.searchService.searchOldApi(filterArr, q);
-      this.searchService.searchOldApiAutocomplete(filterArr, q);
+      this.autocompleteService.getRecommendations(filterArr, q);
     }
   }
 

@@ -10,41 +10,33 @@
       </div>
 
       <div class="filter-items">
-        <div (click)="toggleFilter('phenotype')"
-             [ngClass]="{
-               'filter-item__selected': appliedFilter === 'phenotype' && phenotypeResults.length > 0,
-               'filter-item__other_selected': appliedFilter && appliedFilter !== 'phenotype',
-               'disabled': phenotypeResults.length === 0
-           }"
-             class="filter-item">
-          <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
-          <span class="filter-item-name">Phenotype</span>
-          <span class="filter-item-count">{{ phenotypeResults.length | shortNumber }}</span>
-        </div>
 
-        <div (click)="toggleFilter('study')"
-             [ngClass]="{
-               'filter-item__selected': appliedFilter === 'study' && studyResults.length > 0,
-               'filter-item__other_selected': appliedFilter && appliedFilter !== 'study',
-                'disabled': studyResults.length === 0
-           }"
-             class="filter-item">
-          <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
-          <span class="filter-item-name">Studies</span>
-          <span class="filter-item-count">{{ studyResults.length | shortNumber }}</span>
-        </div>
+        <app-filter-search-page
+          [selectedFilter]="appliedFilter"
+          [filter]="'phenotype'"
+          [resultsCount]="phenotypeResults.length"
+          (click)="phenotypeResults.length  &&toggleFilter('phenotype')"
+        >
+          Phenotype
+        </app-filter-search-page>
 
-        <div (click)="toggleFilter('technology')"
-             [ngClass]="{
-               'filter-item__selected': appliedFilter === 'technology' && platformResults.length > 0,
-               'filter-item__other_selected': appliedFilter && appliedFilter !== 'technology',
-                'disabled': platformResults.length === 0
-           }"
-             class="filter-item">
-          <mat-icon fontSet="material-icons-round">manage_search</mat-icon>
-          <span class="filter-item-name">Platforms</span>
-          <span class="filter-item-count">{{ platformResults.length | shortNumber }}</span>
-        </div>
+        <app-filter-search-page
+          [selectedFilter]="appliedFilter"
+          [filter]="'study'"
+          [resultsCount]="studyResults.length"
+          (click)="studyResults.length && toggleFilter('study')"
+        >
+          Studies
+        </app-filter-search-page>
+
+        <app-filter-search-page
+          [selectedFilter]="appliedFilter"
+          [filter]="'technology'"
+          [resultsCount]="platformResults.length"
+          (click)="platformResults.length && toggleFilter('technology')"
+        >
+          Platforms
+        </app-filter-search-page>
       </div>
     </div>
 

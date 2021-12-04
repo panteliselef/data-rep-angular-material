@@ -52,7 +52,7 @@ main.search-page-container {
     }
 
     .filter-name,
-    .filter-item {
+    .filter-items {
       font-size: u.toRem(12);
       line-height: u.toRem(16);
     }
@@ -76,69 +76,6 @@ main.search-page-container {
       @include brk.tablet {
         flex-direction: row;
       }
-    }
-
-    .filter-item {
-      display: flex;
-      align-items: center;
-      padding: u.toRem(8);
-      cursor: pointer;
-      border-radius: 4px;
-      transition: all .2s ease-out;
-      user-select: none;
-      border: 1px solid transparent;
-
-      .mat-icon {
-        color: map-get(v.$black, 54);
-        width: 20px;
-        height: 20px;
-        font-size: 20px;
-        transition: color .2s ease-out;
-      }
-
-      .filter-item-name {
-        color: map-get(v.$black, 87);
-        margin-left: 5px;
-        margin-right: 10px;
-      }
-
-      .filter-item-count {
-        margin-left: auto;
-        color: map-get(v.$black, 54);
-      }
-
-      &:hover {
-        background-color: map-get(v.$light-green, 10);
-      }
-
-      &__selected {
-        background-color: map-get(v.$light-green, 20);
-        border-color: map-get(v.$green-sec, 100);
-
-        .filter-item-name {
-          font-weight: 700;
-        }
-      }
-
-      &__other_selected {
-        pointer-events: none;
-
-        .mat-icon,
-        .filter-item-name,
-        .filter-item-count {
-          color: v.$disabled-color !important;
-        }
-      }
-
-
-      &.disabled {
-        pointer-events: none;
-
-        * {
-          color: map-get(v.$grey, 100);
-        }
-      }
-
     }
 
   }

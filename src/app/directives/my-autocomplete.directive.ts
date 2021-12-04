@@ -1,7 +1,7 @@
 import {Directive, ElementRef, Input, OnDestroy} from '@angular/core';
 import {fromEvent, Subscription} from 'rxjs';
 import {filter} from 'rxjs/operators';
-import {SearchService} from '../services/search.service';
+import {SearchAutocompleteService} from '../services/search-autocomplete.service';
 
 @Directive({
   selector: '[appMyAutocomplete]',
@@ -14,7 +14,7 @@ export class MyAutocompleteDirective implements OnDestroy {
   private resultsSub: Subscription;
   private cursorSub: Subscription;
 
-  constructor(private el: ElementRef, private searchService: SearchService) {
+  constructor(private el: ElementRef, private autocompleteService: SearchAutocompleteService) {
     this.keyboardSub = fromEvent<KeyboardEvent>(this.el.nativeElement, 'keydown')
       .pipe(
         // This line was preventing for user to search on Enter if the array was empty
@@ -41,8 +41,8 @@ export class MyAutocompleteDirective implements OnDestroy {
         }
       });
 
-    this.resultsSub = this.searchService.searchResultsAutocomplete$.subscribe(_ => this.searchService.updateKeyboardCursor(-1));
-    this.cursorSub = this.searchService.cursor$.subscribe(n => this.cursor = n);
+    this.resultsSub = this.autocompleteService.recommendations$.subscribe(_ => this.autocompleteService.updateKeyboardCursor(-1));
+    this.cursorSub = this.autocompleteService.cursor$.subscribe(n => this.cursor = n);
   }
 
   ngOnDestroy(): void {
@@ -54,28 +54,28 @@ export class MyAutocompleteDirective implements OnDestroy {
 
   private onArrowDown(event): void {
     event.preventDefault();
-    const l = this.searchService.searchResultsAutoCompleteValue.length;
+    const l = this.autocompleteService.recommendationsValue.length;
     let c = this.cursor;
     if (c + 1 >= l) {
       c = -1;
       this.cursor = c;
-      this.searchService.updateKeyboardCursor(c);
+      this.autocompleteService.updateKeyboardCursor(c);
       return;
     } else {
       c++;
     }
     this.cursor = c;
-    this.searchService.updateKeyboardCursor(c);
+    this.autocompleteService.updateKeyboardCursor(c);
   }
 
   private onArrowUp(event): void {
     event.preventDefault();
-    const l = this.searchService.searchResultsAutoCompleteValue.length;
+    const l = this.autocompleteService.recommendationsValue.length;
     let c = this.cursor;
     if (c - 1 === -1) {
       c = -1;
       this.cursor = c;
-      this.searchService.updateKeyboardCursor(c);
+      this.autocompleteService.updateKeyboardCursor(c);
       return;
     } else if (c - 1 < 0) {
       c = l - 1;
@@ -83,7 +83,7 @@ export class MyAutocompleteDirective implements OnDestroy {
       c--;
     }
     this.cursor = c;
-    this.searchService.updateKeyboardCursor(c);
+    this.autocompleteService.updateKeyboardCursor(c);
   }
 
   private onEnter(event: KeyboardEvent): void {
@@ -91,12 +91,12 @@ export class MyAutocompleteDirective implements OnDestroy {
     event.preventDefault();
     console.log(this.searchValue.trim());
     if (this.searchValue.trim() !== '') {
-      this.searchService.updateSelectedCursor(this.cursor);
+      this.autocompleteService.updateSelectedCursor(this.cursor);
     }
   }
 
   private _onEscape(): void {
-    this.searchService.updateFocus(false);
+    this.autocompleteService.updateFocus(false);
   }
 
 }

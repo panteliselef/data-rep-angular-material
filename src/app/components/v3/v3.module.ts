@@ -7,6 +7,7 @@ import {SearchpageComponent} from './searchpage/searchpage.component';
 import {MatIconModule} from '@angular/material/icon';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import {SharedModule} from '../../shared/shared.module';
+import { FilterSearchPageComponent } from './searchpage/filter-search-page/filter-search-page.component';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import {SharedModule} from '../../shared/shared.module';
   declarations: [
     TestingPageComponent,
     SearchpageComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    FilterSearchPageComponent
   ]
 })
 export class V3Module {
