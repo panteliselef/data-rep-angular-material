@@ -7,12 +7,12 @@ import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {SearchAutocompleteService} from '../../../services/search-autocomplete.service';
 
 @Component({
-  selector: 'app-searchpage',
-  templateUrl: './searchpage.component.html',
-  styleUrls: ['./searchpage.component.scss'],
+  selector: 'app-search-page',
+  templateUrl: './search-page.component.html',
+  styleUrls: ['./search-page.component.scss'],
   providers: [SearchService]
 })
-export class SearchpageComponent implements OnInit, OnDestroy {
+export class SearchPageComponent implements OnInit, OnDestroy {
   private routeSub: Subscription;
   searchResults$: Observable<SearchResult[]>;
 

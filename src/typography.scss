@@ -1,12 +1,17 @@
 @use "variables" as v;
 @use "util" as u;
 
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 /* Headings and sub headings */
 h1, .mat-typography h1,
 h2, .mat-typography h2,
+h3, .mat-typography h3,
 h4, .mat-typography h4,
-.sub-headline-1{
+.sub-headline-1 {
   font-family: v.$primaryFontFamily;
   font-style: normal;
   margin: 0;
@@ -26,8 +31,15 @@ h2, .mat-typography h2 {
   color: map-get(v.$green, 100)
 }
 
+h3, .mat-typography h3 {
+  font-weight: normal;
+  font-size: u.toRem(16);
+  line-height: u.toRem(22);
+  color: map-get(v.$green, 100)
+}
+
 h4, .mat-typography h4,
-.sub-headline-1{
+.sub-headline-1 {
   font-weight: 500;
   font-size: u.toRem(14);
   line-height: u.toRem(19);

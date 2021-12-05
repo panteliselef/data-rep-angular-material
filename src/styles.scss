@@ -41,7 +41,8 @@ $class: 'icons-material';
   }
 }
 
-app-searchpage {
+app-search-page,
+app-not-found-page{
   height: calc(100vh - 52px);
   overflow: auto;
 }

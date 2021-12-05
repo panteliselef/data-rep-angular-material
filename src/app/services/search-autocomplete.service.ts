@@ -82,7 +82,6 @@ export class SearchAutocompleteService {
    * @param keyword the term to look for
    */
   getRecommendations(filters: SEARCH_FILTER[], keyword: string): void {
-    console.log('FIRING');
     this.recommendationFilters.next(filters);
     this.searchKeyword.next(keyword);
   }

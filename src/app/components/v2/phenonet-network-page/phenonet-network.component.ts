@@ -19,7 +19,7 @@ import {DatabaseService} from '../../../services/database.service';
   styleUrls: ['./phenonet-network.component.scss'],
   providers: [PhenonetNetworkService]
 })
-export class PhenonetNetworkComponent implements OnInit, OnDestroy, OnDestroy {
+export class PhenonetNetworkComponent implements OnInit, OnDestroy {
 
   connectedNodes: MatTableDataSource<ConnectedNode>;
   mainDisease = 'sepsis';
