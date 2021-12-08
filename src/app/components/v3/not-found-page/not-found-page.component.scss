@@ -26,6 +26,14 @@
     color: map-get(v.$light-green, 100)
   }
 
+  h3 {
+    max-width: 347px;
+  }
+
+  .h {
+    color: map-get(v.$light-green, 100)
+  }
+
 
   img.error-illustration {
     height: 260px;

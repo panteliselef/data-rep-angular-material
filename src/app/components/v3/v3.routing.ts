@@ -10,7 +10,8 @@ const routes: Routes = [
   {path: '', component: TestingPageComponent, },
   {path: 'search', component: SearchPageComponent, },
   {path: 'phenonet', component: PhenonetPageComponent, },
-  {path: '404', component: NotFoundPageComponent, },
+  {path: 'phenonet/:diseaseId', component: PhenonetPageComponent, },
+  {path: 'error', component: NotFoundPageComponent, },
   {path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 

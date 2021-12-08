@@ -1,8 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
-import {LoadingService} from '../../../services/loading.service';
 import {Title} from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
+import {ApiService} from 'src/app/services/api.service';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-phenonet-page',
@@ -15,8 +16,9 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private loadingService: LoadingService,
-    private titleService: Title) {}
+    private apiService: ApiService,
+    private titleService: Title) {
+  }
 
 
   /**
@@ -26,11 +28,36 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
    */
   onParamsChange(params: Params): void {
     const {diseaseId} = params;
+
+    this.apiService.getPhenonetDiseaseNeighborsAtDepth(diseaseId, 1)
+      .subscribe((phenotypeGraph) => {
+        console.log(phenotypeGraph);
+        this.titleService.setTitle(`${diseaseId.capitalize()} | Phenonet`);
+      }, (err: HttpErrorResponse) => {
+        if (err.status === 400) {
+
+          this.router.navigate(['/v3/error'], {
+            queryParams: {
+              fromPage: 'phenonet',
+              fromPageArg: diseaseId
+            },
+            skipLocationChange: true
+          });
+        } else {
+          this.router.navigate(['/v3/error'], {
+            queryParams: {
+              errorCode: '404',
+              withErrorCode: true
+            },
+            skipLocationChange: true
+          });
+
+        }
+      });
+
     /* Meanwhile set up the rest elements */
     if (!diseaseId) {
       this.titleService.setTitle('Phenonet');
-    } else {
-      this.titleService.setTitle(`${diseaseId.capitalize()} | Phenonet`);
     }
   }
 

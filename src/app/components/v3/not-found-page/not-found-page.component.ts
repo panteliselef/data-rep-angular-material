@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {ActivatedRoute, Params} from '@angular/router';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-not-found-page',
@@ -6,10 +9,40 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./not-found-page.component.scss']
 })
 export class NotFoundPageComponent implements OnInit {
+  private routeSub: Subscription;
 
-  constructor() { }
+  errorCode: string;
+  withErrorCode = false;
+  fromPage: string;
+  fromPageArg: string;
+
+  constructor(
+    private titleService: Title,
+    private route: ActivatedRoute
+  ) {
+  }
+
+  private onParamsChange(params: Params): void {
+    const {errorCode, withErrorCode, fromPage, fromPageArg} = params;
+
+    if (withErrorCode) {
+      this.withErrorCode = true;
+      this.errorCode = errorCode;
+      this.titleService.setTitle(`Error ${errorCode}`);
+    }else if (fromPage) {
+      this.fromPage = fromPage;
+      this.fromPageArg = fromPageArg;
+
+    }
+    else {
+      this.titleService.setTitle('Error');
+    }
+
+
+  }
 
   ngOnInit(): void {
+    this.routeSub = this.route.queryParams.subscribe(this.onParamsChange.bind(this));
   }
 
 }
