@@ -1,0 +1,18 @@
+<div class="breadcrumb-inner h-flex">
+
+  <a routerLink="/v3/phenonet">
+    <span class="breadcrumb-base">Phenonet</span>
+  </a>
+
+  <ng-container *ngIf="disease$ | async as disease">
+
+    <mat-icon class="material-icons-round">chevron_right</mat-icon>
+
+    <div class="breadcrumb-layer-node h-flex">
+      <div class="badge-node">NODE</div>
+      <span class="breadcrumb-phenonet-disease">{{disease}}</span>
+    </div>
+  </ng-container>
+
+
+</div>

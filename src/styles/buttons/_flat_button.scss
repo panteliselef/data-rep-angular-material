@@ -33,5 +33,9 @@
   &:active {
     @include flat_button_pressed;
   }
+
+  &__pressed {
+    @include flat_button_pressed;
+  }
 }
 

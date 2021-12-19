@@ -10,6 +10,8 @@ import {SharedModule} from '../../shared/shared.module';
 import { FilterSearchPageComponent } from './search-page/filter-search-page/filter-search-page.component';
 import {PhenonetPageComponent} from './phenonet-page/phenonet-page.component';
 import {NotFoundPageComponent} from './not-found-page/not-found-page.component';
+import {PhenonetBreadcrumbComponent} from './phenonet-page/phenonet-breadcrumb/phenonet-breadcrumb.component';
+import {PGraphFiltersComponent} from './phenonet-page/p-graph-filters/p-graph-filters.component';
 
 @NgModule({
   imports: [
@@ -26,7 +28,9 @@ import {NotFoundPageComponent} from './not-found-page/not-found-page.component';
     NotFoundPageComponent,
     // Components
     LoadingSpinnerComponent,
-    FilterSearchPageComponent
+    FilterSearchPageComponent,
+    PhenonetBreadcrumbComponent,
+    PGraphFiltersComponent
   ]
 })
 export class V3Module {

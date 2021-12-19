@@ -4,11 +4,15 @@ import {Title} from '@angular/platform-browser';
 import {Subscription} from 'rxjs';
 import {ApiService} from 'src/app/services/api.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {PhenonetPageService} from './phenonet-page.service';
 
 @Component({
   selector: 'app-phenonet-page',
   templateUrl: './phenonet-page.component.html',
-  styleUrls: ['./phenonet-page.component.scss']
+  styleUrls: ['./phenonet-page.component.scss'],
+  providers: [
+    PhenonetPageService
+  ]
 })
 export class PhenonetPageComponent implements OnInit, OnDestroy {
   private routeSub: Subscription;
@@ -17,6 +21,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
+    private phenonetService: PhenonetPageService,
     private titleService: Title) {
   }
 
@@ -33,6 +38,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
       .subscribe((phenotypeGraph) => {
         console.log(phenotypeGraph);
         this.titleService.setTitle(`${diseaseId.capitalize()} | Phenonet`);
+        this.phenonetService.updateDisease(diseaseId);
       }, (err: HttpErrorResponse) => {
         if (err.status === 400) {
 

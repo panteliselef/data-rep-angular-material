@@ -47,7 +47,17 @@
   grid-template-columns: 1fr 521px;
   gap: 35px;
   padding: 0 32px;
-  max-width: v.$networksMaxWidth;
+  max-width: v.$pageMaxWidth;
+}
+
+.app-page {
+  margin-top: 20px;
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 521px;
+  max-width: v.$pageMaxWidth;
+  gap: 20px;
+  padding: 0 20px;
 }
 
 .as-card {
@@ -79,7 +89,7 @@
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: .75rem;
-  line-height: 11px;
+  line-height: 12px;
   color: #fff;
   background: v.$green-light-1;
   padding: 3px 4px;
@@ -182,6 +192,12 @@
 /* Functions */
 @function toRem($value) {
   $remValue: ($value / 16) + rem;
+  @return $remValue;
+}
+
+/* Functions */
+@function toEm($value) {
+  $remValue: ($value / 16) + em;
   @return $remValue;
 }
 

@@ -1,0 +1,37 @@
+@use "src/variables" as v;
+@use "src/util" as u;
+
+:host {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.graph-filters-inner {
+  width: 100%;
+  justify-content: space-between;
+}
+
+
+.graph-filter-menu {
+  @include u.with_radius;
+  box-shadow: v.$drop-shadow-1;
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 313px;
+  height: auto;
+  background-color: v.$app-bg-color;
+
+
+  .graph-filter-menu-filters {
+    height: 200px;
+    padding: 20px 20px 10px 20px;
+    border-bottom: 1px solid map-get(v.$black, 8);
+  }
+
+
+  .graph-filter-menu-action {
+    padding: 10px 20px;
+  }
+}

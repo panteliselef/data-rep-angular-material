@@ -1,0 +1,51 @@
+<div class="graph-filters-inner h-flex">
+
+  <div class="h-flex" style="position: relative">
+
+
+    <button
+      (click)="isGraphFilterMenuOpen = !isGraphFilterMenuOpen"
+      class="flat_button app-button app-button__big_font"
+      [ngClass]="{'flat_button__pressed': isGraphFilterMenuOpen}"
+    >
+      Graph Filters
+      <span class="material-icons-round">filter_list</span>
+    </button>
+
+
+    <div [@openClose]="isGraphFilterMenuOpen" class="graph-filter-menu">
+      <div class="graph-filter-menu-filters"></div>
+      <div class="graph-filter-menu-action flex">
+        <button class="outline_button app-button__fluid">
+          <span class="material-icons-round">restart_alt</span>
+          Reset filters
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="h-flex" style="gap: 10px">
+
+    <button class="icon_button">
+      <mat-icon fontSet="material-icons-round">zoom_in</mat-icon>
+    </button>
+
+    <button class="icon_button">
+      <mat-icon fontSet="material-icons-round">zoom_out</mat-icon>
+    </button>
+
+    <button class="outline_button">
+      <span class="material-icons-round">restart_alt</span>
+      Reset graph
+    </button>
+
+    <button class="solid_button">
+      <mat-icon fontSet="material-icons-round">save</mat-icon>
+      Save as image
+    </button>
+  </div>
+
+</div>
