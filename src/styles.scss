@@ -42,7 +42,8 @@ $class: 'icons-material';
 }
 
 app-search-page,
-app-not-found-page{
+app-not-found-page,
+app-phenonet-page{
   height: calc(100vh - 52px);
   overflow: auto;
 }

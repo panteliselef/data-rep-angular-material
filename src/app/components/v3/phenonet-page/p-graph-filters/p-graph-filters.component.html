@@ -29,20 +29,20 @@
 
   <div class="h-flex" style="gap: 10px">
 
-    <button class="icon_button">
+    <button class="icon_button" (click)="zoomIn()" >
       <mat-icon fontSet="material-icons-round">zoom_in</mat-icon>
     </button>
 
-    <button class="icon_button">
+    <button class="icon_button" (click)="zoomOut()">
       <mat-icon fontSet="material-icons-round">zoom_out</mat-icon>
     </button>
 
-    <button class="outline_button">
+    <button class="outline_button" (click)="reset()">
       <span class="material-icons-round">restart_alt</span>
       Reset graph
     </button>
 
-    <button class="solid_button">
+    <button class="solid_button" (click)="savePng()">
       <mat-icon fontSet="material-icons-round">save</mat-icon>
       Save as image
     </button>

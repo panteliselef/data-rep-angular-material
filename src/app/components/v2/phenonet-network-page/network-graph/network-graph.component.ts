@@ -12,10 +12,10 @@ import {ConnectedNode, NODE} from 'src/app/models/graph.model';
 import {DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import {fullPhenonetConfig} from 'src/util/utils';
 import {ActivatedRoute} from '@angular/router';
-import {PhenonetNetworkService} from '../phenonet-network.service';
 import {Observable, Subscription} from 'rxjs';
 import {GraphComponentComponent} from '../../graph-component/graph-component.component';
 import {filter} from 'rxjs/operators';
+import {PhenonetPageService} from '../../../v3/phenonet-page/phenonet-page.service';
 
 @Component({
   selector: 'app-network-graph',
@@ -38,7 +38,7 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
   constructor(
     public visNetworkService: VisNetworkService,
     private route: ActivatedRoute,
-    private phenonetService: PhenonetNetworkService
+    private phenonetService: PhenonetPageService
   ) {
     super(visNetworkService);
     this.nodes = new DataSet<Node>([]);
@@ -66,6 +66,12 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
       } as ConnectedNode : undefined));
     this.selectedNode$.pipe(filter(node => typeof node !== 'undefined'))
       .subscribe(node => this.phenonetService.updateSelectedNode((node as NODE).id));
+
+
+    this.phenonetService.onZoomIn$.subscribe(this.zoomIn.bind(this));
+    this.phenonetService.onZoomOut$.subscribe(this.zoomOut.bind(this));
+    this.phenonetService.resetGraph$.subscribe(this.fitAllNodes.bind(this));
+    this.phenonetService.savePNG$.subscribe(this.savePNG.bind(this));
   }
 
   private _onChangeDisease(disease: string): void {

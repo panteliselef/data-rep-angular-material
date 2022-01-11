@@ -23,7 +23,7 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
 
   connectedNodes: MatTableDataSource<ConnectedNode>;
   mainDisease = 'sepsis';
-  mainDiseaseGraph: GRAPH;
+  // mainDiseaseGraph: GRAPH;
 
   private routeSub: Subscription;
 
@@ -47,9 +47,9 @@ export class PhenonetNetworkComponent implements OnInit, OnDestroy {
     this.searchRecommendations = [];
   }
 
-  setMainGraph(graph: GRAPH): void {
-    this.mainDiseaseGraph = graph;
-  }
+  // setMainGraph(graph: GRAPH): void {
+  //   this.mainDiseaseGraph = graph;
+  // }
 
 
   /**

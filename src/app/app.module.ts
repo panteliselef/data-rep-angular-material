@@ -8,8 +8,6 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-
-import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
@@ -26,7 +24,6 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatRadioModule} from '@angular/material/radio';
 
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {VisModule} from 'ngx-vis';
 
 
 import {HeaderComponent} from './components/header/header.component';
@@ -42,16 +39,13 @@ import {NeighborsTableComponent} from './components/v2/phenonet-network-page/nei
 import {StudiesTableComponent} from './components/v2/phenonet-network-page/studies-table/studies-table.component';
 import {GraphFilterBarComponent} from './components/v2/phenonet-network-page/graph-filter-bar/graph-filter-bar.component';
 import {PhenonetTopBarComponent} from './components/v2/phenonet-network-page/phenonet-top-bar/phenonet-top-bar.component';
-import {NetworkGraphComponent} from './components/v2/phenonet-network-page/network-graph/network-graph.component';
 import {HomepageSearchbarComponent} from './components/homepage-searchbar/homepage-searchbar.component';
 import {DatasetNetworkPageComponent} from './components/v2/dataset-network-page/dataset-network.component';
 import {DatasetTopBarComponent} from './components/v2/dataset-network-page/dataset-top-bar/dataset-top-bar.component';
-import {DatasetNetworkGraphComponent} from './components/v2/dataset-network-page/dataset-network-graph/dataset-network-graph.component';
 import {DatasetFilterBarComponent} from './components/v2/dataset-network-page/dataset-filter-bar/dataset-filter-bar.component';
 import {DownloadUrlPipe} from './components/v2/phenonet-network-page/download-url.pipe';
 import {SearchResultUrlPipe} from './pipes/search-result-url.pipe';
 import {MyAutocompleteDirective} from './directives/my-autocomplete.directive';
-import {GraphComponentComponent} from './components/v2/graph-component/graph-component.component';
 import {NavigationBarComponent} from './components/v3/navigation-bar/navigation-bar.component';
 import {SearchBarComponent} from './components/v3/search-bar/search-bar.component';
 import {ContentLoaderModule} from '@ngneat/content-loader';
@@ -69,7 +63,6 @@ export function importingEchart(): void {
     HomepageComponent,
     DiseaseNetworkComponent,
     NavbarComponent,
-    NavbarComponent,
     ToolbarSearchComponent,
     DatasetNetworkComponent,
     ToolbarSearchDatasetComponent,
@@ -79,16 +72,13 @@ export function importingEchart(): void {
     StudiesTableComponent,
     PhenonetTopBarComponent,
     GraphFilterBarComponent,
-    NetworkGraphComponent,
     HomepageSearchbarComponent,
     DatasetNetworkPageComponent,
     DatasetTopBarComponent,
-    DatasetNetworkGraphComponent,
     DatasetFilterBarComponent,
     DownloadUrlPipe,
     SearchResultUrlPipe,
     MyAutocompleteDirective,
-    GraphComponentComponent,
     NavigationBarComponent,
     SearchBarComponent,
   ],
@@ -107,7 +97,6 @@ export function importingEchart(): void {
     MatSlideToggleModule,
     MatTableModule,
     MatTabsModule,
-    MatIconModule,
     MatChipsModule,
     MatAutocompleteModule,
     MatSidenavModule,
@@ -123,7 +112,6 @@ export function importingEchart(): void {
     }),
     ReactiveFormsModule,
     FormsModule,
-    VisModule,
     MatTooltipModule,
     ContentLoaderModule
   ],

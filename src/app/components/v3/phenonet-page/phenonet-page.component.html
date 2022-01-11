@@ -5,6 +5,10 @@
 
   <div style="gap: 20px;" class="v-flex">
     <app-p-graph-filters></app-p-graph-filters>
+
+    <app-network-graph
+      [disease]="mainDisease || 'phenonet'"
+    ></app-network-graph>
   </div>
 
   <!--    side panel with separate elements-->

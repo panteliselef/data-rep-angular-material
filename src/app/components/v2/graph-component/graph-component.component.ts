@@ -68,6 +68,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
 
 
   setGraphData(graph: GplData | GRAPH): void {
+    if (!graph) { return; }
     this.nodes.clear();
     this.nodes.add(graph.nodes);
     this.edges.clear();
