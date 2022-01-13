@@ -2,8 +2,11 @@
 
 
 /* Flexbox classes */
-.flex {
+@mixin flex {
   display: flex;
+}
+.flex {
+  @include flex;
 }
 
 .align-flex-start {
@@ -26,14 +29,29 @@
   justify-content: center;
 }
 
-.h-flex {
-  @extend .flex;
+@mixin h-flex {
+  @include flex;
   flex-direction: row;
 }
+.h-flex {
+  @include h-flex;
+}
 
-.v-flex {
-  @extend .flex;
+@mixin v-flex {
+  @include flex;
   flex-direction: column;
+}
+.v-flex {
+  @include v-flex;
+}
+
+@mixin h-flex-wrap {
+  @include flex;
+  flex-flow: row wrap;
+}
+
+.h-flex-wrap {
+  @include h-flex-wrap;
 }
 
 /* END: Flexbox classes*/

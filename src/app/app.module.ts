@@ -8,24 +8,6 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
-import {MatButtonModule} from '@angular/material/button';
-import {MatTableModule} from '@angular/material/table';
-import {MatSelectModule} from '@angular/material/select';
-import {MatSliderModule} from '@angular/material/slider';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatChipsModule} from '@angular/material/chips';
-import {MatBadgeModule} from '@angular/material/badge';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatRadioModule} from '@angular/material/radio';
-
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-
-
 import {HeaderComponent} from './components/header/header.component';
 import {DiseaseNetworkComponent} from './components/disease-network/disease-network.component';
 import {NavbarComponent} from './components/navbar/navbar.component';
@@ -89,19 +71,6 @@ export function importingEchart(): void {
     BrowserModule,
     HttpClientModule,
     SharedModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatSliderModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSlideToggleModule,
-    MatTableModule,
-    MatTabsModule,
-    MatChipsModule,
-    MatAutocompleteModule,
-    MatSidenavModule,
-    MatBadgeModule,
-    MatRadioModule,
     NgxEchartsModule.forRoot({
       /**
        * This will import all modules from echarts.
@@ -110,9 +79,6 @@ export function importingEchart(): void {
        */
       echarts: importingEchart, // or import('./path-to-my-custom-echarts')
     }),
-    ReactiveFormsModule,
-    FormsModule,
-    MatTooltipModule,
     ContentLoaderModule
   ],
   providers: [
