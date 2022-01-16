@@ -12,7 +12,6 @@
       <span class="material-icons-round">filter_list</span>
     </button>
 
-
     <div [@openClose]="isGraphFilterMenuOpen" class="graph-filter-menu">
       <div class="graph-filter-menu-filters">
         <div class="graph-filter-menu-item v-flex">
@@ -25,13 +24,14 @@
           <div class="h-flex align-center" style="gap: 6px">
             <div class="slider-icon slider-icon-2" aria-label="icon with many nodes"></div>
             <mat-slider [style.width]="'120px'"
-                        [min]="0"
-                        [max]="10"
-                        [value]="2"
+                        [min]="minEdgeFreq$ | async"
+                        [max]="maxEdgeFreq$ | async"
+                        [value]="minEdgeFreq$ | async"
                         step="1"
                         color="primary"
                         tickInterval="1"
-                        thumbLabel></mat-slider>
+                        thumbLabel
+                        (input)="handleSliderInput($event)"></mat-slider>
             <div class="slider-icon slider-icon-1" aria-label="icon with few nodes"></div>
           </div>
         </div>
@@ -44,11 +44,12 @@
                    placeholder="sepsis"
                    aria-label="Highlight disease"
                    matInput
+                   [formControl]="highlightDiseaseControl"
                    [matAutocomplete]="auto">
-            <mat-autocomplete  #auto="matAutocomplete">
-<!--              <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">-->
-<!--                {{option}}-->
-<!--              </mat-option>-->
+            <mat-autocomplete (optionSelected)="emitSelectedOption($event)" #auto="matAutocomplete">
+              <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">
+                {{option}}
+              </mat-option>
             </mat-autocomplete>
           </mat-form-field>
         </div>
@@ -56,6 +57,8 @@
         <div class="graph-filter-menu-item h-flex align-center space-between" style="height: 30px" [ngClass]="{disabled: false}">
           <label class="filter-label">Display all nodes</label>
           <mat-slide-toggle
+            (ngModelChange)="setNeighborDegree($event)"
+            [ngModel]="displayAll$ | async"
             aria-label="Display all nodes"></mat-slide-toggle>
         </div>
       </div>

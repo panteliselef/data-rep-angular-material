@@ -58,7 +58,6 @@ export class PhenonetNetworkService {
    * @private
    */
   private _setGraph(graph: GRAPH): void {
-    console.warn('setting GRAPH');
     this.graph.next(graph);
     this.filteredGraph.next(graph);
     this.minEdgeFreq.next(graph.edges[graph.edges.length - 1].weight);
