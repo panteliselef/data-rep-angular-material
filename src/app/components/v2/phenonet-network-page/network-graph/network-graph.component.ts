@@ -14,7 +14,7 @@ import {fullPhenonetConfig} from 'src/util/utils';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
 import {GraphComponentComponent} from '../../graph-component/graph-component.component';
-import {filter} from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 import {PhenonetPageService} from '../../../v3/phenonet-page/phenonet-page.service';
 
 @Component({
@@ -64,8 +64,15 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
         ...edge,
         node: edge.from === this.disease ? edge.to : edge.from
       } as ConnectedNode : undefined));
-    this.selectedNode$.pipe(filter(node => typeof node !== 'undefined'))
-      .subscribe(node => this.phenonetService.updateSelectedNode((node as NODE).id));
+
+    /**
+     * selectedNode is undefined when user click neither a node or edge inside canvas
+     */
+    this.selectedNode$.pipe(
+      tap(node => !node && this.phenonetService.updateDiseaseToBeHighlighted('')),
+      filter(node => typeof node !== 'undefined')
+    )
+    .subscribe(node => this.phenonetService.updateSelectedNode((node as NODE).id));
 
 
     this.phenonetService.onZoomIn$.subscribe(this.zoomIn.bind(this));
