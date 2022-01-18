@@ -31,7 +31,7 @@ export class PhenonetPageService {
   readonly filteredGraph$ = this.filteredGraph.asObservable();
   readonly minEdgeFreq$ = this.minEdgeFreq.asObservable();
   readonly maxEdgeFreq$ = this.maxEdgeFreq.asObservable();
-  // readonly currEdgeFreq$ = this.currEdgeFreq.asObservable();
+  readonly currEdgeFreq$ = this.currEdgeFreq.asObservable();
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
   readonly displayAllNodes$ = this.displayAllNodes.asObservable();
   readonly selectedNode$ = this.selectedNode.asObservable();
@@ -53,7 +53,13 @@ export class PhenonetPageService {
    */
   private _setGraph(graph: GRAPH): void {
     this.graph.next(graph);
-    this.filteredGraph.next(graph);
+    const fg = this._filterOriginalGraph(this.currEdgeFreq.value);
+    this.filteredGraph.next(fg);
+    if (fg.diseases.includes(this.diseaseToBeHighlighted.value)) {
+      setTimeout(() => {
+        this.updateDiseaseToBeHighlighted(this.diseaseToBeHighlighted.value);
+      }, 400);
+    }
     this.minEdgeFreq.next(graph.edges[graph.edges.length - 1].weight);
     this.maxEdgeFreq.next(graph.edges[0].weight);
   }
@@ -82,7 +88,8 @@ export class PhenonetPageService {
     const finalNodes = Array.from(finalNodesSet).map(nodeId => graphInstance.nodes.find(node => node.id === nodeId));
     return {
       nodes: finalNodes,
-      edges: finalEdges
+      edges: finalEdges,
+      diseases: Array.from(finalNodesSet)
     };
   }
 
@@ -150,8 +157,14 @@ export class PhenonetPageService {
    * @param sliderLimit
    */
   updateCurrEdgeFreq(sliderLimit: number): void {
+    this.updateDiseaseToBeHighlighted('');
     this._setSlider(sliderLimit);
     const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
     this.filteredGraph.next(filteredOriginalGraph);
+  }
+
+  resetGraphFilters(): void {
+    this.updateCurrEdgeFreq(this.minEdgeFreq.value);
+    this.updateDiseaseToBeHighlighted('');
   }
 }

@@ -23,6 +23,7 @@ export class PGraphFiltersComponent implements OnInit {
   isGraphFilterMenuOpen = false;
   highlightDiseaseControl = new FormControl();
   minEdgeFreq$: Observable<number>;
+  currEdgeFreq$: Observable<number>;
   maxEdgeFreq$: Observable<number>;
   filteredOptions$: Observable<string[]>;
   diseasesInGraph$: Observable<string[]>;
@@ -47,11 +48,13 @@ export class PGraphFiltersComponent implements OnInit {
   ngOnInit(): void {
     this.minEdgeFreq$ = this.phenonetService.minEdgeFreq$;
     this.maxEdgeFreq$ = this.phenonetService.maxEdgeFreq$;
+    this.currEdgeFreq$ = this.phenonetService.currEdgeFreq$;
     this.displayAll$ = this.phenonetService.displayAllNodes$;
+    this.phenonetService.diseaseToBeHighlighted$.subscribe((disease) => this.highlightDiseaseControl.setValue(disease));
 
     // Get diseases that exist in the displayed graph
     this.diseasesInGraph$ = this.phenonetService.filteredGraph$.pipe(
-      map( (graph) => graph?.diseases)
+      map((graph) => graph?.diseases)
     );
 
     /**
@@ -59,7 +62,9 @@ export class PGraphFiltersComponent implements OnInit {
      * those diseases based on the user input
      */
     this.diseasesSub = this.diseasesInGraph$.subscribe((diseases) => {
-      if (!diseases) { return; }
+      if (!diseases) {
+        return;
+      }
       this.filteredOptions$ = this.highlightDiseaseControl.valueChanges
         .pipe(
           startWith(''), // this populates array with every disease
@@ -104,5 +109,9 @@ export class PGraphFiltersComponent implements OnInit {
   handleSliderInput($event: MatSliderChange | number): void {
     const limit = $event instanceof MatSliderChange ? $event.value : $event;
     this.phenonetService.updateCurrEdgeFreq(limit);
+  }
+
+  resetFilters(): void {
+    this.phenonetService.resetGraphFilters();
   }
 }

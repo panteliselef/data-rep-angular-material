@@ -26,7 +26,7 @@
             <mat-slider [style.width]="'120px'"
                         [min]="minEdgeFreq$ | async"
                         [max]="maxEdgeFreq$ | async"
-                        [value]="minEdgeFreq$ | async"
+                        [value]="currEdgeFreq$ | async"
                         step="1"
                         color="primary"
                         tickInterval="1"
@@ -63,7 +63,7 @@
         </div>
       </div>
       <div class="graph-filter-menu-action flex">
-        <button class="outline_button app-button__fluid">
+        <button class="outline_button app-button__fluid" (click)="resetFilters()">
           <span class="material-icons-round">restart_alt</span>
           Reset filters
         </button>
