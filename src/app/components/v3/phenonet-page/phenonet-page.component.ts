@@ -7,8 +7,9 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {PhenonetPageService} from './phenonet-page.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ConnectedNode, GRAPH} from '../../../models/graph.model';
-import {map} from 'rxjs/operators';
+import {filter, map} from 'rxjs/operators';
 import {PostgresStudy} from '../../../models/postgres.model';
+import {animate, style, transition, trigger} from '@angular/animations';
 
 @Component({
   selector: 'app-phenonet-page',
@@ -16,6 +17,17 @@ import {PostgresStudy} from '../../../models/postgres.model';
   styleUrls: ['./phenonet-page.component.scss'],
   providers: [
     PhenonetPageService
+  ],
+  animations: [
+    trigger('myInsertRemoveTrigger', [
+      transition(':enter', [
+        style({opacity: 0, transform: 'translateY(-100px) translateX(-50%)'}),
+        animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)', style({opacity: 1, transform: 'translateY(0) translateX(-50%)'})),
+      ]),
+      transition(':leave', [
+        animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)', style({opacity: 0, transform: 'translateY(-50px) translateX(-50%)'}))
+      ])
+    ])
   ]
 })
 export class PhenonetPageComponent implements OnInit, OnDestroy {
@@ -26,6 +38,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
   filteredGraph$: Observable<GRAPH>;
   connectedNodes$: Observable<MatTableDataSource<ConnectedNode>>;
   studies$: Observable<MatTableDataSource<PostgresStudy>>;
+  isShown = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,6 +61,11 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
     /* Meanwhile set up the rest elements */
     if (!diseaseId) {
       this.titleService.setTitle('Phenonet');
+      this.phenonetService.updateDisplayAllNodesDisabled(true);
+    } else {
+      this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
+      this.phenonetService.updateDisplayAllNodesDisabled(false);
+      this.phenonetService.updateDisplayAllNodes(false);
     }
   }
 
@@ -87,6 +105,12 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
         });
     });
 
+    // Get diseases that exist in the displayed graph
+    this.phenonetService.filteredGraph$.pipe(
+      map((graph) => graph?.diseases),
+      map(diseases => diseases.includes(this.mainDisease))
+    ).subscribe((hasWarning) => this.isShown = hasWarning);
+
 
     this.filteredGraph$ = this.phenonetService.filteredGraph$;
     this.connectedNodes$ = this.phenonetService.graph$.pipe(
@@ -105,10 +129,19 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
         .sort((a, b) => b.weight - a.weight)),
       map(formattedEdges => new MatTableDataSource<ConnectedNode>(formattedEdges))
     );
+
+    this.phenonetService.selectedNode$
+      .pipe(filter(node => typeof node !== 'undefined'))
+      .subscribe(this.onNodeSelect.bind(this));
   }
 
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
+  }
+
+
+  onNodeSelect(node: string): void {
+    this.router.navigate(['/v3/phenonet', node]).then(console.log);
   }
 
 }

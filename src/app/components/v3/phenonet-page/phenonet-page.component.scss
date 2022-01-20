@@ -1,5 +1,40 @@
+@use "src/variables" as v;
 :host {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+
+.warning-toast {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  gap: 5px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 10px;
+  background: #FFD698;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  /* nav-header-shadow */
+
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  border-radius: 11px;
+
+  font-family: v.$primaryFontFamily;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0;
+  text-align: left;
+  .warning-action-action {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }

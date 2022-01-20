@@ -9,13 +9,18 @@ export class PhenonetPageService {
 
   // Behavior Subjects
   private disease = new BehaviorSubject<string>('');
-  private graph = new BehaviorSubject<GRAPH>(undefined);
-  private filteredGraph = new BehaviorSubject<GRAPH>(undefined);
+  private graph = new BehaviorSubject<GRAPH>({
+    nodes: [],
+    edges: [],
+    diseases: []
+  });
+  private filteredGraph = new BehaviorSubject<GRAPH>(this.graph.value);
   private minEdgeFreq = new BehaviorSubject<number>(0);
   private maxEdgeFreq = new BehaviorSubject<number>(1);
   private currEdgeFreq = new BehaviorSubject<number>(0);
   private diseaseToBeHighlighted = new BehaviorSubject<string>('');
   private displayAllNodes = new BehaviorSubject<boolean>(false);
+  private isDisplayAllNodesDisabled = new BehaviorSubject<boolean>(false);
   private selectedNode = new BehaviorSubject<string>(undefined);
   private selectedEdge = new BehaviorSubject<ConnectedNode>(undefined);
 
@@ -34,6 +39,7 @@ export class PhenonetPageService {
   readonly currEdgeFreq$ = this.currEdgeFreq.asObservable();
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
   readonly displayAllNodes$ = this.displayAllNodes.asObservable();
+  readonly isDisplayAllNodesDisabled$ = this.isDisplayAllNodesDisabled.asObservable();
   readonly selectedNode$ = this.selectedNode.asObservable();
   readonly selectedEdge$ = this.selectedEdge.asObservable();
   readonly onZoomIn$ = this.onZoomIn.asObservable();
@@ -77,6 +83,10 @@ export class PhenonetPageService {
     this.currEdgeFreq.next(count);
   }
 
+  private _setDisplayAllNodesDisabled(disabled: boolean): void {
+    this.isDisplayAllNodesDisabled.next(disabled);
+  }
+
   private _filterOriginalGraph(sliderLimit: number): GRAPH {
     const graphInstance = this.graph.getValue();
     const finalNodesSet = new Set<string>();
@@ -102,6 +112,10 @@ export class PhenonetPageService {
       .pipe(tap(graph => this._setGraph(graph)));
   }
 
+
+  updateDisplayAllNodesDisabled(disabled: boolean): void {
+    this._setDisplayAllNodesDisabled(disabled);
+  }
 
   updateDisplayAllNodes(b: boolean): void {
     this._setDisplayAllNodes(b);
@@ -164,6 +178,7 @@ export class PhenonetPageService {
   }
 
   resetGraphFilters(): void {
+    this.displayAllNodes.next(false);
     this.updateCurrEdgeFreq(this.minEdgeFreq.value);
     this.updateDiseaseToBeHighlighted('');
   }

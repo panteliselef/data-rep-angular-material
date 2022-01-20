@@ -8,7 +8,12 @@
 
     <app-network-graph
       [disease]="mainDisease || 'phenonet'"
-    ></app-network-graph>
+    >
+      <div @myInsertRemoveTrigger *ngIf="!isShown" class="warning-toast">
+        <mat-icon fontSet="material-icons-round">warning_amber</mat-icon>
+        <span class="warning-action-action">{{mainDisease}}</span> is not visible in graph
+      </div>
+    </app-network-graph>
   </div>
 
   <!--    side panel with separate elements-->
