@@ -76,19 +76,20 @@
 
   <div class="graph-filter-selected-values">
     <div [@queryShake]="isGraphFilterMenuOpen" class="graph-filter-selected-values-inner">
-      <div [@openClose2]="isGraphFilterMenuOpen" class="graph-filter-value-item">
-        {{(displayAll$ | async) ? 'Full graph' : '1st degree neighbour graph'}}
+      <div class="graph-filter-value-item">
+        <span [@openClose3]="isGraphFilterMenuOpen" class="graph-filter-value-item_divider"></span>
+        <div [@openClose2]="isGraphFilterMenuOpen" >{{(displayAll$ | async) ? 'Full graph' : '1st degree neighbour graph'}}</div>
       </div>
 
-      <div [@openClose2]="isGraphFilterMenuOpen" class="graph-filter-value-item">
-        w/ {{currEdgeFreq$ | async}} similar studies
+      <div class="graph-filter-value-item">
+        <span [@openClose3]="isGraphFilterMenuOpen" class="graph-filter-value-item_divider"></span>
+        <div [@openClose2]="isGraphFilterMenuOpen"> w/ {{currEdgeFreq$ | async}} similar studies</div>
       </div>
     </div>
   </div>
   <ng-template #loading>
     Loading stuff...
   </ng-template>
-
 
 
   <div class="h-flex-wrap" style="gap: 10px">

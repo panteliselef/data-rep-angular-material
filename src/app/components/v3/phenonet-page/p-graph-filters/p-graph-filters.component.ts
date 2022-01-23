@@ -20,23 +20,33 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
     trigger('openClose2', [
       state('false', style({opacity: 1, transform: 'translateY(0)', visibility: 'visible'})),
       state('true', style({opacity: 0, transform: 'translateY(10px)', visibility: 'hidden'})),
-      transition('* <=> *', animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
+      transition('* <=> *', animate('350ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
+    ]),
+
+    trigger('openClose3', [
+      state('true', style({height: '0'})),
+      state('false', style({height: '100%'})),
+      transition('* <=> *', animate('350ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
     ]),
 
     trigger('queryShake', [
-      transition('false => true', [query('@openClose2', [
-        stagger('-80ms', [
+      transition('false => true', [
+          query('@*', stagger('-60ms', [
+            animateChild()
+          ])),
+          // query('@openClose3', stagger('-80ms', [
+          //   animateChild()
+          // ]), {optional: true}),
+      ]),
+      transition('true => false', [
+        query('@*', stagger('60ms', [
           animateChild()
-        ]),
-      ])]),
-      transition('true => false', [query('@openClose2', [
-        stagger('80ms', [
-          animateChild()
-        ]),
-      ])]),
+        ])),
+      ]),
     ]),
   ],
 })
+
 export class PGraphFiltersComponent implements OnInit {
   isGraphFilterMenuOpen = false;
   highlightDiseaseControl = new FormControl();
