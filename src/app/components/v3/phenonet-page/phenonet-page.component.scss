@@ -1,4 +1,5 @@
 @use "src/variables" as v;
+@use "src/util" as u;
 :host {
   display: flex;
   flex-direction: column;
@@ -7,32 +8,27 @@
 
 
 .warning-toast {
+  @include u.with_radius;
   position: absolute;
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
   width: auto;
   gap: 5px;
-  height: 30px;
   display: flex;
   flex-direction: row;
   align-items: center;
   padding: 4px 10px;
-  background: #FFD698;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  box-sizing: border-box;
+  background: map-get(v.$warn, 'bg');
+  border: 1px solid map-get(v.$black, 12);
   /* nav-header-shadow */
-
-  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
-  border-radius: 11px;
-
+  box-shadow: v.$drop-shadow-1;
   font-family: v.$primaryFontFamily;
-  font-size: 12px;
+  font-size: u.toRem(12);
   font-style: normal;
   font-weight: 600;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: left;
+  line-height: u.toRem(16);
+
   .warning-action-action {
     text-decoration: underline;
     cursor: pointer;

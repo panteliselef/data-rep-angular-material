@@ -66,8 +66,15 @@ export class PhenonetPageService {
         this.updateDiseaseToBeHighlighted(this.diseaseToBeHighlighted.value);
       }, 400);
     }
-    this.minEdgeFreq.next(graph.edges[graph.edges.length - 1].weight);
-    this.maxEdgeFreq.next(graph.edges[0].weight);
+    const min = graph.edges[graph.edges.length - 1].weight;
+    const max = graph.edges[0].weight;
+    if (this.currEdgeFreq.value > max) {
+      this.currEdgeFreq.next(max);
+    } else if (this.currEdgeFreq.value < min) {
+      this.currEdgeFreq.next(min);
+    }
+    this.minEdgeFreq.next(min);
+    this.maxEdgeFreq.next(max);
   }
 
   private _setDisplayAllNodes(degree: boolean): void {

@@ -87,8 +87,12 @@
   }
 }
 
-.with-manrope {
+@mixin with_manrope {
   font-family: v.$primaryFontFamily;
+}
+
+.with-manrope {
+  @include with_manrope;
 }
 
 @mixin with_radius {

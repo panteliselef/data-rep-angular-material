@@ -54,7 +54,8 @@
           </mat-form-field>
         </div>
 
-        <div class="graph-filter-menu-item h-flex align-center space-between" style="height: 30px" [ngClass]="{disabled: false}">
+        <div class="graph-filter-menu-item h-flex align-center space-between" style="height: 30px"
+             [ngClass]="{disabled: false}">
           <label class="filter-label">Display all nodes</label>
           <mat-slide-toggle
             (ngModelChange)="setNeighborDegree($event)"
@@ -72,6 +73,22 @@
     </div>
 
   </div>
+
+  <div class="graph-filter-selected-values">
+    <div [@queryShake]="isGraphFilterMenuOpen" class="graph-filter-selected-values-inner">
+      <div [@openClose2]="isGraphFilterMenuOpen" class="graph-filter-value-item">
+        {{(displayAll$ | async) ? 'Full graph' : '1st degree neighbour graph'}}
+      </div>
+
+      <div [@openClose2]="isGraphFilterMenuOpen" class="graph-filter-value-item">
+        w/ {{currEdgeFreq$ | async}} similar studies
+      </div>
+    </div>
+  </div>
+  <ng-template #loading>
+    Loading stuff...
+  </ng-template>
+
 
 
   <div class="h-flex-wrap" style="gap: 10px">

@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, OnInit} from '@angular/core';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {animate, animateChild, query, stagger, state, style, transition, trigger} from '@angular/animations';
 import {PhenonetPageService} from '../phenonet-page.service';
 import {Observable, Subscription} from 'rxjs';
 import {MatSliderChange} from '@angular/material/slider';
@@ -16,7 +16,25 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
       state('true', style({opacity: 1, transform: 'translateY(0)', visibility: 'visible'})),
       state('false', style({opacity: 0, transform: 'translateY(10px)', visibility: 'hidden'})),
       transition('false <=> true', animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
-    ])
+    ]),
+    trigger('openClose2', [
+      state('false', style({opacity: 1, transform: 'translateY(0)', visibility: 'visible'})),
+      state('true', style({opacity: 0, transform: 'translateY(10px)', visibility: 'hidden'})),
+      transition('* <=> *', animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
+    ]),
+
+    trigger('queryShake', [
+      transition('false => true', [query('@openClose2', [
+        stagger('-80ms', [
+          animateChild()
+        ]),
+      ])]),
+      transition('true => false', [query('@openClose2', [
+        stagger('80ms', [
+          animateChild()
+        ]),
+      ])]),
+    ]),
   ],
 })
 export class PGraphFiltersComponent implements OnInit {
