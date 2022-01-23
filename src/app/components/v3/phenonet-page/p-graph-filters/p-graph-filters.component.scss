@@ -30,6 +30,9 @@
 
   .graph-filter-value-item {
     font-weight: 500;
+    overflow: hidden;
+    user-select: none;
+    pointer-events: none;
     //border-left: 1px solid v.$search-icon-color;
     padding: 0 u.toRem(10);
     font-size: u.toRem(14);
@@ -39,6 +42,7 @@
     &_divider {
       //transform: rotate(180deg);
       //transform-origin: top left;
+      border-radius: 4px;
       width: 1px;
       position: absolute;
       bottom: 0;

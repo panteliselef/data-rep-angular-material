@@ -15,12 +15,12 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
     trigger('openClose', [
       state('true', style({opacity: 1, transform: 'translateY(0)', visibility: 'visible'})),
       state('false', style({opacity: 0, transform: 'translateY(10px)', visibility: 'hidden'})),
-      transition('false <=> true', animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
+      transition('false <=> true', animate('400ms cubic-bezier(0.68,-1.55,0.27,2.55)'))
     ]),
     trigger('openClose2', [
-      state('false', style({opacity: 1, transform: 'translateY(0)', visibility: 'visible'})),
-      state('true', style({opacity: 0, transform: 'translateY(10px)', visibility: 'hidden'})),
-      transition('* <=> *', animate('350ms cubic-bezier(0.68,-0.55,0.27,1.55)'))
+      state('false', style({transform: 'translateY(0)'})),
+      state('true', style({transform: 'translateY(15px)'})),
+      transition('* <=> *', animate('350ms cubic-bezier(0.68,-1.55,0.27,2.55)'))
     ]),
 
     trigger('openClose3', [
@@ -31,17 +31,14 @@ import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 
     trigger('queryShake', [
       transition('false => true', [
-          query('@*', stagger('-60ms', [
-            animateChild()
-          ])),
-          // query('@openClose3', stagger('-80ms', [
-          //   animateChild()
-          // ]), {optional: true}),
+        query('@*', stagger('-60ms', [
+          animateChild()
+        ]), {optional: true}),
       ]),
       transition('true => false', [
         query('@*', stagger('60ms', [
           animateChild()
-        ])),
+        ]), {optional: true}),
       ]),
     ]),
   ],
