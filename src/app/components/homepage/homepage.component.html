@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="homepage.component.scss">
-<nav  class="navbar-header" [class.scrolled]="userHasScrolled">
+<nav class="navbar-header" [class.scrolled]="userHasScrolled">
   <div style="flex-grow: 1"></div>
   <a mat-button routerLink="phenonet">Phenonet</a>
   <a mat-button routerLink="vis">Visualisation</a>
@@ -11,69 +11,65 @@
 <div class="top_container">
   <h1>
     <mat-icon fontSet="material-icons-round">bar_chart</mat-icon>
-<!--    <span style="font-size: inherit" class="material-icons-round">bar_chart</span>-->
     Data Repurposing
   </h1>
 
-  <div class="example_searches" style="font-family: 'Source Sans Pro', sans-serif">
+  <div class="example_searches">
     Example searches:
 
     <mat-chip-list aria-label="Search examples">
-      <a routerLink="/v2/dataset">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
-<!--          <span class="material-icons">open_in_new</span>-->
-          v2 Dataset</mat-chip>
-      </a>
+      <!--      <a routerLink="/v2/dataset">-->
+      <!--        <mat-chip color="primary" selected>-->
+      <!--          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>-->
+      <!--          v2 Dataset</mat-chip>-->
+      <!--      </a>-->
 
-      <a routerLink="/v2/phenonet">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
-<!--          <span class="material-icons-round">open_in_new</span>-->
-          v2 Phenonet</mat-chip>
-      </a>
+      <!--      <a routerLink="/v2/phenonet">-->
+      <!--        <mat-chip color="primary" selected>-->
+      <!--          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>-->
+      <!--          v2 Phenonet</mat-chip>-->
+      <!--      </a>-->
 
-      <a routerLink="/phenonet">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
-<!--          <span class="material-icons-round">open_in_new</span>-->
-          Phenonet</mat-chip>
-      </a>
+      <!--      <a routerLink="/phenonet">-->
+      <!--        <mat-chip color="primary" selected>-->
+      <!--          <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>-->
+      <!--          Phenonet</mat-chip>-->
+      <!--      </a>-->
+      <mat-chip color="primary" selected routerLink="/v3/phenonet">
+        <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
+        Phenonet
+      </mat-chip>
 
-      <a routerLink="/disease/sepsis">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">search</mat-icon>
-<!--          <span class="material-icons-round">search</span>-->
-          sepsis</mat-chip>
-      </a>
-      <a routerLink="/disease/asthma">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">search</mat-icon>
-<!--          <span class="material-icons-round">search</span>-->
-          asthma</mat-chip>
-      </a>
-      <a routerLink="/disease/breast cancer">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">search</mat-icon>
-<!--          <span class="material-icons-round">search</span>-->
-          breast cancer</mat-chip>
-      </a>
-      <a routerLink="/disease/breast cancer">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">description</mat-icon>
-<!--          <span class="material-icons-round">description</span>-->
-          GSExxxx</mat-chip>
-      </a>
-      <a routerLink="/dataset-network">
-        <mat-chip color="primary" selected>
-          <mat-icon fontSet="material-icons-round">description</mat-icon>
-<!--          <span class="material-icons-round">description</span>-->
-          GPL96</mat-chip>
-      </a>
+
+      <mat-chip color="primary" selected routerLink="/v3/phenonet/sepsis">
+        <mat-icon fontSet="material-icons-round">search</mat-icon>
+        sepsis
+      </mat-chip>
+
+      <mat-chip color="primary" selected routerLink="v3/phenonet/asthma">
+        <mat-icon fontSet="material-icons-round">search</mat-icon>
+        asthma
+      </mat-chip>
+
+      <mat-chip color="primary" selected routerLink="/v3/phenonet/breast cancer">
+        <mat-icon fontSet="material-icons-round">search</mat-icon>
+        breast cancer
+      </mat-chip>
+
+      <!--      <a routerLink="/disease/breast cancer">-->
+      <!--        <mat-chip color="primary" selected>-->
+      <!--          <mat-icon fontSet="material-icons-round">description</mat-icon>-->
+      <!--          GSExxxx</mat-chip>-->
+      <!--      </a>-->
+      <!--      <a routerLink="/dataset-network">-->
+      <!--        <mat-chip color="primary" selected>-->
+      <!--          <mat-icon fontSet="material-icons-round">description</mat-icon>-->
+      <!--          GPL96</mat-chip>-->
+      <!--      </a>-->
     </mat-chip-list>
   </div>
 
-  <app-homepage-searchbar></app-homepage-searchbar>
+<!--  <app-homepage-searchbar></app-homepage-searchbar>-->
 
 </div>
 
@@ -82,23 +78,32 @@
 
     <div style="display: flex;flex-direction: column;width: 100%; flex-wrap: wrap; align-items: flex-start;">
       <h1>Phenotype network</h1>
-      <p>In phenotype network, each node represents a phenotype. Phenotype network is an aggregation network from individual dataset networks, where two nodes are connected by an edge whenever a dataset of phenotype A has been found similar to a dataset of phenotype B in any dataset network of the same species. Edge weight represents the frequency of the similarity (A,B).</p>
+      <p>In phenotype network, each node represents a phenotype. Phenotype network is an aggregation network from
+        individual dataset networks, where two nodes are connected by an edge whenever a dataset of phenotype A has been
+        found similar to a dataset of phenotype B in any dataset network of the same species. Edge weight represents the
+        frequency of the similarity (A,B).</p>
       <div style="display: flex;gap: .5rem">
         <button mat-raised-button>Explore</button>
       </div>
 
     </div>
 
-    <img alt="network-image" src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+    <img alt="network-image"
+         src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
   </div>
 </section>
 
-<section >
+<section>
   <div class="section_container reverse">
-    <img alt="network-image" src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
+    <img alt="network-image"
+         src="https://public-media.interaction-design.org/images/uploads/49cc66880bd19f638136237261b1066e.jpg"/>
     <div style="display: flex;flex-direction: column;">
       <h1>Dataset network</h1>
-      <p>In dataset networks, each node represents a dataset. Edges represent similarities between datasets, as distances between two empirical, multivariable, statistical distributions, intuitively implying that molecular quantities measured in the two datasets are inter-correlated in a similar way, i.e., the covariance matrices are similar. Computation in these networks is unsupervised and depends only on the omics data distributions, ignoring any annotation or labeling of each dataset.</p>
+      <p>In dataset networks, each node represents a dataset. Edges represent similarities between datasets, as
+        distances between two empirical, multivariable, statistical distributions, intuitively implying that molecular
+        quantities measured in the two datasets are inter-correlated in a similar way, i.e., the covariance matrices are
+        similar. Computation in these networks is unsupervised and depends only on the omics data distributions,
+        ignoring any annotation or labeling of each dataset.</p>
       <div style="display: flex;gap: .5rem">
         <button mat-raised-button>Explore</button>
         <button mat-button color="primary">Read More</button>

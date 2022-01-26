@@ -1,3 +1,9 @@
+@use "src/util" as u;
+
+:host {
+  @include u.with-manrope;
+}
+
 .navbar-header {
   display: flex;
   flex-wrap: wrap;
@@ -33,11 +39,12 @@
 }
 
 h1 {
-  font-family: "Source Sans Pro", sans-serif;
+  @include u.with_manrope;
+  letter-spacing: -1px;
 }
 
 .top_container {
-  min-height: 500px;
+  min-height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,6 +57,7 @@ h1 {
     width: 100%;
     font-size: 3.125rem;
     font-weight: 600;
+    margin-bottom: 1rem;
     color: #1e352f;
 
     & > span, & > .mat-icon {
