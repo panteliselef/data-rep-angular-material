@@ -7,33 +7,33 @@
   <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef> Accession ID</th>
     <td mat-cell *matCellDef="let element">
-      <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.studyid}}" target="_blank"
+      <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.GSE}}" target="_blank"
          rel="noopener">
-        {{element.studyid}}
+        {{element.GSE}}
       </a></td>
   </ng-container>
 
   <!-- Name Column -->
   <ng-container matColumnDef="samples">
     <th mat-header-cell *matHeaderCellDef> Samples</th>
-    <td mat-cell *matCellDef="let element"> {{element.samples}} </td>
+    <td mat-cell *matCellDef="let element"> {{element.Samples}} </td>
   </ng-container>
 
   <!-- Weight Column -->
   <ng-container matColumnDef="entity">
     <th mat-header-cell *matHeaderCellDef> Entity</th>
-    <td mat-cell *matCellDef="let element"> {{element.studytype}} </td>
+    <td mat-cell *matCellDef="let element"> {{element.Entity}} </td>
   </ng-container>
 
   <!-- Symbol Column -->
   <ng-container matColumnDef="type">
     <th mat-header-cell *matHeaderCellDef> Acquisition Type</th>
     <td mat-cell *matCellDef="let element">
-      <span> {{element.studytypedef}}</span>
+      <span> {{element.Type}}</span>
       <!--          <span class="gmail_like"></span>-->
 
       <div class="gmail_like ">
-        <a [href]="[element.studyid] | downloadUrl:'data'">
+        <a [href]="[element.GSE] | downloadUrl:'data'">
           <button mat-icon-button
                   aria-label="Download data"
                   matTooltipClass="app-tooltip"
@@ -41,7 +41,7 @@
             <mat-icon class="green-color" fontSet="material-icons-round">file_download</mat-icon>
           </button>
         </a>
-        <a [href]="[element.studyid] | downloadUrl:'annotation'">
+        <a [href]="[element.GSE] | downloadUrl:'annotation'">
           <button mat-icon-button
                   matTooltip="Download annotation"
                   matTooltipClass="app-tooltip"

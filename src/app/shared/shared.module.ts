@@ -22,6 +22,10 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatRadioModule} from '@angular/material/radio';
+import {NeighborsTableComponent} from '../components/v2/phenonet-network-page/neighbors-table/neighbors-table.component';
+import {StudyPairsListComponent} from '../components/v2/phenonet-network-page/study-pairs-list/study-pairs-list.component';
+import {DownloadUrlPipe} from '../components/v2/phenonet-network-page/download-url.pipe';
+import {StudiesTableComponent} from '../components/v2/phenonet-network-page/studies-table/studies-table.component';
 
 
 
@@ -32,6 +36,10 @@ import {MatRadioModule} from '@angular/material/radio';
     DatasetNetworkGraphComponent,
     GraphComponentComponent,
     NetworkGraphComponent,
+    NeighborsTableComponent,
+    StudyPairsListComponent,
+    DownloadUrlPipe,
+    StudiesTableComponent,
   ],
   imports: [
     CommonModule,
@@ -60,6 +68,10 @@ import {MatRadioModule} from '@angular/material/radio';
     DatasetNetworkGraphComponent,
     GraphComponentComponent,
     NetworkGraphComponent,
+    NeighborsTableComponent,
+    StudyPairsListComponent,
+    DownloadUrlPipe,
+    StudiesTableComponent,
     MatAutocompleteModule,
     MatIconModule,
     FormsModule,

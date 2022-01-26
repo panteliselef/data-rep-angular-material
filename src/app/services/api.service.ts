@@ -8,6 +8,22 @@ import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
 import {GplData, Technology} from 'src/app/models/gplGraph.model';
 import {tap} from 'rxjs/operators';
 
+export interface StudyMetadata {
+  id: string;
+  GSE: string;
+  Species: string;
+  Entity: string;
+  Technology: string;
+  Type: string;
+  Samples: string;
+  Disease: string;
+  DOLink: string;
+  Dsetlink: string;
+  Datapath: string;
+  DataAnnot: string;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,6 +59,15 @@ export class ApiService {
       tap(ApiService.invokeBlobDownload)
     );
   }
+
+  /**
+   * Get annotation data for studies/datasets
+   * @param studyIds Array of studies e.g. GSE123,GSE890
+   */
+  public getStudiesMetadata(studyIds: string[]): Observable<StudyMetadata[]> {
+    return this.http.get<StudyMetadata[]>(`${environment.apiUrl}biodataome/?q=${studyIds.length === 0 ? '' : studyIds.join(',')}`);
+  }
+
 
   /**
    * @deprecated
@@ -87,7 +112,6 @@ export class ApiService {
     }
     return this.http.get<SearchResult[]>(url, {params});
   }
-
 
 
   /**

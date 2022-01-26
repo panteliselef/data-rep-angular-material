@@ -10,9 +10,9 @@ export class SearchResultUrlPipe implements PipeTransform {
    */
   transform(result: SearchResult): string {
     switch (result?.foundIn) {
-      case 'phenonet': return `/v2/phenonet/${result.name}`;
-      case 'technology': return `/v2/dataset/${result.name}`;
-      default: return `/v2/dataset/${result.foundIn}/${result.name}`;
+      case 'phenonet': return `/v3/phenonet/${result.name}`;
+      case 'technology': return `/v3/dataset/${result.name}`;
+      default: return `/v3/dataset/${result.foundIn}/${result.name}`;
     }
   }
 
