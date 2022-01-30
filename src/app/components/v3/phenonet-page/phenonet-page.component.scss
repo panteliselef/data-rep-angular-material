@@ -1,9 +1,11 @@
 @use "src/variables" as v;
 @use "src/util" as u;
+
 :host {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: v.$primaryFontFamily;
 }
 
 
@@ -32,5 +34,43 @@
   .warning-action-action {
     text-decoration: underline;
     cursor: pointer;
+  }
+}
+
+.search-filter-table {
+  @include u.h-flex;
+  @include u.with_radius;
+  align-items: center;
+  gap: u.toRem(4);
+  position: absolute;
+  top: 52px;
+  left: 2%;
+  //transition: all .2 ease-in-out;
+  padding: 0 u.toRem(10);
+  background-color: v.$app-bg-color;
+  box-shadow: v.$drop-shadow-1;
+  height: 39px;
+  z-index: 1;
+  width: 96%;
+
+  .material-icons-round {
+    color: v.$search-2;
+    flex: 0 0 auto;
+  }
+
+  & > input {
+    font-family: inherit;
+    flex: 1 1 auto;
+    width: auto;
+    border: none;
+    font-size: u.toRem(14);
+    height: 100%;
+    outline: none;
+    caret-color: map-get(v.$light-green, 100);
+
+    &::placeholder {
+      font-weight: 700;
+      color: map-get(v.$light-green, 30);
+    }
   }
 }

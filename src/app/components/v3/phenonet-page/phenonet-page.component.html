@@ -29,7 +29,8 @@
               </ng-template>
               <div style="height: 100%;width: 100%; overflow: hidden">
                 <!-- This outer div is required, otherwise expanded rows on table are being auto expanded when changing between tabs -->
-                <app-neighbors-table [connectedNodes]="connectedNodes" [mainDisease]="mainDisease"></app-neighbors-table>
+                <app-neighbors-table [connectedNodes]="connectedNodes"
+                                     [mainDisease]="mainDisease"></app-neighbors-table>
               </div>
             </mat-tab>
             <mat-tab label="Studies">
@@ -43,6 +44,17 @@
             </mat-tab>
           </mat-tab-group>
 
+          <div style="position: absolute; top: 3px; right: 16px; z-index: 1">
+            <button (click)="toggleSearchField()" mat-icon-button aria-label="Example icon button with a menu icon">
+              <mat-icon fontSet="material-icons-round">search</mat-icon>
+            </button>
+          </div>
+
+          <div @lala *ngIf="isSearchFieldVisible" class="search-filter-table">
+            <mat-icon fontSet="material-icons-round">search</mat-icon>
+            <input (keyup)="requestSearchInTable($event)" type="text" placeholder="Search"/>
+          </div>
+
 
         </div>
       </ng-container>
@@ -52,7 +64,7 @@
 
 </main>
 
-<ng-template #sideLoading >
+<ng-template #sideLoading>
   <div style="gap: 35px;" class="v-flex">
     <div class="as-card">
 

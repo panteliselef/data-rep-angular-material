@@ -23,6 +23,7 @@ export class PhenonetPageService {
   private isDisplayAllNodesDisabled = new BehaviorSubject<boolean>(false);
   private selectedNode = new BehaviorSubject<string>(undefined);
   private selectedEdge = new BehaviorSubject<ConnectedNode>(undefined);
+  private connectedNodeFilter = new BehaviorSubject<string>('');
 
   private onZoomIn = new Subject();
   private onZoomOut = new Subject();
@@ -46,6 +47,7 @@ export class PhenonetPageService {
   readonly onZoomOut$ = this.onZoomOut.asObservable();
   readonly resetGraph$ = this.resetGraph.asObservable();
   readonly savePNG$ = this.savePNG.asObservable();
+  readonly connectedNodeFilter$ = this.connectedNodeFilter.asObservable();
 
   constructor(
     private apiService: ApiService,
@@ -188,5 +190,9 @@ export class PhenonetPageService {
     this.displayAllNodes.next(false);
     this.updateCurrEdgeFreq(this.minEdgeFreq.value);
     this.updateDiseaseToBeHighlighted('');
+  }
+
+  updateConnectedNodeFilter(f: string): void {
+    this.connectedNodeFilter.next(f);
   }
 }

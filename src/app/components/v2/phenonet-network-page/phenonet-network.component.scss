@@ -4,7 +4,7 @@
 .info-panel {
   @extend .as-card, .v-flex;
   overflow: hidden;
-
+  position: relative;
 
   .info-panel-top-part {
     @extend .h-flex, .space-between;
@@ -73,7 +73,7 @@
 }
 
 @keyframes bg {
-  0%{background-position:0% 50%}
+  0%{background-position:0 50%}
   50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+  100%{background-position:0 50%}
 }

@@ -3,6 +3,8 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ConnectedNode} from 'src/app/models/graph.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {Router} from '@angular/router';
+import {PhenonetPageService} from '../../../v3/phenonet-page/phenonet-page.service';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
   selector: 'app-neighbors-table',
@@ -22,9 +24,22 @@ export class NeighborsTableComponent implements OnInit {
   @Input() mainDisease: string;
   expandedElement: any;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private phenonetService: PhenonetPageService) {
+  }
 
   ngOnInit(): void {
+    this.connectedNodes.filterPredicate = (data, filter: string): boolean => {
+      return data.node.toLowerCase().includes(filter);
+    };
+
+    this.phenonetService.connectedNodeFilter$
+      .pipe(
+        debounceTime(100),
+        distinctUntilChanged(),
+      )
+      .subscribe(v => {
+        this.connectedNodes.filter = v;
+      });
   }
 
   openNewTab(disease: string): void {
@@ -35,5 +50,4 @@ export class NeighborsTableComponent implements OnInit {
     );
     window.open(url, '_blank');
   }
-
 }
