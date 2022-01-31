@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {ShortNumberPipe} from '../pipes/short-number.pipe';
 import {EmptyIllustrationComponent} from '../components/v3/empty-illustration/empty-illustration.component';
 import {DatasetNetworkGraphComponent} from '../components/v2/dataset-network-page/dataset-network-graph/dataset-network-graph.component';
@@ -26,7 +26,7 @@ import {NeighborsTableComponent} from '../components/v2/phenonet-network-page/ne
 import {StudyPairsListComponent} from '../components/v2/phenonet-network-page/study-pairs-list/study-pairs-list.component';
 import {DownloadUrlPipe} from '../components/v2/phenonet-network-page/download-url.pipe';
 import {StudiesTableComponent} from '../components/v2/phenonet-network-page/studies-table/studies-table.component';
-
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 @NgModule({
@@ -61,6 +61,7 @@ import {StudiesTableComponent} from '../components/v2/phenonet-network-page/stud
     MatSidenavModule,
     MatBadgeModule,
     MatRadioModule,
+    MatPaginatorModule,
   ],
   exports: [
     ShortNumberPipe,
@@ -90,6 +91,8 @@ import {StudiesTableComponent} from '../components/v2/phenonet-network-page/stud
     MatSidenavModule,
     MatBadgeModule,
     MatRadioModule,
+    MatPaginatorModule
   ]
 })
-export class SharedModule { }
+export class SharedModule {
+}

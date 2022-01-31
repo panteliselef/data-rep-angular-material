@@ -140,7 +140,11 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
           };
         })
         .sort((a, b) => b.weight - a.weight)),
-      map(formattedEdges => new MatTableDataSource<ConnectedNode>(formattedEdges))
+      map(formattedEdges => new MatTableDataSource<ConnectedNode>(formattedEdges)),
+      // map(ds => {
+      //   ds.data = ds.data.slice(0, 4);
+      //   return ds;
+      // })
     );
 
     this.studies$ = this.phenonetService.graph$.pipe(
