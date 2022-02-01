@@ -1,4 +1,7 @@
+@use "src/util" as u;
+@use "src/variables" as v;
 @forward "src/mat-table-appearance";
+
 tr {
   .mat-column-connected_node .mat-icon-button {
     opacity: 0;
@@ -6,14 +9,25 @@ tr {
     transform: translateX(-10px);
     transition: all .2s ease-out;
   }
+
   &.mat-row:hover {
     .mat-column-connected_node {
       text-decoration: underline;
     }
+
     .mat-icon-button {
       transform: translateX(0px);
       opacity: 1;
       pointer-events: auto;
     }
   }
+}
+
+
+.app-table-paginator {
+  border-top: 1px solid map-get(v.$black, 12);
+  height: 40px;
+  padding: 10px;
+  font-size: u.toRem(12);
+  color: map-get(v.$green-sec, 100);
 }

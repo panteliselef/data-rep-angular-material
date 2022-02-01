@@ -7,7 +7,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {PhenonetPageService} from './phenonet-page.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ConnectedNode, GRAPH} from '../../../models/graph.model';
-import {catchError, filter, map, switchMap} from 'rxjs/operators';
+import {catchError, delay, filter, map, switchMap} from 'rxjs/operators';
 import {animate, style, transition, trigger} from '@angular/animations';
 
 @Component({
@@ -93,7 +93,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
     this.phenonetService.displayAllNodes$.subscribe((display) => {
       this.phenonetService.fetchNetwork(display ? '' : this.mainDisease)
         .subscribe(_ => {
-          this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
+          // this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
           this.phenonetService.updateDisease(this.mainDisease);
         }, (err: HttpErrorResponse) => {
           if (err.status === 400) {
@@ -122,7 +122,10 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
     this.phenonetService.filteredGraph$.pipe(
       map((graph) => graph?.diseases),
       map(diseases => diseases.includes(this.mainDisease))
-    ).subscribe((hasWarning) => this.isShown = hasWarning);
+    ).subscribe((hasWarning) => {
+      this.isShown = !!this.mainDisease ? hasWarning : true;
+      console.log(this.isShown);
+    });
 
 
     this.filteredGraph$ = this.phenonetService.filteredGraph$;
@@ -140,14 +143,11 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
           };
         })
         .sort((a, b) => b.weight - a.weight)),
-      map(formattedEdges => new MatTableDataSource<ConnectedNode>(formattedEdges)),
-      // map(ds => {
-      //   ds.data = ds.data.slice(0, 4);
-      //   return ds;
-      // })
+      map(formattedEdges => new MatTableDataSource<ConnectedNode>(formattedEdges))
     );
 
     this.studies$ = this.phenonetService.graph$.pipe(
+      delay(1000),
       map(graph => this.mainDisease ? graph.nodes.filter(n => n.disease === this.mainDisease)?.[0]?.datasets || [] : []),
       filter(datasetIds => datasetIds.length !== 0),
       switchMap(datasetIds => this.apiService.getStudiesMetadata(datasetIds as string[])),

@@ -53,6 +53,7 @@ export class PGraphFiltersComponent implements OnInit {
   filteredOptions$: Observable<string[]>;
   diseasesInGraph$: Observable<string[]>;
   displayAll$: Observable<boolean>;
+  displayAllDisabled$: Observable<boolean>;
 
   private diseasesSub: Subscription;
 
@@ -75,6 +76,7 @@ export class PGraphFiltersComponent implements OnInit {
     this.maxEdgeFreq$ = this.phenonetService.maxEdgeFreq$;
     this.currEdgeFreq$ = this.phenonetService.currEdgeFreq$;
     this.displayAll$ = this.phenonetService.displayAllNodes$;
+    this.displayAllDisabled$ = this.phenonetService.isDisplayAllNodesDisabled$;
     this.phenonetService.diseaseToBeHighlighted$.subscribe((disease) => this.highlightDiseaseControl.setValue(disease));
 
     // Get diseases that exist in the displayed graph

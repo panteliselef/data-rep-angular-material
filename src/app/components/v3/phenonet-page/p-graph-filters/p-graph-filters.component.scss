@@ -76,6 +76,16 @@
       width: 100%;
       box-shadow: inset 0px -1px 0px map-get(v.$black, 12);
     }
+    .graph-filter-menu-item {
+      &.disabled {
+        * {
+          pointer-events: none;
+        }
+        p {
+          color: v.$search-icon-color;
+        }
+      }
+    }
 
     .slider-icon {
       height: 18px;
@@ -93,7 +103,7 @@
       }
     }
 
-    label.filter-label {
+    p.filter-label {
       font-family: inherit;
       font-style: normal;
       font-weight: 600;

@@ -55,8 +55,8 @@
         </div>
 
         <div class="graph-filter-menu-item h-flex align-center space-between" style="height: 30px"
-             [ngClass]="{disabled: false}">
-          <label class="filter-label">Display all nodes</label>
+             [ngClass]="{disabled: (displayAllDisabled$ | async)}">
+          <p class="filter-label">Display all nodes</p>
           <mat-slide-toggle
             (ngModelChange)="setNeighborDegree($event)"
             [ngModel]="displayAll$ | async"

@@ -72,11 +72,24 @@
   </tr>
 </table>
 
-<mat-paginator [pageSizeOptions]="[5, 10, 20]"
-               style="opacity: 0; visibility: hidden; height: 0"
+<mat-paginator [pageSizeOptions]="[pageSize]"
+               style="visibility: hidden;opacity: 0;height: 0"
                showFirstLastButtons
                aria-label="Select page of periodic elements">
 </mat-paginator>
 
 
-<div (click)="nextPage()">hello</div>
+<div class="h-flex space-between align-center app-table-paginator">
+  <div style="">Total of {{connectedNodes.filteredData.length}} neighbors</div>
+  <div class="h-flex align-center">
+    <div> {{pageItemIndexFirst}} - {{pageItemIndexLast}} of {{connectedNodes.filteredData.length}} </div>
+
+    <button (click)="prevPage()" [disabled]="!hasPrevious" mat-icon-button aria-label="Example icon button with a menu icon">
+      <mat-icon fontSet="material-icons-round">navigate_before</mat-icon>
+    </button>
+
+    <button (click)="nextPage()" [disabled]="!hasNext" mat-icon-button aria-label="Example icon button with a menu icon">
+      <mat-icon fontSet="material-icons-round">navigate_next</mat-icon>
+    </button>
+  </div>
+</div>
