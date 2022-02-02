@@ -49,8 +49,8 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
   filteredGraph$: Observable<GRAPH>;
   connectedNodes$: Observable<MatTableDataSource<ConnectedNode>>;
   studies$: Observable<MatTableDataSource<StudyMetadata>>;
-  isShown = false;
-
+  isShown = true;
+  selectedEdge: ConnectedNode;
   isSearchFieldVisible = false;
 
   constructor(
@@ -121,10 +121,9 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
     // Get diseases that exist in the displayed graph
     this.phenonetService.filteredGraph$.pipe(
       map((graph) => graph?.diseases),
-      map(diseases => diseases.includes(this.mainDisease))
+      map(diseases => diseases.length === 0 ? true : diseases.includes(this.mainDisease))
     ).subscribe((hasWarning) => {
-      this.isShown = !!this.mainDisease ? hasWarning : true;
-      console.log(this.isShown);
+      this.isShown = !(!!this.mainDisease ? !hasWarning : false);
     });
 
 
@@ -155,6 +154,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
       map(datasets => new MatTableDataSource<StudyMetadata>(datasets))
     );
 
+    this.phenonetService.selectedEdge$.subscribe(this.onEdgeSelect.bind(this));
     this.phenonetService.selectedNode$
       .pipe(filter(node => typeof node !== 'undefined'))
       .subscribe(this.onNodeSelect.bind(this));
@@ -164,8 +164,14 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
     this.routeSub.unsubscribe();
   }
 
+  onEdgeSelect(edge: ConnectedNode): void {
+    this.selectedEdge = edge;
+  }
+
 
   onNodeSelect(node: string): void {
+    this.isShown = true;
+    this.isSearchFieldVisible = false;
     this.router.navigate(['/v3/phenonet', node]).then(console.log);
   }
 

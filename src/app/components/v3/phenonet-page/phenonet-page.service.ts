@@ -61,20 +61,27 @@ export class PhenonetPageService {
    */
   private _setGraph(graph: GRAPH): void {
     this.graph.next(graph);
-    const fg = this._filterOriginalGraph(this.currEdgeFreq.value);
+
+    const min = Number(graph.edges[graph.edges.length - 1].weight);
+    const max = Number(graph.edges[0].weight);
+
+    let currVal = this.currEdgeFreq.getValue();
+    if (this.currEdgeFreq.value > max) {
+      currVal = max;
+    } else if (this.currEdgeFreq.value < min) {
+      currVal = min;
+    }
+
+    this.currEdgeFreq.next(currVal);
+
+    const fg = this._filterOriginalGraph(currVal);
     this.filteredGraph.next(fg);
     if (fg.diseases.includes(this.diseaseToBeHighlighted.value)) {
       setTimeout(() => {
         this.updateDiseaseToBeHighlighted(this.diseaseToBeHighlighted.value);
       }, 400);
     }
-    const min = graph.edges[graph.edges.length - 1].weight;
-    const max = graph.edges[0].weight;
-    if (this.currEdgeFreq.value > max) {
-      this.currEdgeFreq.next(max);
-    } else if (this.currEdgeFreq.value < min) {
-      this.currEdgeFreq.next(min);
-    }
+    // console.log(min, max, this.currEdgeFreq.getValue());
     this.minEdgeFreq.next(min);
     this.maxEdgeFreq.next(max);
   }
