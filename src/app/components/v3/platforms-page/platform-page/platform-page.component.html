@@ -1,6 +1,86 @@
 <app-platform-breadcrumb></app-platform-breadcrumb>
 
 
-<main class="app-page">
+<main *ngIf="(gplGraph$ | async) as gplData else loader"  class="app-page">
+
+  <div style="gap: 20px;" class="v-flex"></div>
+
+  <!--    side panel with separate elements-->
+  <div style="gap: 20px; z-index: 0" class="v-flex">
+    <div *ngIf="!(isEdgeNodeSelected$ | async)" style="padding: 0 17px" class="as-card">
+      <div class="hint-with-badges" style="height: 56px">
+        <p class="text">Select a</p>
+        <div class="badge-node">NODE</div>
+        <p class="text">or an</p>
+        <div class="badge-edge">EDGE</div>
+        <p class="text">from the network graph</p>
+      </div>
+    </div>
+  </div>
 
 </main>
+
+
+
+<ng-template #loader>
+
+  <main class="app-page">
+    <div style="gap: 20px;" class="v-flex">
+      <div class="loading_graph_filters">
+        <div class="l_placeholder" style="width: 200px;height: 30px"></div>
+        <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
+        <div class="l_placeholder" style="width: 200px;height: 30px"></div>
+        <div style="border-left: 1px solid rgba(0, 0, 0, 0.12);height: 39px"></div>
+        <div class="l_placeholder" style="width: 200px;height: 30px"></div>
+      </div>
+
+      <div class="as-card" style="height:800px;width: 100%; position:relative;">
+      </div>
+    </div>
+
+    <div style="gap: 20px;" class="v-flex">
+      <div class="as-card">
+
+        <div class="v-flex" style="padding: 17px;gap: 31px">
+          <div class="h-flex space-between">
+            <div class="v-flex" style="gap: 9px">
+              <div class="l_placeholder" style="width: 49px;height: 14px;"></div>
+              <div class="l_placeholder" style="width: 163px;height: 21px;"></div>
+            </div>
+
+            <div class="h-flex align-flex-start" style="gap: 23px">
+              <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
+              <div class="l_placeholder l_placeholder_circle" style="width: 41px"></div>
+            </div>
+          </div>
+
+          <div class="h-flex" style="gap: 50px">
+            <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
+            <div class="l_placeholder" style="width: 147px;height: 14px;"></div>
+          </div>
+        </div>
+
+        <div style="width: 100%; height: 1px;border-bottom: 1px solid rgba(0, 0, 0, 0.12);"></div>
+
+        <div class="v-flex" style="padding: 20px 17px; gap: 20px">
+
+          <div class="h-flex align-center space-between">
+            <div class="l_placeholder" style="width: 420px;height: 14px"></div>
+            <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
+          </div>
+
+          <div class="h-flex align-center space-between">
+            <div class="l_placeholder" style="width: 420px;height: 14px"></div>
+            <div class="l_placeholder l_placeholder_circle" style="width: 30px"></div>
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+  </main>
+</ng-template>

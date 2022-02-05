@@ -1,4 +1,5 @@
 @use 'src/variables' as v;
+@forward "src/styles/v3/loading_skeleton/loading_skeleton";
 @import "src/mat-table-appearance";
 
 .info-panel {
@@ -37,43 +38,4 @@
 
     }
   }
-}
-
-.loading_top_bar {
-  width: 100%;
-  padding: 0 32px;
-  max-width: v.$networksMaxWidth;
-  font-family: v.$primaryFontFamily;
-  display: flex;
-  align-items: center;
-  gap:15px;
-}
-
-.loading_graph_filters {
-  @extend .as-card, .h-flex, .align-center;
-  padding: 19px 17px;
-  gap: 15px;
-  justify-content: flex-start;
-  height: 94px;
-}
-
-.l_placeholder {
-  @extend .with-radius;
-  background: rgba(77, 114, 103, 0.2);
-  background: rgb(77,114,103);
-  background: linear-gradient(-45deg, rgba(77,114,103,0.15),rgba(77,114,103,0.05));
-  background-size: 400% 400%;
-  border-radius: 11px;
-  animation: bg 1s ease infinite;
-
-  &_circle {
-    aspect-ratio: 1/1;
-    border-radius: 100%;
-  }
-}
-
-@keyframes bg {
-  0%{background-position:0 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0 50%}
 }

@@ -17,8 +17,11 @@
   align-items: flex-end;
 }
 
-.align-center {
+@mixin align-center {
   align-items: center;
+}
+.align-center {
+  @include align-center;
 }
 
 .justify-end {
@@ -82,9 +85,13 @@
   padding: 0 20px;
 }
 
-.as-card {
+
+@mixin as-card {
   border-radius: 11px;
   border: 1px solid v.$grey-light-1;
+}
+.as-card {
+  @include as-card;
 
   &.with-padding {
     padding: v.$d-padding;
