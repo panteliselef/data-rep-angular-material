@@ -1,35 +1,34 @@
 import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject, EMPTY, Observable, Subscription} from 'rxjs';
-import {combineLatest} from 'rxjs';
-import {LoadingService} from 'src/app/services/loading.service';
-import {GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
-import {DatasetNetworkService} from './dataset-network.service';
+import {ApiService} from '../../../../services/api.service';
+import {LoadingService} from '../../../../services/loading.service';
+import {ElasticService} from '../../../../services/elastic.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, Subscription} from 'rxjs';
 import {map, switchMap, withLatestFrom} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
-import {ApiService} from 'src/app/services/api.service';
-import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
-import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
-import {ElasticService} from '../../../services/elastic.service';
+import {GplData, GPLEDGE, GPLNODE, Technology} from '../../../../models/gplGraph.model';
+import groupsGPL96 from '../../../../../assets/groupColors/GPL96.json';
+import groupsGPL570 from '../../../../../assets/groupColors/GPL570.json';
+import {GENE} from '../../../v2/dataset-network-page/dataset-network.component';
+import {PlatformPageService} from './platform-page.service';
 
-export type GENE = string;
 
 @Component({
-  selector: 'app-dataset-network2',
-  templateUrl: './dataset-network.component.html',
-  styleUrls: [
-    './dataset-network.component.scss',
-    '../phenonet-network-page/phenonet-network.component.scss'
-  ],
-  providers: [DatasetNetworkService]
+  selector: 'app-platform-page',
+  templateUrl: './platform-page.component.html',
+  styleUrls: ['./platform-page.component.scss'],
+  providers: [PlatformPageService]
 })
-export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
+export class PlatformPageComponent implements OnInit, OnDestroy {
+
   private studyId: string;
+  private secondStudyId: string;
 
   /* Use ViewChild this way
-   * why ?
-   * this allows to get a reference of an element when is inside a block with ngIf
-   */
+ * why ?
+ * this allows to get a reference of an element when is inside a block with ngIf
+ */
+
   @ViewChild('userContent') set userContent(element) {
     if (element) {
       this.collapsible = element;
@@ -37,21 +36,20 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  collapsible: ElementRef;
+
   private routeSub: Subscription;
+  private queryUrlSub: Subscription;
   private technologySub: Subscription;
   private gplGraphSub: Subscription;
   private networkNameSub: Subscription;
   private edgeOrGenesSub: Subscription;
   private selectedNodeSub: Subscription;
 
-
-  collapsible: ElementRef;
-
   loadingGraphData$: Observable<boolean>;
   gplGraph$: Observable<GplData>;
   selectedNode$: Observable<GPLNODE>;
   selectedEdge$: Observable<GPLEDGE>;
-  networkName$: Observable<string>;
   similarDatasets: MatTableDataSource<GPLEDGE>;
   tableData$: Observable<GPLEDGE[]>;
 
@@ -62,14 +60,13 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
   limits: number[] = [100, 500, 1000, 2000];
   genesArray = [] as string[];
 
-
   downloadUrl = '';
   bestExplainingGene: MatTableDataSource<GENE>;
   isCollapsed = false;
   groupColors: any;
 
   constructor(
-    private datasetNetworkService: DatasetNetworkService,
+    private platformService: PlatformPageService,
     private apiService: ApiService,
     private loadingService: LoadingService,
     private elastic: ElasticService,
@@ -85,7 +82,6 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
       .pipe(map(([a$, b$]) => typeof (a$ || b$) !== 'undefined'));
   }
 
-
   /**
    * Create url for requesting many files at once
    */
@@ -100,7 +96,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
    * @private
    */
   private _filterNeighbors(ofNode: GPLNODE): Observable<GPLEDGE[]> {
-    return this.datasetNetworkService.graph$
+    return this.platformService.graph$
       .pipe(
         map(graph => graph.edges
           .filter(edge => edge.from === ofNode.id || edge.to === ofNode.id)
@@ -117,13 +113,27 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
    * Subscribe to Observables on Init
    */
   ngOnInit(): void {
-    this.networkName$ = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()));
+    this.networkNameSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()))
+      .subscribe(async (technology) => {
+        console.log(technology);
+        // TODO: verify that technology exist
+        // if (!technology) {
+        //   // TODO: handle behavior when technology parameter doesn't exist
+        //   // a temporary solution is to fallback to technology GPL96
+        //   await this.router.navigate(['GPL96'], {relativeTo: this.route});
+        //   return;
+        // }
+        this.platformService.fetchNetwork(technology.toUpperCase() as Technology);
+      });
     this.routeSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => this.studyId = id);
+    this.queryUrlSub = this.route.queryParamMap
+      .pipe(map(queryParamMap => queryParamMap.get('edgeWith')?.toUpperCase()))
+      .subscribe(id => this.secondStudyId = id);
     this.loadingGraphData$ = this.loadingService.loading$;
-    this.gplGraph$ = this.datasetNetworkService.filteredGraph$;
-    this.selectedEdge$ = this.datasetNetworkService.selectedEdge$;
-    this.selectedNode$ = this.datasetNetworkService.selectedNode$;
-    this.technologySub = this.datasetNetworkService.technology$.subscribe((technology) => {
+    this.gplGraph$ = this.platformService.filteredGraph$;
+    this.selectedEdge$ = this.platformService.selectedEdge$;
+    this.selectedNode$ = this.platformService.selectedNode$;
+    this.technologySub = this.platformService.technology$.subscribe((technology) => {
       // TODO: complete with other colors
       if (!technology) {
         return;
@@ -144,40 +154,72 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
       if (!graph) {
         return;
       }
-      const {nodes} = graph;
-      const selectedNode = nodes.find(node => node.id === this.studyId);
-      this.datasetNetworkService.updateSelectedNode(selectedNode);
+      const {nodes, edges} = graph;
+      const selectedNode = nodes.find(node => node.id === this.studyId) as GPLNODE;
+
+      // url contains a node which does not exist in graph
+      if (!selectedNode) {
+
+        // TODO: display error message to user about the node not being in the graph
+        return;
+      }
+
+
+      // checking we need to display an existing edge between two nodes
+      if (selectedNode && this.secondStudyId) {
+
+        // checking both combinations while searching
+        let selectedEdge = edges.find(edge => edge.to === this.studyId && edge.from === this.secondStudyId
+          || edge.from === this.studyId && edge.to === this.secondStudyId);
+
+
+        if (selectedEdge) {
+          // get more info about the second node
+          selectedEdge = {
+            ...selectedEdge,
+            from: selectedNode,
+            to: nodes.find(node => node.id === this.secondStudyId) as GPLNODE
+          };
+          this.platformService.updateSelectedEdge(selectedEdge);
+        } else {
+          // redirect user because there is not a valid edge between those edges
+          this.router.navigate(['.'], {relativeTo: this.route}).then();
+        }
+      }
+
+      // whatever the case is always select the node is the nodes is valid and exists
+      this.platformService.updateSelectedNode(selectedNode);
     });
 
 
     // If a limit for genes or an edge is selected request Best Explaining Genes
-    this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
-      .pipe(switchMap(([selectedEdge]) => {
-        if (!selectedEdge) {
-          return EMPTY;
-        }
-        return this.elastic.getPlatformGenes(this.datasetNetworkService.technologyValue, selectedEdge);
-      })).subscribe((geneData) => {
-        let arr = [];
-        switch (this.limitGenes) {
-          case 100:
-            arr = geneData.thres100;
-            break;
-          case 500:
-            arr = geneData.thres500;
-            break;
-          case 1000:
-            arr = geneData.thres1000;
-            break;
-          case 2000:
-            arr = geneData.thres2000;
-            break;
-          default:
-            break;
-        }
-        this.genesArray = arr;
-        this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
-      });
+    // this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
+    //   .pipe(switchMap(([selectedEdge]) => {
+    //     if (!selectedEdge) {
+    //       return EMPTY;
+    //     }
+    //     return this.elastic.getPlatformGenes(this.platformService.technologyValue, selectedEdge);
+    //   })).subscribe((geneData) => {
+    //     let arr = [];
+    //     switch (this.limitGenes) {
+    //       case 100:
+    //         arr = geneData.thres100;
+    //         break;
+    //       case 500:
+    //         arr = geneData.thres500;
+    //         break;
+    //       case 1000:
+    //         arr = geneData.thres1000;
+    //         break;
+    //       case 2000:
+    //         arr = geneData.thres2000;
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //     this.genesArray = arr;
+    //     this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
+    //   });
 
     this.selectedNodeSub = this.selectedNode$.pipe(
       switchMap((node: GPLNODE) => {
@@ -193,30 +235,20 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
       this.downloadUrl = this.requestDataFiles();
     });
 
-    this.networkNameSub = this.networkName$.subscribe(async (technology) => {
-      // TODO: verify that technology exist
-      if (!technology) {
-        // TODO: handle behavior when technology parameter doesn't exist
-        // a temporary solution is to fallback to technology GPL96
-        await this.router.navigate(['GPL96'], {relativeTo: this.route});
-        return;
-      }
-      this.datasetNetworkService.fetchNetwork(technology.toUpperCase() as Technology);
-    });
-
     /**
      * @deprecated Now best Explaining genes are being fetched
      */
     // this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
 
 
-    this.findWhenEdgeIsVisibleBetween('GSE5327', 'GSE1456');
+    // TODO: uncomment this for later
+    // this.findWhenEdgeIsVisibleBetween('GSE5327', 'GSE1456');
   }
 
   ngOnDestroy(): void {
     this.networkNameSub.unsubscribe();
     this.selectedNodeSub.unsubscribe();
-    this.edgeOrGenesSub.unsubscribe();
+    // this.edgeOrGenesSub.unsubscribe();
     this.gplGraphSub.unsubscribe();
     this.routeSub.unsubscribe();
     this.technologySub.unsubscribe();
@@ -247,11 +279,11 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
     }
 
 
-    this.datasetNetworkService.maxSliderValue$.pipe(withLatestFrom(this.datasetNetworkService.minSliderValue$))
-      .subscribe(([max, min]) => {
+    this.platformService.maxSliderValue$.pipe(withLatestFrom(this.platformService.minSliderValue$))
+      .subscribe(([max]) => {
 
 
-        const graphSnapShot = this.datasetNetworkService.graphSnapshot;
+        const graphSnapShot = this.platformService.graphSnapshot;
         if (!graphSnapShot) {
           return;
         }
@@ -269,19 +301,16 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
           const area = Math.floor((original - left) / 2);
           if (area === 0) {
             console.log('finally found at', left, original);
-            return ;
+            return;
           }
-          const fGraph = this.datasetNetworkService.filterGraph(filteredGraph, left);
+          const fGraph = this.platformService.filterGraph(filteredGraph, left);
 
           const found = areTheyConnected(fGraph);
-          // if (right <= left) {
-          //   return ;
-          // }
 
 
           if (found) {
             return binarySearch(left, left - area, filteredGraph);
-          }else {
+          } else {
             console.log('sum', left, area, left + area);
             // debugger;
             return binarySearch(original, left + area, filteredGraph);
@@ -290,13 +319,9 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
         };
 
         binarySearch(max, 0, graphSnapShot); // 85
-
-
-
       });
 
   }
-
 
   /**
    * Opens/Closes the collapsible
@@ -316,7 +341,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
    * @param id
    */
   highlightDisease(id: string): void {
-    this.datasetNetworkService.updateDiseaseToBeHighlighted(id);
+    this.platformService.updateDiseaseToBeHighlighted(id);
   }
 
   /**
@@ -329,4 +354,5 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
   downloadGenes(): void {
     this.apiService.downloadGenesAsFile(this.genesArray).subscribe();
   }
+
 }

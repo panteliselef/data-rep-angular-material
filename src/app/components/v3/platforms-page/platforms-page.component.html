@@ -18,7 +18,7 @@
           <p class="sub-headline-1">{{platform.edges}} edges</p>
           <p class="sub-headline-1">{{platform.phenotypes}} phenotypes</p>
         </div>
-        <button class="outline_button">
+        <button class="outline_button" [routerLink]="'/v3/platforms/'+platform.name">
           View Graph
         </button>
       </div>

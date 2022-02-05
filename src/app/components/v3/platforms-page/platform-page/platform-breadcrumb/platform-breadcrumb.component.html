@@ -1,0 +1,46 @@
+<div class="breadcrumb-inner h-flex">
+
+  <ng-container *ngIf="platform$ | async as platform">
+
+    <a [routerLink]="'/v3/platforms/' + platform">
+      <span class="breadcrumb-base">{{platform}}</span>
+    </a>
+
+  </ng-container>
+
+  <ng-container *ngIf="selectedNode$ | async as selectedNode">
+    <mat-icon class="material-icons-round">chevron_right</mat-icon>
+    <ng-container *ngIf="selectedEdge$ | async as selectedEdge else onlyNode">
+
+      <div class="breadcrumb-layer-node h-flex">
+        <div class="v-flex center" style="gap: 2px; height: 45px;">
+          <span class="breadcrumb-phenonet-disease">{{selectedEdge.from.label}}</span>
+          <span class="breadcrumb-phenotype">{{selectedEdge.from.group}}</span>
+        </div>
+        <div class="v-flex align-center center" style="gap: 5px">
+          <div class="badge-edge">EDGE</div>
+          <img style="height: 10px" alt="icon indicating an edge between two nodes" src="assets/double-arrow-small.svg"/>
+        </div>
+        <div class="v-flex center" style="gap: 2px; height: 45px;">
+          <span class="breadcrumb-phenonet-disease">{{selectedEdge.to.label}}</span>
+          <span class="breadcrumb-phenotype">{{selectedEdge.to.group}}</span>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <ng-template #onlyNode>
+
+      <div class="breadcrumb-layer-node h-flex">
+        <div class="badge-node">NODE</div>
+        <div class="v-flex center" style="gap: 2px; height: 45px;">
+          <span class="breadcrumb-phenonet-disease">{{selectedNode.label}}</span>
+          <span class="breadcrumb-phenotype">{{selectedNode.group}}</span>
+        </div>
+      </div>
+
+    </ng-template>
+  </ng-container>
+
+
+</div>

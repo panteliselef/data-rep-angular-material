@@ -112,6 +112,7 @@
 }
 
 .badge-node, .badge-edge {
+  user-select: none;
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: .75rem;

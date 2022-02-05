@@ -16,7 +16,6 @@ export class PlatformsPageComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
     this.platforms$ = this.apiService.getPlatforms();
   }
 

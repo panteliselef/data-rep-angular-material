@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
-import {PlatformEdge, PlatformNode} from 'src/app/models/elastic.model';
-import {ElasticService} from '../../../services/elastic.service';
 
 /**
  * A service for managing the state of dataset-network page
  */
 @Injectable()
-export class DatasetNetworkService {
+export class PlatformPageService {
 
 
   // Behavior Subjects
@@ -36,7 +34,6 @@ export class DatasetNetworkService {
 
   constructor(
     private apiService: ApiService,
-    private elastic: ElasticService
   ) {
 
   }
@@ -137,53 +134,7 @@ export class DatasetNetworkService {
   fetchNetwork(technology: Technology): void {
     this.technology.next(technology);
     // Uncomment this line to request from Node API
-    // this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
-
-    /**
-     * The following maps database schema to a more useful data structure
-     */
-    this.elastic.getPlatformGraph(technology).subscribe((edges: PlatformEdge[]) => {
-      // TODO: make this private function
-      const diseaseSet = new Set<string>();
-      const nodes = new Array<GPLNODE>();
-
-      const GSESet = new Set<string>();
-
-      for (const edge of edges) {
-        const pairNodes = [edge.node1, edge.node2];
-        pairNodes.forEach((node: PlatformNode) => {
-          if (GSESet.has(node.data_table_id)) {
-            return;
-          }
-          GSESet.add(node.data_table_id);
-          diseaseSet.add(node.disease);
-          nodes.push({
-            id: node.data_table_id,
-            label: node.data_table_id,
-            group: node.disease
-          });
-        });
-      }
-
-      const gplEdges =  edges.map<GPLEDGE>((edge: PlatformEdge) => {
-        return {
-          from: edge.node1.data_table_id,
-          to: edge.node2.data_table_id,
-          value: edge.q_value
-        };
-      });
-
-      const graph = {
-        nodes,
-        edges: gplEdges,
-        categories: Array.from(diseaseSet).map<GPLCATEGORY>(disease => ({name: disease}))
-      };
-
-
-
-
-      this._setGraph(graph);
-    });
+    this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
   }
 
 
