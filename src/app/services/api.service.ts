@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
-import {GplData, Technology} from 'src/app/models/gplGraph.model';
+import {GplData, PlatformMetadata, Technology} from 'src/app/models/gplGraph.model';
 import {tap} from 'rxjs/operators';
 
 export interface StudyMetadata {
@@ -58,6 +58,10 @@ export class ApiService {
     }).pipe(
       tap(ApiService.invokeBlobDownload)
     );
+  }
+
+  public getPlatforms(): Observable<PlatformMetadata[]> {
+    return this.http.get<PlatformMetadata[]>(`${environment.apiUrl}platforms`);
   }
 
   /**

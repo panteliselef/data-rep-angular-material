@@ -12,6 +12,7 @@ import {PhenonetPageComponent} from './phenonet-page/phenonet-page.component';
 import {NotFoundPageComponent} from './not-found-page/not-found-page.component';
 import {PhenonetBreadcrumbComponent} from './phenonet-page/phenonet-breadcrumb/phenonet-breadcrumb.component';
 import {PGraphFiltersComponent} from './phenonet-page/p-graph-filters/p-graph-filters.component';
+import {PlatformsPageComponent} from './platforms-page/platforms-page.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import {PGraphFiltersComponent} from './phenonet-page/p-graph-filters/p-graph-fi
     TestingPageComponent,
     SearchPageComponent,
     PhenonetPageComponent,
+    PlatformsPageComponent,
     NotFoundPageComponent,
     // Components
     LoadingSpinnerComponent,

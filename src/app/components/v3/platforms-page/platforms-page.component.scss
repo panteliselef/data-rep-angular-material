@@ -1,0 +1,70 @@
+@use 'src/util' as u;
+@use 'src/variables' as v;
+@use "src/styles/helpers/breakpoints" as brk;
+:host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding-top: 31px;
+  padding-bottom: 31px;
+}
+
+
+.platforms_inner {
+  @include u.v-flex;
+  max-width: 1000px;
+  width: 100%;
+  gap: u.toRem(20);
+
+  &_hero {
+    @include u.h-flex;
+    gap: u.toRem(10);
+    width: 100%;
+    padding: u.toRem(25);
+    @include brk.mobile {
+      @include u.v-flex;
+    }
+
+    img {
+      width: 170px;
+      aspect-ratio: 1/1;
+    }
+  }
+
+  &_platforms_options_container {
+    @include u.h-flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 0 1rem;
+
+
+    .platform_option {
+      @include u.v-flex;
+      @include u.with_radius;
+      gap: 4px;
+      flex: 0 1 300px;
+      border: 1px solid map-get(v.$light-green, 100);
+      padding: u.toRem(16);
+
+      h1 {
+        color: map-get(v.$green-sec, 100);
+      }
+
+      &_divider {
+        width: 100%;
+        height: 1px;
+        border-radius: 10px;
+        background-color: map-get(v.$black, 12);
+      }
+
+      &:hover .outline_button {
+        opacity: 1;
+      }
+
+      .outline_button {
+        opacity: 0;
+      }
+    }
+  }
+}

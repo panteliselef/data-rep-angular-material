@@ -1,0 +1,30 @@
+<div class="platforms_inner">
+  <div class="platforms_inner_hero align-center">
+    <img alt="Illustration showing a human to select an option" src="assets/undraw_click_here.svg"/>
+    <div class="v-flex" style="gap: 10px">
+      <h1>Select & Explore</h1>
+      <h4>All platforms contain data & metadata which you can explore easily</h4>
+    </div>
+  </div>
+
+  <div class="platforms_inner_platforms_options_container">
+
+
+    <div *ngFor="let platform of platforms$ | async" class="platform_option">
+      <h1>{{platform.name}}</h1>
+      <div class="platform_option_divider"></div>
+      <div class="h-flex space-between align-flex-end">
+        <div class="v-flex" style="padding-top: 6px; gap: 5px;">
+          <p class="sub-headline-1">{{platform.edges}} edges</p>
+          <p class="sub-headline-1">{{platform.phenotypes}} phenotypes</p>
+        </div>
+        <button class="outline_button">
+          View Graph
+        </button>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+

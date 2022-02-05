@@ -15,6 +15,12 @@ export interface GPLCATEGORY {
   color?: string;
 }
 
+export interface PlatformMetadata {
+  name: string;
+  edges: number;
+  nodes: number;
+  phenotypes: number;
+}
 
 
 export interface GplData {
