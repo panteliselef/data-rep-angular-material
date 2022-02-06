@@ -9,11 +9,12 @@ import {
 import {DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import { gplConfig, gplEdgeColor} from 'src/util/utils';
 import {GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
-import {DatasetNetworkService} from '../dataset-network.service';
 import {Observable, Subscription} from 'rxjs';
 import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
 import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
 import {GraphComponentComponent} from '../../graph-component/graph-component.component';
+import {PlatformPageService} from '../../../v3/platforms-page/platform-page/platform-page.service';
+
 @Component({
   selector: 'app-dataset-network-graph',
   templateUrl: './dataset-network-graph.component.html',
@@ -24,7 +25,6 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
 
   @ViewChild('networkCanvas') canvasContainer: ElementRef;
 
-
   /* About Vis.js Network Graph */
   public visNetwork = 'dataset'; // Do not change this value
   public visNetworkOptions: Options;
@@ -33,7 +33,7 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
   private selectedNodeSub: Subscription;
 
   constructor(
-    private datasetNetworkService: DatasetNetworkService,
+    private platformService: PlatformPageService,
     public visNetworkService: VisNetworkService
   ) {
     super(visNetworkService);
@@ -50,7 +50,7 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
     super.ngOnInit();
     this.visNetworkOptions = gplConfig;
 
-    this.datasetNetworkService.technology$.subscribe((technology) => {
+    this.platformService.technology$.subscribe((technology) => {
       if (!technology) { return; }
       switch (technology) {
         case 'GPL96': gplConfig.groups = groupsGPL96; break;
@@ -62,23 +62,28 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
 
     });
 
-    this.filteredGraphSub = this.datasetNetworkService.filteredGraph$.subscribe(this.setGraphData.bind(this));
-    this.diseaseToBeHighlighted$ = this.datasetNetworkService.diseaseToBeHighlighted$;
+    this.filteredGraphSub = this.platformService.filteredGraph$.subscribe(this.setGraphData.bind(this));
+    this.diseaseToBeHighlighted$ = this.platformService.diseaseToBeHighlighted$;
     this.diseaseToBeHighlightedSub = this.diseaseToBeHighlighted$.subscribe((diseaseToBeHighlighted: string) => {
       if (!diseaseToBeHighlighted) { return; }
       this._highlightByDisease(diseaseToBeHighlighted);
       console.log('Disease Highlighted: ', diseaseToBeHighlighted);
     });
 
-    this.selectedNodeSub = this.datasetNetworkService.selectedNode$.subscribe((selectedNode: GPLNODE) => {
+    this.selectedNodeSub = this.platformService.selectedNode$.subscribe((selectedNode: GPLNODE) => {
       if (!selectedNode) { return; }
       setTimeout(() => this._focusNode(selectedNode.id), 300);
     });
 
     this.selectedEdge$
-      .subscribe(edge => this.datasetNetworkService.updateSelectedEdge(edge as GPLEDGE));
+      .subscribe(edge => this.platformService.updateSelectedEdge(edge as GPLEDGE));
     this.selectedNode$
-      .subscribe(node => this.datasetNetworkService.updateSelectedNode(node as GPLNODE));
+      .subscribe(node => this.platformService.updateSelectedNode(node as GPLNODE));
+
+    this.platformService.onZoomIn$.subscribe(this.zoomIn.bind(this));
+    this.platformService.onZoomOut$.subscribe(this.zoomOut.bind(this));
+    this.platformService.resetGraph$.subscribe(this.fitAllNodes.bind(this));
+    this.platformService.savePNG$.subscribe(this.savePNG.bind(this));
   }
 
   ngOnDestroy(): void{

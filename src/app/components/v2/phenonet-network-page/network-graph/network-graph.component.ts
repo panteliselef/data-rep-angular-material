@@ -23,7 +23,6 @@ import {PhenonetPageService} from '../../../v3/phenonet-page/phenonet-page.servi
   styleUrls: ['./network-graph.component.scss']
 })
 export class NetworkGraphComponent extends GraphComponentComponent implements OnInit, OnChanges, AfterViewInit {
-
   @Input() disease: string;
 
   @ViewChild('networkCanvas') canvasContainer: ElementRef;
