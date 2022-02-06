@@ -1,38 +1,35 @@
-import {Component, ElementRef, HostListener, OnInit} from '@angular/core';
-import {PhenonetPageService} from '../phenonet-page.service';
-import {Observable, Subscription} from 'rxjs';
-import {MatSliderChange} from '@angular/material/slider';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {Observable, Subscription} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
-import {openClose, openClose2, openClose3, queryShake} from '../../../../shared/animations';
+import {MatSliderChange} from '@angular/material/slider';
+import {PlatformPageService} from '../platform-page.service';
+import {openClose, openClose2, openClose3, queryShake} from '../../../../../shared/animations';
 
 @Component({
-  selector: 'app-p-graph-filters',
-  templateUrl: './p-graph-filters.component.html',
-  styleUrls: ['./p-graph-filters.component.scss'],
+  selector: 'app-platform-graph-filters',
+  templateUrl: './platform-graph-filters.component.html',
+  styleUrls: ['./platform-graph-filters.component.scss'],
   animations: [
     openClose,
     openClose2,
     openClose3,
     queryShake
-  ],
+  ]
 })
-
-export class PGraphFiltersComponent implements OnInit {
+export class PlatformGraphFiltersComponent implements OnInit, OnDestroy {
   isGraphFilterMenuOpen = false;
   highlightDiseaseControl = new FormControl();
-  minEdgeFreq$: Observable<number>;
-  currEdgeFreq$: Observable<number>;
-  maxEdgeFreq$: Observable<number>;
+  minSliderValue$: Observable<number>;
+  maxSliderValue$: Observable<number>;
+  currSliderValue$: Observable<number>;
   filteredOptions$: Observable<string[]>;
   diseasesInGraph$: Observable<string[]>;
-  displayAll$: Observable<boolean>;
-  displayAllDisabled$: Observable<boolean>;
 
   private diseasesSub: Subscription;
 
-  constructor(private phenonetService: PhenonetPageService,
+  constructor(private platformService: PlatformPageService,
               private eRef: ElementRef) {
   }
 
@@ -47,16 +44,14 @@ export class PGraphFiltersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.minEdgeFreq$ = this.phenonetService.minEdgeFreq$;
-    this.maxEdgeFreq$ = this.phenonetService.maxEdgeFreq$;
-    this.currEdgeFreq$ = this.phenonetService.currEdgeFreq$;
-    this.displayAll$ = this.phenonetService.displayAllNodes$;
-    this.displayAllDisabled$ = this.phenonetService.isDisplayAllNodesDisabled$;
-    this.phenonetService.diseaseToBeHighlighted$.subscribe((disease) => this.highlightDiseaseControl.setValue(disease));
+    this.minSliderValue$ = this.platformService.minSliderValue$;
+    this.maxSliderValue$ = this.platformService.maxSliderValue$;
+    this.currSliderValue$ = this.platformService.currSliderValue$;
+    this.platformService.diseaseToBeHighlighted$.subscribe((disease) => this.highlightDiseaseControl.setValue(disease));
 
     // Get diseases that exist in the displayed graph
-    this.diseasesInGraph$ = this.phenonetService.filteredGraph$.pipe(
-      map((graph) => graph?.diseases)
+    this.diseasesInGraph$ = this.platformService.filteredGraph$.pipe(
+      map( (gplGraph) => gplGraph?.categories.map(category => category.name))
     );
 
     /**
@@ -78,25 +73,24 @@ export class PGraphFiltersComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.diseasesSub.unsubscribe();
+  }
+
   zoomIn(): void {
-    this.phenonetService.updateZoomIn();
+    this.platformService.updateZoomIn();
   }
 
   zoomOut(): void {
-    this.phenonetService.updateZoomOut();
+    this.platformService.updateZoomOut();
   }
 
   savePng(): void {
-    this.phenonetService.requestPNGSave();
+    this.platformService.requestPNGSave();
   }
 
   reset(): void {
-    this.phenonetService.requestResetGraph();
-  }
-
-
-  setNeighborDegree($event: boolean): void {
-    this.phenonetService.updateDisplayAllNodes($event);
+    this.platformService.requestResetGraph();
   }
 
   /**
@@ -105,15 +99,16 @@ export class PGraphFiltersComponent implements OnInit {
    */
   emitSelectedOption($event: MatAutocompleteSelectedEvent | string): void {
     const diseaseName = $event instanceof MatAutocompleteSelectedEvent ? $event.option.value : $event;
-    this.phenonetService.updateDiseaseToBeHighlighted(diseaseName);
+    this.platformService.updateDiseaseToBeHighlighted(diseaseName);
   }
 
   handleSliderInput($event: MatSliderChange | number): void {
     const limit = $event instanceof MatSliderChange ? $event.value : $event;
-    this.phenonetService.updateCurrEdgeFreq(limit);
+    this.platformService.updateCurrEdgeFreq(limit);
   }
 
   resetFilters(): void {
-    this.phenonetService.resetGraphFilters();
+    this.platformService.resetGraphFilters();
   }
+
 }

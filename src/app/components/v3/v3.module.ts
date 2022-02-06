@@ -15,6 +15,7 @@ import {PGraphFiltersComponent} from './phenonet-page/p-graph-filters/p-graph-fi
 import {PlatformsPageComponent} from './platforms-page/platforms-page.component';
 import {PlatformPageComponent} from './platforms-page/platform-page/platform-page.component';
 import {PlatformBreadcrumbComponent} from './platforms-page/platform-page/platform-breadcrumb/platform-breadcrumb.component';
+import {PlatformGraphFiltersComponent} from './platforms-page/platform-page/platform-graph-filters/platform-graph-filters.component';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import {PlatformBreadcrumbComponent} from './platforms-page/platform-page/platfo
     PlatformPageComponent,
     PlatformsPageComponent,
     PlatformBreadcrumbComponent,
+    PlatformGraphFiltersComponent,
     NotFoundPageComponent,
     // Components
     LoadingSpinnerComponent,

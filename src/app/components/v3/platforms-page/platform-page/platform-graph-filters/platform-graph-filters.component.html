@@ -16,23 +16,23 @@
       <div class="graph-filter-menu-filters">
         <div class="graph-filter-menu-item v-flex">
           <div class="h-flex align-center space-between">
-            <p class="filter-label">Number of similar studies</p>
+            <p class="filter-label">Number of significant edges</p>
             <mat-icon fontSet="material-icons-round" matTooltip="Info about the action"
                       aria-label="Button that displays a tooltip when focused or hovered over">info
             </mat-icon>
           </div>
           <div class="h-flex align-center" style="gap: 6px">
-            <div class="slider-icon slider-icon-2" aria-label="icon with many nodes"></div>
+            <div class="slider-icon slider-icon-1" aria-label="icon with few nodes"></div>
             <mat-slider [style.width]="'120px'"
-                        [min]="minEdgeFreq$ | async"
-                        [max]="maxEdgeFreq$ | async"
-                        [value]="currEdgeFreq$ | async"
+                        [min]="minSliderValue$ | async"
+                        [max]="maxSliderValue$ | async"
+                        [value]="currSliderValue$ | async"
                         step="1"
                         color="primary"
                         tickInterval="1"
                         thumbLabel
                         (input)="handleSliderInput($event)"></mat-slider>
-            <div class="slider-icon slider-icon-1" aria-label="icon with few nodes"></div>
+            <div class="slider-icon slider-icon-2" aria-label="icon with many nodes"></div>
           </div>
         </div>
 
@@ -53,15 +53,6 @@
             </mat-autocomplete>
           </mat-form-field>
         </div>
-
-        <div class="graph-filter-menu-item h-flex align-center space-between" style="height: 30px"
-             [ngClass]="{disabled: (displayAllDisabled$ | async)}">
-          <p class="filter-label">Display all nodes</p>
-          <mat-slide-toggle
-            (ngModelChange)="setNeighborDegree($event)"
-            [ngModel]="displayAll$ | async"
-            aria-label="Display all nodes"></mat-slide-toggle>
-        </div>
       </div>
       <div class="graph-filter-menu-action flex">
         <button class="outline_button app-button__fluid" (click)="resetFilters()">
@@ -78,12 +69,7 @@
     <div [@queryShake]="isGraphFilterMenuOpen" class="graph-filter-selected-values-inner">
       <div class="graph-filter-value-item">
         <span [@openClose3]="isGraphFilterMenuOpen" class="graph-filter-value-item_divider"></span>
-        <div [@openClose2]="isGraphFilterMenuOpen" >{{(displayAll$ | async) ? 'Full graph' : '1st degree neighbour graph'}}</div>
-      </div>
-
-      <div class="graph-filter-value-item">
-        <span [@openClose3]="isGraphFilterMenuOpen" class="graph-filter-value-item_divider"></span>
-        <div [@openClose2]="isGraphFilterMenuOpen"> w/ {{currEdgeFreq$ | async}} similar studies</div>
+        <div [@openClose2]="isGraphFilterMenuOpen"> w/ {{currSliderValue$ | async}} significant edges</div>
       </div>
     </div>
   </div>

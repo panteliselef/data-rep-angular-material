@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
 
@@ -13,24 +13,33 @@ export class PlatformPageService {
   // Behavior Subjects
   private graph = new BehaviorSubject<GplData>(undefined);
   private filteredGraph = new BehaviorSubject<GplData>(undefined);
-  private sliderEdgeLimit = new BehaviorSubject<number>(10);
   private minSliderValue = new BehaviorSubject<number>(0);
-  private maxSliderValue = new BehaviorSubject<number>(1);
+  private maxSliderValue = new BehaviorSubject<number>(10);
+  private currSliderValue = new BehaviorSubject<number>(10);
   private diseaseToBeHighlighted = new BehaviorSubject<string>('');
   private selectedNode = new BehaviorSubject<GPLNODE>(undefined);
   private selectedEdge = new BehaviorSubject<GPLEDGE>(undefined);
   private technology = new BehaviorSubject<Technology>(undefined);
 
+  private onZoomIn = new Subject();
+  private onZoomOut = new Subject();
+  private resetGraph = new Subject();
+  private savePNG = new Subject();
+
   // Exposed observable (read-only).
   readonly graph$ = this.graph.asObservable();
   readonly filteredGraph$ = this.filteredGraph.asObservable();
-  readonly sliderEdgeLimit$ = this.sliderEdgeLimit.asObservable();
   readonly minSliderValue$ = this.minSliderValue.asObservable();
   readonly maxSliderValue$ = this.maxSliderValue.asObservable();
+  readonly currSliderValue$ = this.currSliderValue.asObservable();
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
   readonly selectedNode$ = this.selectedNode.asObservable();
   readonly selectedEdge$ = this.selectedEdge.asObservable();
   readonly technology$ = this.technology.asObservable();
+  readonly onZoomIn$ = this.onZoomIn.asObservable();
+  readonly onZoomOut$ = this.onZoomOut.asObservable();
+  readonly resetGraph$ = this.resetGraph.asObservable();
+  readonly savePNG$ = this.savePNG.asObservable();
 
   constructor(
     private apiService: ApiService,
@@ -78,6 +87,7 @@ export class PlatformPageService {
     this.graph.next(graph);
     this.filteredGraph.next(graph);
     this.minSliderValue.next(10);
+    this.currSliderValue.next(10);
     this.maxSliderValue.next(graph.edges.length);
   }
 
@@ -97,7 +107,7 @@ export class PlatformPageService {
    * @private
    */
   private _setSlider(count: number): void {
-    this.sliderEdgeLimit.next(count);
+    this.currSliderValue.next(count);
   }
 
   get graphSnapshot(): GplData {
@@ -108,7 +118,7 @@ export class PlatformPageService {
     return {
       min: this.minSliderValue.getValue(),
       max: this.maxSliderValue.getValue(),
-      current: this.sliderEdgeLimit.getValue()
+      current: this.currSliderValue.getValue()
     };
   }
 
@@ -153,6 +163,39 @@ export class PlatformPageService {
    * @param sliderLimit
    */
   updateSliderEdgeLimit(sliderLimit: number): void {
+    this._setSlider(sliderLimit);
+    const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
+    this.filteredGraph.next(filteredOriginalGraph);
+  }
+
+
+  updateZoomIn(): void {
+    this.onZoomIn.next();
+  }
+
+  updateZoomOut(): void {
+    this.onZoomOut.next();
+  }
+
+  requestPNGSave(): void {
+    this.savePNG.next();
+  }
+
+  requestResetGraph(): void {
+    this.resetGraph.next();
+  }
+
+  resetGraphFilters(): void {
+    this.updateCurrEdgeFreq(this.minSliderValue.value);
+    this.updateDiseaseToBeHighlighted('');
+  }
+
+  /**
+   * Sets selected value of slider and filters the graph for top k edges based on that value
+   * @param sliderLimit
+   */
+  updateCurrEdgeFreq(sliderLimit: number): void {
+    this.updateDiseaseToBeHighlighted('');
     this._setSlider(sliderLimit);
     const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
     this.filteredGraph.next(filteredOriginalGraph);

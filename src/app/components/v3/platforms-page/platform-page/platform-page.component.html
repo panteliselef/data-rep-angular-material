@@ -3,7 +3,9 @@
 
 <main *ngIf="(gplGraph$ | async) as gplData else loader"  class="app-page">
 
-  <div style="gap: 20px;" class="v-flex"></div>
+  <div style="gap: 20px;" class="v-flex">
+    <app-platform-graph-filters></app-platform-graph-filters>
+  </div>
 
   <!--    side panel with separate elements-->
   <div style="gap: 20px; z-index: 0" class="v-flex">
