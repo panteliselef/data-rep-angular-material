@@ -142,7 +142,10 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
       const clickedNode = clickData.nodes[0];
       const allNodes = this.nodes.get({returnType: 'Object'}) as any;
       const cNode = allNodes[clickedNode];
-      this.selectedNode.next(cNode);
+      this.selectedNode.next({
+        ...cNode,
+        label: cNode.id
+      });
       this.highlightConnectedNodes(clickedNode);
       this._onNetworkDeselectEdge();
     } else {
@@ -158,8 +161,17 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
     const allEdges = this.edges.get({returnType: 'Object'}) as any;
     const cEdge = allEdges[clickedEdge] as GPLEDGE;
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
-    cEdge.from = allNodes[cEdge.from as string];
-    cEdge.to = allNodes[cEdge.to as string];
+    cEdge.from = allNodes[cEdge.from as string] as GPLNODE;
+    // in case label is missing because of highlighting
+    cEdge.from = {
+      ...(cEdge.from),
+      label: cEdge.from.id
+    };
+    cEdge.to = allNodes[cEdge.to as string] as GPLNODE;
+    cEdge.to = {
+      ...(cEdge.to),
+      label: cEdge.to.id
+    };
     this.selectedEdge.next(cEdge);
     this.selectedNode.next(undefined);
     this._onNetworkHoverEdge([undefined, {edge: clickedEdge}]);
@@ -230,7 +242,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
   }
 
   public highlightConnectedNodes(selectedNode: string | IdType): void {
-    console.log('Node selected', selectedNode);
+    // console.log('Node selected', selectedNode);
     const allNodes = this.nodes.get({returnType: 'Object'}) as any;
     this.highlightActive = true;
     let i;

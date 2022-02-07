@@ -9,7 +9,7 @@ import {
 import {DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
 import { gplConfig, gplEdgeColor} from 'src/util/utils';
 import {GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, pipe, Subscription} from 'rxjs';
 import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
 import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
 import {GraphComponentComponent} from '../../graph-component/graph-component.component';

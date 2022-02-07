@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Observable} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {PlatformPageService} from '../platform-page.service';
 import {GPLEDGE, GPLNODE} from '../../../../../models/gplGraph.model';
+import {map, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-platform-breadcrumb',
@@ -17,12 +18,20 @@ export class PlatformBreadcrumbComponent implements OnInit {
     private platformService: PlatformPageService,
   ) {  }
 
+  /**
+   * @returns Observable<boolean> True if any edge or node is selected
+   */
+  get isEdgeNodeSelected$(): Observable<boolean> {
+    return combineLatest([this.selectedNode$, this.selectedEdge$])
+      .pipe(map(([a$, b$]) => typeof (a$ || b$) !== 'undefined'));
+  }
+
   ngOnInit(): void {
     this.platform$ = this.platformService.technology$;
     this.selectedNode$ = this.platformService.selectedNode$;
-    this.selectedEdge$ = this.platformService.selectedEdge$;
-
-    this.platformService.selectedEdge$.subscribe(console.log);
+    this.selectedEdge$ = this.platformService.selectedEdge$.pipe(
+      tap(edge => console.log('edge', edge))
+    );
   }
 
 }

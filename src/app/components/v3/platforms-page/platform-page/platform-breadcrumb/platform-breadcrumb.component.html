@@ -8,9 +8,20 @@
 
   </ng-container>
 
-  <ng-container *ngIf="selectedNode$ | async as selectedNode">
+  <ng-container *ngIf="isEdgeNodeSelected$ | async">
     <mat-icon class="material-icons-round">chevron_right</mat-icon>
-    <ng-container *ngIf="selectedEdge$ | async as selectedEdge else onlyNode">
+
+    <ng-container *ngIf="selectedNode$ | async as selectedNode">
+      <div class="breadcrumb-layer-node h-flex">
+        <div class="badge-node">NODE</div>
+        <div class="v-flex center" style="gap: 2px; height: 45px;">
+          <span class="breadcrumb-phenonet-disease">{{selectedNode.label}}</span>
+          <span class="breadcrumb-phenotype">{{selectedNode.group}}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="selectedEdge$ | async as selectedEdge">
 
       <div class="breadcrumb-layer-node h-flex">
         <div class="v-flex center" style="gap: 2px; height: 45px;">
@@ -28,19 +39,6 @@
       </div>
 
     </ng-container>
-
-    <ng-template #onlyNode>
-
-      <div class="breadcrumb-layer-node h-flex">
-        <div class="badge-node">NODE</div>
-        <div class="v-flex center" style="gap: 2px; height: 45px;">
-          <span class="breadcrumb-phenonet-disease">{{selectedNode.label}}</span>
-          <span class="breadcrumb-phenotype">{{selectedNode.group}}</span>
-        </div>
-      </div>
-
-    </ng-template>
   </ng-container>
-
 
 </div>

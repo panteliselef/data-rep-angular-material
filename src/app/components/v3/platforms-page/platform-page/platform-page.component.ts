@@ -159,7 +159,6 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
 
       // url contains a node which does not exist in graph
       if (!selectedNode) {
-
         // TODO: display error message to user about the node not being in the graph
         return;
       }
@@ -183,12 +182,16 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
           this.platformService.updateSelectedEdge(selectedEdge);
         } else {
           // redirect user because there is not a valid edge between those edges
+          // use the following to replace url and show warning message instead of redirecting
+          // TODO: https://stackoverflow.com/questions/35618463/change-route-params-without-reloading-in-angular-2
           this.router.navigate(['.'], {relativeTo: this.route}).then();
         }
+      } else {
+        this.platformService.updateSelectedNode(selectedNode);
       }
 
       // whatever the case is always select the node is the nodes is valid and exists
-      this.platformService.updateSelectedNode(selectedNode);
+
     });
 
 
@@ -221,8 +224,13 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
     //     this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
     //   });
 
+    // this.selectedNode$.pipe(filter(node => !!node)).subscribe(node => this.router.navigate([node.label], {
+    //   relativeTo: this.route,
+    // }));
+
     this.selectedNodeSub = this.selectedNode$.pipe(
       switchMap((node: GPLNODE) => {
+        console.log('selected', node);
         if (!node) {
           return EMPTY;
         }
@@ -238,7 +246,7 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
     /**
      * @deprecated Now best Explaining genes are being fetched
      */
-    // this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
+    this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
 
 
     // TODO: uncomment this for later
@@ -246,13 +254,13 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.networkNameSub.unsubscribe();
-    this.selectedNodeSub.unsubscribe();
+    // this.networkNameSub.unsubscribe();
+    // this.selectedNodeSub.unsubscribe();
     // this.edgeOrGenesSub.unsubscribe();
-    this.gplGraphSub.unsubscribe();
-    this.routeSub.unsubscribe();
-    this.technologySub.unsubscribe();
-    this.limitGenesSubject.unsubscribe();
+    // this.gplGraphSub.unsubscribe();
+    // this.routeSub.unsubscribe();
+    // this.technologySub.unsubscribe();
+    // this.limitGenesSubject.unsubscribe();
   }
 
   private findWhenEdgeIsVisibleBetween(nodeId1: string, nodeId2: string): void {

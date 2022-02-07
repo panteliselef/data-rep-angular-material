@@ -1,7 +1,7 @@
 <app-platform-breadcrumb></app-platform-breadcrumb>
 
 
-<main *ngIf="(gplGraph$ | async) as gplData else loader"  class="app-page">
+<main *ngIf="(gplGraph$ | async) as gplData else loader" class="app-page">
 
   <div style="gap: 20px;" class="v-flex">
     <app-platform-graph-filters></app-platform-graph-filters>
@@ -11,6 +11,107 @@
 
   <!--    side panel with separate elements-->
   <div style="gap: 20px; z-index: 0" class="v-flex">
+
+    <div *ngIf="(selectedNode$ | async) as selectedNode" class="v-flex align-flex-start as-card"
+         style="overflow: hidden">
+
+      <div class="h-flex space-between align-center"
+           style="width: 100%;height: 68px;padding: 0 16px; border-bottom: 1px solid rgba(0,0,0,.12)">
+        <p class="title title_2">Similar Datasets</p>
+
+
+        <a [href]="downloadUrl">
+          <button mat-flat-button class="app_button app_button_left_icon">
+            <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+            Download all similar datasets
+          </button>
+
+        </a>
+      </div>
+
+      <table mat-table multiTemplateDataRows [dataSource]="similarDatasets"
+             style="width: 100%">
+
+        <ng-container matColumnDef="dataset_name">
+          <th mat-header-cell *matHeaderCellDef> Name</th>
+          <td mat-cell *matCellDef="let element">
+            {{element.to}}
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="dataset_qvalue">
+          <th mat-header-cell *matHeaderCellDef>qvalue</th>
+          <td mat-cell *matCellDef="let element">{{element.value}}</td>
+        </ng-container>
+
+        <tr mat-header-row
+            *matHeaderRowDef="['dataset_name','dataset_qvalue'];sticky:true"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['dataset_name','dataset_qvalue'];"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No results.</td>
+        </tr>
+      </table>
+
+
+    </div>
+
+    <div *ngIf="(selectedEdge$ | async) as selectedEdge" class="v-flex align-flex-start as-card" style="overflow: hidden">
+      <div class="h-flex space-between align-center"
+           style="width: 100%;height: 58px;padding: 0 16px; border-bottom: 1px solid rgba(0,0,0,.12)">
+        <p class="title title_4">Best explaining genes</p>
+
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="h-flex"
+          [(ngModel)]="limitGenes"
+          (change)="fetchGenes()"
+          style="gap: 10px">
+          <mat-radio-button *ngFor="let limit of limits" [value]="limit">
+            {{limit}}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <table mat-table multiTemplateDataRows [dataSource]="bestExplainingGene"
+             style="width: 100%">
+
+        <ng-container matColumnDef="gene">
+          <th mat-header-cell *matHeaderCellDef> Gene</th>
+          <td mat-cell *matCellDef="let element">
+            {{element}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="view_on">
+          <th mat-header-cell *matHeaderCellDef>View on</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-flat-button class="app_button">KEGG</button>
+            <button style="margin-left: 10px" mat-flat-button class="app_button app_button_orange">GeneCards</button>
+
+          </td>
+        </ng-container>
+
+        <tr mat-header-row
+            *matHeaderRowDef="['gene','view_on'];sticky:true"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['gene','view_on'];"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No results.</td>
+        </tr>
+      </table>
+
+      <div class="h-flex align-center"
+           style="gap:15px;width: 100%;height: 60px;padding: 0 16px; border-top: 1px solid rgba(0,0,0,.12)">
+        <button (click)="downloadGenes()" mat-flat-button class="app_button app_button_left_icon">
+          <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+          Download gene list</button>
+
+        <button mat-flat-button class="app_button">
+          Perform Enrichment Analysis</button>
+      </div>
+
+
+    </div>
+
     <div *ngIf="!(isEdgeNodeSelected$ | async)" style="padding: 0 17px" class="as-card">
       <div class="hint-with-badges" style="height: 56px">
         <p class="text">Select a</p>
@@ -20,10 +121,25 @@
         <p class="text">from the network graph</p>
       </div>
     </div>
+
+    <div *ngIf="!(isEdgeNodeSelected$ | async)" class="as-card with-padding">
+      <p class="title title_2">Graph Legend</p>
+
+      <div #userContent class="legend_list">
+        <div class="legend_list_item" *ngFor="let item of gplData.categories">
+          <div [style.background]="groupColors[item.name]?.color?.background || 'red'"></div>
+          <p>{{item.name}}</p>
+        </div>
+
+      </div>
+
+      <button *ngIf="gplData.categories.length > 10" mat-flat-button (click)="toggle()">
+        View More
+      </button>
+    </div>
+
   </div>
-
 </main>
-
 
 
 <ng-template #loader>

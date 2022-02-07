@@ -215,6 +215,7 @@ export class PlatformPageService {
    * @param edge selected edge
    */
   updateSelectedEdge(edge: GPLEDGE): void {
+    console.log('setting');
     this.selectedEdge.next(edge);
   }
 }
