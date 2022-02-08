@@ -76,12 +76,14 @@ export class PhenonetPageService {
 
     const fg = this._filterOriginalGraph(currVal);
     this.filteredGraph.next(fg);
-    if (fg.diseases.includes(this.diseaseToBeHighlighted.value)) {
-      setTimeout(() => {
-        this.updateDiseaseToBeHighlighted(this.diseaseToBeHighlighted.value);
-      }, 400);
-    }
-    // console.log(min, max, this.currEdgeFreq.getValue());
+
+    // persist highlighting
+    // TODO: not sure why i need this here, seems if statement always to be false
+    // if (fg.diseases.includes(this.diseaseToBeHighlighted.value)) {
+    //   setTimeout(() => {
+    //     this.updateDiseaseToBeHighlighted(this.diseaseToBeHighlighted.value);
+    //   }, 400);
+    // }
     this.minEdgeFreq.next(min);
     this.maxEdgeFreq.next(max);
   }

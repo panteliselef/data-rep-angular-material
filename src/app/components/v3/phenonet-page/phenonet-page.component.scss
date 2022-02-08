@@ -1,40 +1,13 @@
 @use "src/variables" as v;
 @use "src/util" as u;
 
+@forward "src/styles/v3/graph-toast/graph-toast";
+
 :host {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: v.$primaryFontFamily;
-}
-
-
-.warning-toast {
-  @include u.with_radius;
-  position: absolute;
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
-  gap: 5px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 4px 10px;
-  background: map-get(v.$warn, 'bg');
-  border: 1px solid map-get(v.$black, 12);
-  /* nav-header-shadow */
-  box-shadow: v.$drop-shadow-1;
-  font-family: v.$primaryFontFamily;
-  font-size: u.toRem(12);
-  font-style: normal;
-  font-weight: 600;
-  line-height: u.toRem(16);
-
-  .warning-action-action {
-    text-decoration: underline;
-    cursor: pointer;
-  }
 }
 
 .search-filter-table {

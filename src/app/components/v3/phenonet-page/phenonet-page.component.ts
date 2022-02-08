@@ -9,6 +9,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {ConnectedNode, GRAPH} from '../../../models/graph.model';
 import {catchError, delay, filter, map, switchMap} from 'rxjs/operators';
 import {animate, style, transition, trigger} from '@angular/animations';
+import {toastSliding} from '../../../shared/animations';
 
 @Component({
   selector: 'app-phenonet-page',
@@ -21,15 +22,7 @@ import {animate, style, transition, trigger} from '@angular/animations';
     PhenonetPageService
   ],
   animations: [
-    trigger('myInsertRemoveTrigger', [
-      transition(':enter', [
-        style({opacity: 0, transform: 'translateY(-100px) translateX(-50%)'}),
-        animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)', style({opacity: 1, transform: 'translateY(0) translateX(-50%)'})),
-      ]),
-      transition(':leave', [
-        animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)', style({opacity: 0, transform: 'translateY(-50px) translateX(-50%)'}))
-      ])
-    ]),
+    toastSliding,
     trigger('lala', [
       transition(':enter', [
         style({opacity: 0, transform: 'translateY(-10px)'}),
@@ -97,11 +90,10 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
           this.phenonetService.updateDisease(this.mainDisease);
         }, (err: HttpErrorResponse) => {
           if (err.status === 400) {
-
             this.router.navigate(['/v3/error'], {
               queryParams: {
                 fromPage: 'phenonet',
-                fromPageArg: this.mainDisease
+                fromPageArg: this.mainDisease,
               },
               skipLocationChange: true
             });

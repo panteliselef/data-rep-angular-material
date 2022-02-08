@@ -1,5 +1,9 @@
 @use "src/util" as u;
 
+:host {
+  overflow: hidden;
+}
+
 .graph-area {
   height: 100%;
   flex: 1 1 800px;

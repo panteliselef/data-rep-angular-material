@@ -1,0 +1,34 @@
+@use 'src/variables' as v;
+@use 'src/util' as u;
+
+
+.legend_list {
+  @include u.v-flex;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+  margin-bottom: 6px;
+
+  max-height: 300px;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+
+  .legend_list_item {
+    @include u.h-flex;
+    @include u.align-center;
+    gap: 10px;
+
+    div:nth-child(1)  {
+      aspect-ratio: 1 / 1;
+      width: 21px;
+      border-radius: 50%;
+      background-color: map-get(v.$light-green,100);
+    }
+
+    p {
+      color: #0000008A;
+    }
+
+
+  }
+}

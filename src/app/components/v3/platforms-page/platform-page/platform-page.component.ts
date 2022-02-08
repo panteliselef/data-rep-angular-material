@@ -4,25 +4,31 @@ import {LoadingService} from '../../../../services/loading.service';
 import {ElasticService} from '../../../../services/elastic.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, EMPTY, Observable, Subscription} from 'rxjs';
-import {map, switchMap, withLatestFrom} from 'rxjs/operators';
+import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {GplData, GPLEDGE, GPLNODE, Technology} from '../../../../models/gplGraph.model';
 import groupsGPL96 from '../../../../../assets/groupColors/GPL96.json';
 import groupsGPL570 from '../../../../../assets/groupColors/GPL570.json';
 import {GENE} from '../../../v2/dataset-network-page/dataset-network.component';
 import {PlatformPageService} from './platform-page.service';
+import {toastSliding} from '../../../../shared/animations';
+import {HttpErrorResponse} from '@angular/common/http';
 
 
 @Component({
   selector: 'app-platform-page',
   templateUrl: './platform-page.component.html',
   styleUrls: ['./platform-page.component.scss'],
-  providers: [PlatformPageService]
+  providers: [PlatformPageService],
+  animations: [
+    toastSliding
+  ]
 })
 export class PlatformPageComponent implements OnInit, OnDestroy {
 
-  private studyId: string;
+  studyId: string;
   private secondStudyId: string;
+  isShown = false;
 
   /* Use ViewChild this way
  * why ?
@@ -113,18 +119,27 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
    * Subscribe to Observables on Init
    */
   ngOnInit(): void {
+    // TODO: use switchMap
     this.networkNameSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()))
       .subscribe(async (technology) => {
-        console.log(technology);
-        // TODO: verify that technology exist
-        // if (!technology) {
-        //   // TODO: handle behavior when technology parameter doesn't exist
-        //   // a temporary solution is to fallback to technology GPL96
-        //   await this.router.navigate(['GPL96'], {relativeTo: this.route});
-        //   return;
-        // }
-        this.platformService.fetchNetwork(technology.toUpperCase() as Technology);
+        this.platformService.fetchNetwork(technology.toUpperCase() as Technology)
+          .subscribe(
+            () => {
+            },
+            (error: HttpErrorResponse) => {
+              if (error.status === 400) {
+                this.router.navigate(['/v3/error'], {
+                  queryParams: {
+                    fromPage: 'platforms',
+                    fromPageArg: technology
+                  },
+                  skipLocationChange: true
+                });
+              }
+            }
+          );
       });
+
     this.routeSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => this.studyId = id);
     this.queryUrlSub = this.route.queryParamMap
       .pipe(map(queryParamMap => queryParamMap.get('edgeWith')?.toUpperCase()))
@@ -150,6 +165,20 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Get diseases that exist in the displayed graph
+    combineLatest([this.selectedNode$, this.gplGraph$])
+      .pipe(
+        map(([selectedNode, graph]) => [selectedNode, graph.nodes]),
+        map(([selectedNode, nodes]: [GPLNODE, GPLNODE[]]) => {
+          if (!selectedNode) {
+            return true;
+          }
+          return nodes.length === 0 ? true : !!nodes.find(node => node.id === selectedNode.id);
+        })
+      ).subscribe((isIncluded) => {
+      this.isShown = !isIncluded;
+    });
+
     this.gplGraphSub = this.gplGraph$.subscribe((graph) => {
       if (!graph) {
         return;
@@ -159,7 +188,8 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
 
       // url contains a node which does not exist in graph
       if (!selectedNode) {
-        // TODO: display error message to user about the node not being in the graph
+        // display error message to user about the node not being in the graph
+        this.isShown = !!this.studyId;
         return;
       }
 
@@ -189,9 +219,6 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
       } else {
         this.platformService.updateSelectedNode(selectedNode);
       }
-
-      // whatever the case is always select the node is the nodes is valid and exists
-
     });
 
 
@@ -229,13 +256,10 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
     // }));
 
     this.selectedNodeSub = this.selectedNode$.pipe(
-      switchMap((node: GPLNODE) => {
-        console.log('selected', node);
-        if (!node) {
-          return EMPTY;
-        }
-        return this._filterNeighbors(node);
-      })
+      tap(node => typeof node !== 'undefined' && (this.studyId = node?.id)),
+      switchMap(
+        (node: GPLNODE) => !node ? EMPTY : this._filterNeighbors(node)
+      )
     ).subscribe((neighbors) => {
       this.similarDatasets = new MatTableDataSource<GPLEDGE>(
         neighbors.sort((a, b) => a.value - b.value)

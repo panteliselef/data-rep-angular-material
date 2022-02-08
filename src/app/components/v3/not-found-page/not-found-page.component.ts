@@ -11,8 +11,8 @@ import {Title} from '@angular/platform-browser';
 export class NotFoundPageComponent implements OnInit {
   private routeSub: Subscription;
 
-  errorCode: string;
-  withErrorCode = false;
+  errorCode = '404';
+  withErrorCode = true;
   fromPage: string;
   fromPageArg: string;
 
@@ -29,13 +29,12 @@ export class NotFoundPageComponent implements OnInit {
       this.withErrorCode = true;
       this.errorCode = errorCode;
       this.titleService.setTitle(`Error ${errorCode}`);
-    }else if (fromPage) {
+    } else if (fromPage) {
+      this.withErrorCode = false;
       this.fromPage = fromPage;
       this.fromPageArg = fromPageArg;
-
-    }
-    else {
-      this.titleService.setTitle('Error');
+    } else {
+      this.titleService.setTitle(`Error${errorCode ? ` ${errorCode}` : ''}`);
     }
 
 

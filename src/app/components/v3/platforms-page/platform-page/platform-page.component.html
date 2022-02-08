@@ -6,7 +6,12 @@
   <div style="gap: 20px;" class="v-flex">
     <app-platform-graph-filters></app-platform-graph-filters>
 
-    <app-dataset-network-graph></app-dataset-network-graph>
+    <app-dataset-network-graph>
+      <div @myInsertRemoveTrigger *ngIf="isShown" class="warning-toast">
+        <mat-icon fontSet="material-icons-round">warning_amber</mat-icon>
+        <span class="warning-action-action">{{studyId}}</span> is not visible in graph
+      </div>
+    </app-dataset-network-graph>
   </div>
 
   <!--    side panel with separate elements-->

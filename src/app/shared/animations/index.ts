@@ -31,3 +31,13 @@ export const queryShake = trigger('queryShake', [
     ]), {optional: true}),
   ]),
 ]);
+
+export const toastSliding = trigger('myInsertRemoveTrigger', [
+  transition(':enter', [
+    style({opacity: 0, transform: 'translateY(-100px) translateX(-50%)'}),
+    animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)', style({opacity: 1, transform: 'translateY(0) translateX(-50%)'})),
+  ]),
+  transition(':leave', [
+    animate('400ms cubic-bezier(0.68,-0.55,0.27,1.55)', style({opacity: 0, transform: 'translateY(-50px) translateX(-50%)'}))
+  ])
+]);

@@ -150,7 +150,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
       this._onNetworkDeselectEdge();
     } else {
       this._onNetworkBlurNode(eventData);
-      this.selectedNode.next(undefined);
+      this.selectedNode.next(null);
       this._onNetworkDeselectEdge();
     }
   }
@@ -173,7 +173,7 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
       label: cEdge.to.id
     };
     this.selectedEdge.next(cEdge);
-    this.selectedNode.next(undefined);
+    this.selectedNode.next(null);
     this._onNetworkHoverEdge([undefined, {edge: clickedEdge}]);
   }
 

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
+import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
 
 /**
  * A service for managing the state of dataset-network page
@@ -11,8 +12,12 @@ export class PlatformPageService {
 
 
   // Behavior Subjects
-  private graph = new BehaviorSubject<GplData>(undefined);
-  private filteredGraph = new BehaviorSubject<GplData>(undefined);
+  private graph = new BehaviorSubject<GplData>({
+    nodes: [],
+    edges: [],
+    categories: [],
+  });
+  private filteredGraph = new BehaviorSubject<GplData>(this.graph.getValue());
   private minSliderValue = new BehaviorSubject<number>(0);
   private maxSliderValue = new BehaviorSubject<number>(10);
   private currSliderValue = new BehaviorSubject<number>(10);
@@ -44,6 +49,16 @@ export class PlatformPageService {
   constructor(
     private apiService: ApiService,
   ) {
+
+    this.currSliderValue$.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      tap(sliderValue => {
+        this.updateDiseaseToBeHighlighted('');
+        const filteredOriginalGraph = this._filterOriginalGraph(sliderValue);
+        this.filteredGraph.next(filteredOriginalGraph);
+      })
+    ).subscribe();
 
   }
 
@@ -83,9 +98,7 @@ export class PlatformPageService {
    * @private
    */
   private _setGraph(graph: GplData): void {
-    console.warn('setting');
     this.graph.next(graph);
-    this.filteredGraph.next(graph);
     this.minSliderValue.next(10);
     this.currSliderValue.next(10);
     this.maxSliderValue.next(graph.edges.length);
@@ -141,10 +154,11 @@ export class PlatformPageService {
    * Fetch Network Data and set selected technology
    * @param technology
    */
-  fetchNetwork(technology: Technology): void {
+  fetchNetwork(technology: Technology): Observable<GplData> {
     this.technology.next(technology);
     // Uncomment this line to request from Node API
-    this.apiService.getTechnologyGraph(technology).subscribe(this._setGraph.bind(this));
+    return this.apiService.getTechnologyGraph(technology)
+      .pipe(tap(graph => this._setGraph(graph)));
   }
 
 
@@ -195,10 +209,10 @@ export class PlatformPageService {
    * @param sliderLimit
    */
   updateCurrEdgeFreq(sliderLimit: number): void {
-    this.updateDiseaseToBeHighlighted('');
     this._setSlider(sliderLimit);
-    const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
-    this.filteredGraph.next(filteredOriginalGraph);
+    // this.updateDiseaseToBeHighlighted('');
+    // const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
+    // this.filteredGraph.next(filteredOriginalGraph);
   }
 
 
@@ -207,6 +221,7 @@ export class PlatformPageService {
    * @param node selected node
    */
   updateSelectedNode(node: GPLNODE): void {
+    console.warn('setting node', node);
     this.selectedNode.next(node);
   }
 
@@ -215,7 +230,6 @@ export class PlatformPageService {
    * @param edge selected edge
    */
   updateSelectedEdge(edge: GPLEDGE): void {
-    console.log('setting');
     this.selectedEdge.next(edge);
   }
 }

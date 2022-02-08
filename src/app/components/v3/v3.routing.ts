@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: 'platforms/:technology', component: PlatformPageComponent, },
   {path: 'platforms/:technology/:study', component: PlatformPageComponent, },
   {path: 'error', component: NotFoundPageComponent, },
-  {path: '**', redirectTo: '', pathMatch: 'full'}
+  {path: '**', component: NotFoundPageComponent}
 ];
 
 @NgModule({

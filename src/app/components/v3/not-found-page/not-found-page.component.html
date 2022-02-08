@@ -8,6 +8,9 @@
     <h3 *ngIf="fromPage==='phenonet'">
       It appears ‘<span class="h">{{fromPageArg}}</span>’ is not part of the Phenonet graph
     </h3>
+    <h3 *ngIf="fromPage==='platforms'">
+      It appears ‘<span class="h">{{fromPageArg}}</span>’ is not matching any platforms
+    </h3>
     <h3 *ngIf="withErrorCode">Error Code: {{errorCode}}</h3>
 
     <button class="outline_button" style="margin-top: 8px" routerLink="/">
