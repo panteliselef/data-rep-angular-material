@@ -52,7 +52,6 @@ export class PlatformPageService {
 
     this.currSliderValue$.pipe(
       debounceTime(100),
-      distinctUntilChanged(),
       tap(sliderValue => {
         this.updateDiseaseToBeHighlighted('');
         const filteredOriginalGraph = this._filterOriginalGraph(sliderValue);

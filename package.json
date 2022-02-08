@@ -8,6 +8,7 @@
     "start_no_host": "ng serve --disable-host-check --poll=1000",
     "build": "ng build",
     "build-prod": "ng build --configuration production",
+    "firebase-deploy": "firebase deploy",
     "docker-dev": "docker-compose up",
     "docker-dev:ri": "docker images -a |  grep -E \"data-rep-frontend.*dev\" | awk '{print $3}' | xargs docker rmi",
     "docker-dev:rc": "docker ps -a -f status=exited | grep -E \"data-rep-frontend.*dev\" | awk '{print $1}' | xargs docker rm",
