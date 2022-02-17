@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:4201/api/',
+  // apiUrl: 'https://data-repurposing.herokuapp.com/api/',
   vmUrl: 'http://snf-880201.vm.okeanos.grnet.gr:8000/'
 };
 
