@@ -4,7 +4,7 @@ import {LoadingService} from '../../../../services/loading.service';
 import {ElasticService} from '../../../../services/elastic.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, EMPTY, Observable, Subscription} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {debounceTime, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {GplData, GPLEDGE, GPLNODE, Technology} from '../../../../models/gplGraph.model';
 import groupsGPL96 from '../../../../../assets/groupColors/GPL96.json';
@@ -13,6 +13,7 @@ import {GENE} from '../../../v2/dataset-network-page/dataset-network.component';
 import {PlatformPageService} from './platform-page.service';
 import {toastSliding} from '../../../../shared/animations';
 import {HttpErrorResponse} from '@angular/common/http';
+import {Location} from '@angular/common';
 
 
 @Component({
@@ -72,6 +73,7 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
   groupColors: any;
 
   constructor(
+    private location: Location,
     private platformService: PlatformPageService,
     private apiService: ApiService,
     private loadingService: LoadingService,
@@ -223,37 +225,24 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
 
 
     // If a limit for genes or an edge is selected request Best Explaining Genes
-    // this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
-    //   .pipe(switchMap(([selectedEdge]) => {
-    //     if (!selectedEdge) {
-    //       return EMPTY;
-    //     }
-    //     return this.elastic.getPlatformGenes(this.platformService.technologyValue, selectedEdge);
-    //   })).subscribe((geneData) => {
-    //     let arr = [];
-    //     switch (this.limitGenes) {
-    //       case 100:
-    //         arr = geneData.thres100;
-    //         break;
-    //       case 500:
-    //         arr = geneData.thres500;
-    //         break;
-    //       case 1000:
-    //         arr = geneData.thres1000;
-    //         break;
-    //       case 2000:
-    //         arr = geneData.thres2000;
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //     this.genesArray = arr;
-    //     this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
-    //   });
+    this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
+      .pipe(
+        // simulating slow connection
+        debounceTime(1000),
+        switchMap(([selectedEdge, limitGenes]) => {
+          if (!selectedEdge) {
+            return EMPTY;
+          }
+          return this.apiService.getPlatformEdgeGenes(this.platformService.technologyValue, limitGenes + '', selectedEdge);
+        })).subscribe((geneData) => {
+        this.bestExplainingGene = new MatTableDataSource<GENE>(geneData as GENE[]);
+      });
 
-    // this.selectedNode$.pipe(filter(node => !!node)).subscribe(node => this.router.navigate([node.label], {
-    //   relativeTo: this.route,
-    // }));
+    // Update url on node select without triggering a route event
+    this.selectedNode$.pipe(filter(node => !!node))
+      .subscribe(node => {
+        this.location.go(this.router.url.replace(/(\/GSE).*/, '') + '/' + node.id);
+      });
 
     this.selectedNodeSub = this.selectedNode$.pipe(
       tap(node => typeof node !== 'undefined' && (this.studyId = node?.id)),
@@ -266,11 +255,6 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
       );
       this.downloadUrl = this.requestDataFiles();
     });
-
-    /**
-     * @deprecated Now best Explaining genes are being fetched
-     */
-    this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
 
 
     // TODO: uncomment this for later
@@ -311,10 +295,9 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
     }
 
 
-    this.platformService.maxSliderValue$.pipe(withLatestFrom(this.platformService.minSliderValue$))
+    this.platformService.maxSliderValue$
+      .pipe(withLatestFrom(this.platformService.minSliderValue$))
       .subscribe(([max]) => {
-
-
         const graphSnapShot = this.platformService.graphSnapshot;
         if (!graphSnapShot) {
           return;

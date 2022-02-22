@@ -1,3 +1,13 @@
 @forward "src/styles/v3/loading_skeleton/loading_skeleton";
 @forward "src/styles/v3/graph-legend/graph-legend";
 @forward "src/styles/v3/graph-toast/graph-toast";
+
+@use "src/variables" as v;
+@use "src/util" as u;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: v.$primaryFontFamily;
+}
