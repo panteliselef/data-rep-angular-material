@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from '../../../../services/api.service';
 import {LoadingService} from '../../../../services/loading.service';
 import {ElasticService} from '../../../../services/elastic.service';
@@ -14,6 +14,7 @@ import {PlatformPageService} from './platform-page.service';
 import {toastSliding} from '../../../../shared/animations';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Location} from '@angular/common';
+import {MatPaginator} from '@angular/material/paginator';
 
 
 @Component({
@@ -25,11 +26,33 @@ import {Location} from '@angular/common';
     toastSliding
   ]
 })
-export class PlatformPageComponent implements OnInit, OnDestroy {
+export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   studyId: string;
   private secondStudyId: string;
   isShown = false;
+
+  pageSize = 12;
+  pageItemIndexFirst = 1;
+  pageItemIndexLast = 1;
+  hasPrevious = false;
+  hasNext = false;
+
+  private paginator: MatPaginator;
+
+  @ViewChild(MatPaginator) set matPaginator(element: MatPaginator) {
+    if (element) {
+      this.paginator = element;
+      this.paginator.page.subscribe((l) => {
+        this.pageItemIndexFirst = 1 + l.pageIndex * this.pageSize;
+        this.pageItemIndexLast = this.pageSize + l.pageIndex * this.pageSize;
+        this.pageItemIndexLast = Math.min(this.pageItemIndexLast, l.length);
+        this.hasPrevious = this.bestExplainingGene.paginator.hasPreviousPage();
+        this.hasNext = this.bestExplainingGene.paginator.hasNextPage();
+      });
+    }
+  }
+
 
   /* Use ViewChild this way
  * why ?
@@ -68,7 +91,7 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
   genesArray = [] as string[];
 
   downloadUrl = '';
-  bestExplainingGene: MatTableDataSource<GENE>;
+  bestExplainingGene: MatTableDataSource<GENE> = new MatTableDataSource<GENE>();
   isCollapsed = false;
   groupColors: any;
 
@@ -80,6 +103,10 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
     private elastic: ElasticService,
     private router: Router,
     private route: ActivatedRoute) {
+  }
+
+  ngAfterViewInit(): void {
+    this.bestExplainingGene.paginator = this.paginator;
   }
 
   /**
@@ -236,6 +263,16 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
           return this.apiService.getPlatformEdgeGenes(this.platformService.technologyValue, limitGenes + '', selectedEdge);
         })).subscribe((geneData) => {
         this.bestExplainingGene = new MatTableDataSource<GENE>(geneData as GENE[]);
+        this.hasNext = this.bestExplainingGene.filteredData.length > this.pageSize;
+        this.pageItemIndexLast = this.bestExplainingGene.filteredData.length > this.pageSize
+          ? this.pageSize
+          : this.bestExplainingGene.filteredData.length;
+
+        // paginator need to be registered after datasource has changed
+        this.bestExplainingGene.paginator = this.paginator;
+        if (this.bestExplainingGene.paginator) {
+          this.bestExplainingGene.paginator.firstPage();
+        }
       });
 
     // Update url on node select without triggering a route event
@@ -368,6 +405,14 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
 
   downloadGenes(): void {
     this.apiService.downloadGenesAsFile(this.genesArray).subscribe();
+  }
+
+  nextPage(): void {
+    this.bestExplainingGene.paginator.nextPage();
+  }
+
+  prevPage(): void {
+    this.bestExplainingGene.paginator.previousPage();
   }
 
 }

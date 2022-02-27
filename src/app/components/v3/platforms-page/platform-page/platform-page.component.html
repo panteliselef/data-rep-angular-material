@@ -104,15 +104,37 @@
         </tr>
       </table>
 
-      <div class="h-flex align-center"
-           style="gap:15px;width: 100%;height: 60px;padding: 0 16px; border-top: 1px solid rgba(0,0,0,.12)">
-        <button (click)="downloadGenes()" mat-flat-button class="app_button app_button_left_icon">
-          <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
-          Download gene list</button>
+      <mat-paginator #paginator [pageSizeOptions]="[pageSize]"
+                     style="visibility: hidden;opacity: 0;height: 0"
+                     showFirstLastButtons
+                     aria-label="Select page of periodic elements">
+      </mat-paginator>
 
-        <button mat-flat-button class="app_button">
-          Perform Enrichment Analysis</button>
+
+      <div class="h-flex space-between align-center app-table-paginator">
+        <div style="">Total of {{bestExplainingGene.filteredData.length}} neighbors</div>
+        <div class="h-flex align-center">
+          <div> {{pageItemIndexFirst}} - {{pageItemIndexLast}} of {{bestExplainingGene.filteredData.length}} </div>
+
+          <button (click)="prevPage()" [disabled]="!hasPrevious" mat-icon-button aria-label="Example icon button with a menu icon">
+            <mat-icon fontSet="material-icons-round">navigate_before</mat-icon>
+          </button>
+
+          <button (click)="nextPage()" [disabled]="!hasNext" mat-icon-button aria-label="Example icon button with a menu icon">
+            <mat-icon fontSet="material-icons-round">navigate_next</mat-icon>
+          </button>
+        </div>
       </div>
+
+<!--      <div class="h-flex align-center"-->
+<!--           style="gap:15px;width: 100%;height: 60px;padding: 0 16px; border-top: 1px solid rgba(0,0,0,.12)">-->
+<!--        <button (click)="downloadGenes()" mat-flat-button class="app_button app_button_left_icon">-->
+<!--          <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>-->
+<!--          Download gene list</button>-->
+
+<!--        <button mat-flat-button class="app_button">-->
+<!--          Perform Enrichment Analysis</button>-->
+<!--      </div>-->
 
 
     </div>
