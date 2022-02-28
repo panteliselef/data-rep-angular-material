@@ -48,3 +48,19 @@ h4, .mat-typography h4,
 }
 
 /* END: Headings and sub headings */
+
+/* Custom */
+p.dataset-name {
+  font-weight: 600;
+  font-size: u.toRem(22);
+  line-height: u.toRem(22);
+  color: map-get(v.$green, 100);
+}
+
+p.dataset-disease {
+  font-family: v.$secondaryFontFamily;
+  font-size: u.toRem(12);
+  font-weight: 500;
+  line-height: 1;
+  color: map-get(v.$light-green, 100);
+}

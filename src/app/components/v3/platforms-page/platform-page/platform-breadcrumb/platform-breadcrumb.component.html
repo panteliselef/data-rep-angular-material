@@ -15,8 +15,8 @@
       <div class="breadcrumb-layer-node h-flex">
         <div class="badge-node">NODE</div>
         <div class="v-flex center" style="gap: 2px; height: 45px;">
-          <span class="breadcrumb-phenonet-disease">{{selectedNode.label}}</span>
-          <span class="breadcrumb-phenotype">{{selectedNode.group}}</span>
+          <p class="dataset-name">{{selectedNode.label}}</p>
+          <p class="dataset-disease">{{selectedNode.group}}</p>
         </div>
       </div>
     </ng-container>
@@ -25,16 +25,16 @@
 
       <div class="breadcrumb-layer-node h-flex">
         <div class="v-flex center" style="gap: 2px; height: 45px;">
-          <span class="breadcrumb-phenonet-disease">{{selectedEdge.from.label}}</span>
-          <span class="breadcrumb-phenotype">{{selectedEdge.from.group}}</span>
+          <p class="dataset-name">{{selectedEdge.from.label}}</p>
+          <p class="dataset-disease">{{selectedEdge.from.group}}</p>
         </div>
         <div class="v-flex align-center center" style="gap: 5px">
           <div class="badge-edge">EDGE</div>
           <img style="height: 10px" alt="icon indicating an edge between two nodes" src="assets/double-arrow-small.svg"/>
         </div>
         <div class="v-flex center" style="gap: 2px; height: 45px;">
-          <span class="breadcrumb-phenonet-disease">{{selectedEdge.to.label}}</span>
-          <span class="breadcrumb-phenotype">{{selectedEdge.to.group}}</span>
+          <p class="dataset-name">{{selectedEdge.to.label}}</p>
+          <p class="dataset-disease">{{selectedEdge.to.group}}</p>
         </div>
       </div>
 

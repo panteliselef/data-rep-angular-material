@@ -4,7 +4,7 @@ import {LoadingService} from '../../../../services/loading.service';
 import {ElasticService} from '../../../../services/elastic.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, EMPTY, Observable, Subscription} from 'rxjs';
-import {debounceTime, filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {debounceTime, filter, map, switchMap, tap} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {GplData, GPLEDGE, GPLNODE, Technology} from '../../../../models/gplGraph.model';
 import groupsGPL96 from '../../../../../assets/groupColors/GPL96.json';
@@ -32,11 +32,13 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private secondStudyId: string;
   isShown = false;
 
-  pageSize = 12;
+  pageSize = 15;
   pageItemIndexFirst = 1;
   pageItemIndexLast = 1;
   hasPrevious = false;
   hasNext = false;
+
+  waitingForGeneFile = false;
 
   private paginator: MatPaginator;
 
@@ -262,6 +264,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           return this.apiService.getPlatformEdgeGenes(this.platformService.technologyValue, limitGenes + '', selectedEdge);
         })).subscribe((geneData) => {
+        this.genesArray = geneData;
         this.bestExplainingGene = new MatTableDataSource<GENE>(geneData as GENE[]);
         this.hasNext = this.bestExplainingGene.filteredData.length > this.pageSize;
         this.pageItemIndexLast = this.bestExplainingGene.filteredData.length > this.pageSize
@@ -296,6 +299,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // TODO: uncomment this for later
     // this.findWhenEdgeIsVisibleBetween('GSE5327', 'GSE1456');
+    this.findWhenEdgeIsVisibleBetween();
   }
 
   ngOnDestroy(): void {
@@ -308,9 +312,9 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.limitGenesSubject.unsubscribe();
   }
 
-  private findWhenEdgeIsVisibleBetween(nodeId1: string, nodeId2: string): void {
+  private findWhenEdgeIsVisibleBetween(): void {
 
-    function areTheyConnected(graph: GplData): boolean {
+    function areTheyConnected(graph: GplData, nodeId1: string, nodeId2: string): boolean {
 
       function getNeighbors(nodeId: string): [string] {
         return graph.edges
@@ -319,9 +323,9 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       const node1Neigh = getNeighbors(nodeId1);
-      console.log(nodeId1, node1Neigh);
+      // console.log(nodeId1, node1Neigh);
       const node2Neigh = getNeighbors(nodeId2);
-      console.log(nodeId2, node2Neigh);
+      // console.log(nodeId2, node2Neigh);
       let foundNode;
       if (node1Neigh.length > node2Neigh.length) {
         foundNode = node2Neigh.find(node => nodeId1 === node);
@@ -331,46 +335,47 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
       return !!foundNode;
     }
 
-
-    this.platformService.maxSliderValue$
-      .pipe(withLatestFrom(this.platformService.minSliderValue$))
-      .subscribe(([max]) => {
+    combineLatest([this.platformService.maxSliderValue$, this.platformService.filteredGraph$])
+      // .pipe(withLatestFrom(this.platformService.minSliderValue$))
+      .subscribe(([max, graph]) => {
         const graphSnapShot = this.platformService.graphSnapshot;
         if (!graphSnapShot) {
           return;
         }
-        const isConnected = areTheyConnected(graphSnapShot);
-        if (!isConnected) {
-          // TODO: the are not ever connected
-          return;
-        }
-        console.log('Found', isConnected);
 
-
-        const binarySearch = (original: number, left: number, filteredGraph: GplData): void => {
-
-          console.log('searching in', left, original);
-          const area = Math.floor((original - left) / 2);
-          if (area === 0) {
-            console.log('finally found at', left, original);
-            return;
-          }
-          const fGraph = this.platformService.filterGraph(filteredGraph, left);
-
-          const found = areTheyConnected(fGraph);
-
-
-          if (found) {
-            return binarySearch(left, left - area, filteredGraph);
-          } else {
-            console.log('sum', left, area, left + area);
-            // debugger;
-            return binarySearch(original, left + area, filteredGraph);
+        const getPos = (node1: string, node2: string): number => {
+          const isConnected = areTheyConnected(graphSnapShot, node1, node2);
+          if (!isConnected) {
+            return -1;
           }
 
+
+          const binarySearch = (original: number, left: number, filteredGraph: GplData): number => {
+            // console.log('searching in', left, original);
+            const area = Math.floor((original + 1 - left) / 2);
+            if (area === 0) {
+              // console.log('finally found at', left, original);
+              return left;
+            }
+            const fGraph = this.platformService.filterGraph(filteredGraph, left);
+
+            const found = areTheyConnected(fGraph, node1, node2);
+            // console.log('area', area, found);
+
+            if (found) {
+              return binarySearch(left, left - area, filteredGraph);
+            } else {
+              // console.log('sum', left, area, left + area);
+              // debugger;
+              return binarySearch(original, left + area, filteredGraph);
+            }
+
+          };
+          return binarySearch(max, 0, graphSnapShot);
         };
 
-        binarySearch(max, 0, graphSnapShot); // 85
+        graph.edges.forEach(edge => console.log(edge.from, edge.to, getPos(edge.from as string, edge.to as string)));
+
       });
 
   }
@@ -404,7 +409,8 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   downloadGenes(): void {
-    this.apiService.downloadGenesAsFile(this.genesArray).subscribe();
+    this.waitingForGeneFile = true;
+    this.apiService.downloadGenesAsFile(this.genesArray).subscribe(() => this.waitingForGeneFile = false);
   }
 
   nextPage(): void {
