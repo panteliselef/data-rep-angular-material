@@ -1,10 +1,10 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ApiService} from '../../../../services/api.service';
 import {LoadingService} from '../../../../services/loading.service';
 import {ElasticService} from '../../../../services/elastic.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BehaviorSubject, combineLatest, EMPTY, Observable, Subscription} from 'rxjs';
-import {map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
+import {debounceTime, filter, map, switchMap, tap} from 'rxjs/operators';
 import {MatTableDataSource} from '@angular/material/table';
 import {GplData, GPLEDGE, GPLNODE, Technology} from '../../../../models/gplGraph.model';
 import groupsGPL96 from '../../../../../assets/groupColors/GPL96.json';
@@ -13,6 +13,8 @@ import {GENE} from '../../../v2/dataset-network-page/dataset-network.component';
 import {PlatformPageService} from './platform-page.service';
 import {toastSliding} from '../../../../shared/animations';
 import {HttpErrorResponse} from '@angular/common/http';
+import {Location} from '@angular/common';
+import {MatPaginator} from '@angular/material/paginator';
 
 
 @Component({
@@ -24,11 +26,35 @@ import {HttpErrorResponse} from '@angular/common/http';
     toastSliding
   ]
 })
-export class PlatformPageComponent implements OnInit, OnDestroy {
+export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   studyId: string;
   private secondStudyId: string;
   isShown = false;
+
+  pageSize = 15;
+  pageItemIndexFirst = 1;
+  pageItemIndexLast = 1;
+  hasPrevious = false;
+  hasNext = false;
+
+  waitingForGeneFile = false;
+
+  private paginator: MatPaginator;
+
+  @ViewChild(MatPaginator) set matPaginator(element: MatPaginator) {
+    if (element) {
+      this.paginator = element;
+      this.paginator.page.subscribe((l) => {
+        this.pageItemIndexFirst = 1 + l.pageIndex * this.pageSize;
+        this.pageItemIndexLast = this.pageSize + l.pageIndex * this.pageSize;
+        this.pageItemIndexLast = Math.min(this.pageItemIndexLast, l.length);
+        this.hasPrevious = this.bestExplainingGene.paginator.hasPreviousPage();
+        this.hasNext = this.bestExplainingGene.paginator.hasNextPage();
+      });
+    }
+  }
+
 
   /* Use ViewChild this way
  * why ?
@@ -67,17 +93,22 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
   genesArray = [] as string[];
 
   downloadUrl = '';
-  bestExplainingGene: MatTableDataSource<GENE>;
+  bestExplainingGene: MatTableDataSource<GENE> = new MatTableDataSource<GENE>();
   isCollapsed = false;
   groupColors: any;
 
   constructor(
+    private location: Location,
     private platformService: PlatformPageService,
     private apiService: ApiService,
     private loadingService: LoadingService,
     private elastic: ElasticService,
     private router: Router,
     private route: ActivatedRoute) {
+  }
+
+  ngAfterViewInit(): void {
+    this.bestExplainingGene.paginator = this.paginator;
   }
 
   /**
@@ -223,37 +254,35 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
 
 
     // If a limit for genes or an edge is selected request Best Explaining Genes
-    // this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
-    //   .pipe(switchMap(([selectedEdge]) => {
-    //     if (!selectedEdge) {
-    //       return EMPTY;
-    //     }
-    //     return this.elastic.getPlatformGenes(this.platformService.technologyValue, selectedEdge);
-    //   })).subscribe((geneData) => {
-    //     let arr = [];
-    //     switch (this.limitGenes) {
-    //       case 100:
-    //         arr = geneData.thres100;
-    //         break;
-    //       case 500:
-    //         arr = geneData.thres500;
-    //         break;
-    //       case 1000:
-    //         arr = geneData.thres1000;
-    //         break;
-    //       case 2000:
-    //         arr = geneData.thres2000;
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //     this.genesArray = arr;
-    //     this.bestExplainingGene = new MatTableDataSource<GENE>(arr.slice(0, 10) as GENE[]);
-    //   });
+    this.edgeOrGenesSub = combineLatest([this.selectedEdge$, this.limitGenes$])
+      .pipe(
+        // simulating slow connection
+        debounceTime(1000),
+        switchMap(([selectedEdge, limitGenes]) => {
+          if (!selectedEdge) {
+            return EMPTY;
+          }
+          return this.apiService.getPlatformEdgeGenes(this.platformService.technologyValue, limitGenes + '', selectedEdge);
+        })).subscribe((geneData) => {
+        this.genesArray = geneData;
+        this.bestExplainingGene = new MatTableDataSource<GENE>(geneData as GENE[]);
+        this.hasNext = this.bestExplainingGene.filteredData.length > this.pageSize;
+        this.pageItemIndexLast = this.bestExplainingGene.filteredData.length > this.pageSize
+          ? this.pageSize
+          : this.bestExplainingGene.filteredData.length;
 
-    // this.selectedNode$.pipe(filter(node => !!node)).subscribe(node => this.router.navigate([node.label], {
-    //   relativeTo: this.route,
-    // }));
+        // paginator need to be registered after datasource has changed
+        this.bestExplainingGene.paginator = this.paginator;
+        if (this.bestExplainingGene.paginator) {
+          this.bestExplainingGene.paginator.firstPage();
+        }
+      });
+
+    // Update url on node select without triggering a route event
+    this.selectedNode$.pipe(filter(node => !!node))
+      .subscribe(node => {
+        this.location.go(this.router.url.replace(/(\/GSE).*/, '') + '/' + node.id);
+      });
 
     this.selectedNodeSub = this.selectedNode$.pipe(
       tap(node => typeof node !== 'undefined' && (this.studyId = node?.id)),
@@ -267,14 +296,10 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
       this.downloadUrl = this.requestDataFiles();
     });
 
-    /**
-     * @deprecated Now best Explaining genes are being fetched
-     */
-    this.bestExplainingGene = new MatTableDataSource<GENE>(Array(12).fill('ZAP70' as GENE) as GENE[]);
-
 
     // TODO: uncomment this for later
     // this.findWhenEdgeIsVisibleBetween('GSE5327', 'GSE1456');
+    this.findWhenEdgeIsVisibleBetween();
   }
 
   ngOnDestroy(): void {
@@ -287,9 +312,9 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
     // this.limitGenesSubject.unsubscribe();
   }
 
-  private findWhenEdgeIsVisibleBetween(nodeId1: string, nodeId2: string): void {
+  private findWhenEdgeIsVisibleBetween(): void {
 
-    function areTheyConnected(graph: GplData): boolean {
+    function areTheyConnected(graph: GplData, nodeId1: string, nodeId2: string): boolean {
 
       function getNeighbors(nodeId: string): [string] {
         return graph.edges
@@ -298,9 +323,9 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
       }
 
       const node1Neigh = getNeighbors(nodeId1);
-      console.log(nodeId1, node1Neigh);
+      // console.log(nodeId1, node1Neigh);
       const node2Neigh = getNeighbors(nodeId2);
-      console.log(nodeId2, node2Neigh);
+      // console.log(nodeId2, node2Neigh);
       let foundNode;
       if (node1Neigh.length > node2Neigh.length) {
         foundNode = node2Neigh.find(node => nodeId1 === node);
@@ -310,47 +335,47 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
       return !!foundNode;
     }
 
-
-    this.platformService.maxSliderValue$.pipe(withLatestFrom(this.platformService.minSliderValue$))
-      .subscribe(([max]) => {
-
-
+    combineLatest([this.platformService.maxSliderValue$, this.platformService.filteredGraph$])
+      // .pipe(withLatestFrom(this.platformService.minSliderValue$))
+      .subscribe(([max, graph]) => {
         const graphSnapShot = this.platformService.graphSnapshot;
         if (!graphSnapShot) {
           return;
         }
-        const isConnected = areTheyConnected(graphSnapShot);
-        if (!isConnected) {
-          // TODO: the are not ever connected
-          return;
-        }
-        console.log('Found', isConnected);
 
-
-        const binarySearch = (original: number, left: number, filteredGraph: GplData): void => {
-
-          console.log('searching in', left, original);
-          const area = Math.floor((original - left) / 2);
-          if (area === 0) {
-            console.log('finally found at', left, original);
-            return;
-          }
-          const fGraph = this.platformService.filterGraph(filteredGraph, left);
-
-          const found = areTheyConnected(fGraph);
-
-
-          if (found) {
-            return binarySearch(left, left - area, filteredGraph);
-          } else {
-            console.log('sum', left, area, left + area);
-            // debugger;
-            return binarySearch(original, left + area, filteredGraph);
+        const getPos = (node1: string, node2: string): number => {
+          const isConnected = areTheyConnected(graphSnapShot, node1, node2);
+          if (!isConnected) {
+            return -1;
           }
 
+
+          const binarySearch = (original: number, left: number, filteredGraph: GplData): number => {
+            // console.log('searching in', left, original);
+            const area = Math.floor((original + 1 - left) / 2);
+            if (area === 0) {
+              // console.log('finally found at', left, original);
+              return left;
+            }
+            const fGraph = this.platformService.filterGraph(filteredGraph, left);
+
+            const found = areTheyConnected(fGraph, node1, node2);
+            // console.log('area', area, found);
+
+            if (found) {
+              return binarySearch(left, left - area, filteredGraph);
+            } else {
+              // console.log('sum', left, area, left + area);
+              // debugger;
+              return binarySearch(original, left + area, filteredGraph);
+            }
+
+          };
+          return binarySearch(max, 0, graphSnapShot);
         };
 
-        binarySearch(max, 0, graphSnapShot); // 85
+        graph.edges.forEach(edge => console.log(edge.from, edge.to, getPos(edge.from as string, edge.to as string)));
+
       });
 
   }
@@ -384,7 +409,16 @@ export class PlatformPageComponent implements OnInit, OnDestroy {
   }
 
   downloadGenes(): void {
-    this.apiService.downloadGenesAsFile(this.genesArray).subscribe();
+    this.waitingForGeneFile = true;
+    this.apiService.downloadGenesAsFile(this.genesArray).subscribe(() => this.waitingForGeneFile = false);
+  }
+
+  nextPage(): void {
+    this.bestExplainingGene.paginator.nextPage();
+  }
+
+  prevPage(): void {
+    this.bestExplainingGene.paginator.previousPage();
   }
 
 }

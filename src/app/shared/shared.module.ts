@@ -27,6 +27,7 @@ import {StudyPairsListComponent} from '../components/v2/phenonet-network-page/st
 import {DownloadUrlPipe} from '../components/v2/phenonet-network-page/download-url.pipe';
 import {StudiesTableComponent} from '../components/v2/phenonet-network-page/studies-table/studies-table.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatBadgeModule,
     MatRadioModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule
   ],
   exports: [
     ShortNumberPipe,
@@ -91,7 +93,8 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatSidenavModule,
     MatBadgeModule,
     MatRadioModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatProgressSpinnerModule
   ]
 })
 export class SharedModule {

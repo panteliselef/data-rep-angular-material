@@ -51,20 +51,4 @@
 .breadcrumb-layer-node {
   align-items: center;
   gap: 10px;
-
-  .breadcrumb-phenonet-disease {
-    font-weight: 600;
-    font-size: u.toRem(22);
-    line-height: u.toRem(22);
-    color: map-get(v.$green, 100);
-  }
-
-  .breadcrumb-phenotype {
-    font-family: v.$secondaryFontFamily;
-    font-size: u.toRem(12);
-    font-weight: 500;
-    line-height: 1;
-    color: map-get(v.$light-green, 100);
-
-  }
 }

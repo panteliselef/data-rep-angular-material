@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
-import {GplData, PlatformMetadata, Technology} from 'src/app/models/gplGraph.model';
+import {GplData, GPLEDGE, GPLNODE, PlatformMetadata, Technology} from 'src/app/models/gplGraph.model';
 import {tap} from 'rxjs/operators';
 
 export interface StudyMetadata {
@@ -29,7 +29,8 @@ export interface StudyMetadata {
 })
 export class ApiService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   private static invokeBlobDownload(blob: Blob, filename?: string): void {
     const a = document.createElement('a');
@@ -144,5 +145,12 @@ export class ApiService {
    */
   public getTechnologyGraph(technology: Technology): Observable<GplData> {
     return this.http.get<GplData>(`${environment.apiUrl}visjs/${technology}`);
+  }
+
+  public getPlatformEdgeGenes(technology: Technology, threshold: string, edge: GPLEDGE): Observable<string[]> {
+    let params = new HttpParams();
+    params = params.append('node1', (edge.from as GPLNODE)?.id || edge.from as string);
+    params = params.append('node2', (edge.to as GPLNODE)?.id || edge.to as string);
+    return this.http.get<string[]>(`${environment.apiUrl}platforms/${technology}/genes/${threshold}`, {params});
   }
 }

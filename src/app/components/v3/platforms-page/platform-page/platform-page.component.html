@@ -3,7 +3,7 @@
 
 <main *ngIf="(gplGraph$ | async) as gplData else loader" class="app-page">
 
-  <div style="gap: 20px;" class="v-flex">
+  <div style="gap: 20px;top: 73px;position: sticky;align-self: flex-start;" class="v-flex">
     <app-platform-graph-filters></app-platform-graph-filters>
 
     <app-dataset-network-graph>
@@ -61,61 +61,132 @@
 
     </div>
 
-    <div *ngIf="(selectedEdge$ | async) as selectedEdge" class="v-flex align-flex-start as-card" style="overflow: hidden">
-      <div class="h-flex space-between align-center"
-           style="width: 100%;height: 58px;padding: 0 16px; border-bottom: 1px solid rgba(0,0,0,.12)">
-        <p class="title title_4">Best explaining genes</p>
+    <ng-container *ngIf="(selectedEdge$ | async) as selectedEdge">
+      <div class="v-flex as-card" style="padding: 0 16px;">
+        <div class="h-flex space-between align-center">
+          <div class="v-flex center" style="gap: 2px; height: 60px;">
+            <p class="dataset-name">{{selectedEdge.from.label}}</p>
+            <p class="dataset-disease">{{selectedEdge.from.group}}</p>
+          </div>
+          <button class="outline_button">
+            <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+            Download Data & Annotation
+          </button>
+        </div>
 
-        <mat-radio-group
-          aria-labelledby="example-radio-group-label"
-          class="h-flex"
-          [(ngModel)]="limitGenes"
-          (change)="fetchGenes()"
-          style="gap: 10px">
-          <mat-radio-button *ngFor="let limit of limits" [value]="limit">
-            {{limit}}
-          </mat-radio-button>
-        </mat-radio-group>
+        <!--   Divider     -->
+        <div style="width: 100%; height: 1px; background: rgba(0,0,0,.12)"></div>
+
+        <div class="h-flex space-between align-center">
+          <div class="v-flex center" style="gap: 2px; height: 60px;">
+            <p class="dataset-name">{{selectedEdge.to.label}}</p>
+            <p class="dataset-disease">{{selectedEdge.to.group}}</p>
+          </div>
+          <button class="outline_button">
+            <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
+            Download Data & Annotation
+          </button>
+        </div>
       </div>
 
-      <table mat-table multiTemplateDataRows [dataSource]="bestExplainingGene"
-             style="width: 100%">
+      <div class="v-flex align-flex-start as-card">
+        <div class="h-flex space-between align-center"
+             style="width: 100%;height: 58px;padding: 0 16px;">
+          <p class="title title_4">Best explaining genes</p>
 
-        <ng-container matColumnDef="gene">
-          <th mat-header-cell *matHeaderCellDef> Gene</th>
-          <td mat-cell *matCellDef="let element">
-            {{element}}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="view_on">
-          <th mat-header-cell *matHeaderCellDef>View on</th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-flat-button class="app_button">KEGG</button>
-            <button style="margin-left: 10px" mat-flat-button class="app_button app_button_orange">GeneCards</button>
+          <div class="h-flex" style="gap: 20px">
+            <button class="icon_button" (click)="downloadGenes()">
+              <mat-icon *ngIf="!waitingForGeneFile" fontSet="material-icons-round">play_for_work</mat-icon>
+              <mat-spinner *ngIf="waitingForGeneFile" diameter="20"></mat-spinner>
+            </button>
 
-          </td>
-        </ng-container>
+            <button class="solid_button">
+              Perform Enrichment Analysis
+            </button>
+          </div>
+        </div>
 
-        <tr mat-header-row
-            *matHeaderRowDef="['gene','view_on'];sticky:true"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['gene','view_on'];"></tr>
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="4">No results.</td>
-        </tr>
-      </table>
+        <div class="h-flex space-between align-center"
+             style="width: 100%;padding: 8px 16px 14px 16px; border-bottom: 1px solid rgba(0,0,0,.12)">
 
-      <div class="h-flex align-center"
-           style="gap:15px;width: 100%;height: 60px;padding: 0 16px; border-top: 1px solid rgba(0,0,0,.12)">
-        <button (click)="downloadGenes()" mat-flat-button class="app_button app_button_left_icon">
-          <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
-          Download gene list</button>
+          <mat-radio-group
+            aria-labelledby="example-radio-group-label"
+            class="h-flex"
+            [(ngModel)]="limitGenes"
+            (change)="fetchGenes()"
+            style="gap: 10px">
+            <mat-radio-button *ngFor="let limit of limits" [value]="limit">
+              {{limit}}
+            </mat-radio-button>
+          </mat-radio-group>
 
-        <button mat-flat-button class="app_button">
-          Perform Enrichment Analysis</button>
+          <mat-icon fontSet="material-icons-round">search</mat-icon>
+        </div>
+
+        <table mat-table multiTemplateDataRows [dataSource]="bestExplainingGene"
+               style="width: 100%">
+
+          <ng-container matColumnDef="gene">
+            <th mat-header-cell *matHeaderCellDef> Gene</th>
+            <td mat-cell *matCellDef="let element">
+              {{element}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="view_on">
+            <th mat-header-cell *matHeaderCellDef>View on</th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-flat-button class="app_button">KEGG</button>
+              <button style="margin-left: 10px" mat-flat-button class="app_button app_button_orange">GeneCards</button>
+
+            </td>
+          </ng-container>
+
+          <tr mat-header-row
+              *matHeaderRowDef="['gene','view_on'];sticky:true"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['gene','view_on'];"></tr>
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="4">No results.</td>
+          </tr>
+        </table>
+
+        <mat-paginator #paginator [pageSizeOptions]="[pageSize]"
+                       style="visibility: hidden;opacity: 0;height: 0"
+                       showFirstLastButtons
+                       aria-label="Select page of periodic elements">
+        </mat-paginator>
+
+
+        <div class="h-flex space-between align-center app-table-paginator">
+          <div style="">Total of {{bestExplainingGene.filteredData.length}} neighbors</div>
+          <div class="h-flex align-center">
+            <div> {{pageItemIndexFirst}} - {{pageItemIndexLast}} of {{bestExplainingGene.filteredData.length}} </div>
+
+            <button (click)="prevPage()" [disabled]="!hasPrevious" mat-icon-button
+                    aria-label="Example icon button with a menu icon">
+              <mat-icon fontSet="material-icons-round">navigate_before</mat-icon>
+            </button>
+
+            <button (click)="nextPage()" [disabled]="!hasNext" mat-icon-button
+                    aria-label="Example icon button with a menu icon">
+              <mat-icon fontSet="material-icons-round">navigate_next</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!--      <div class="h-flex align-center"-->
+        <!--           style="gap:15px;width: 100%;height: 60px;padding: 0 16px; border-top: 1px solid rgba(0,0,0,.12)">-->
+        <!--        <button (click)="downloadGenes()" mat-flat-button class="app_button app_button_left_icon">-->
+        <!--          <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>-->
+        <!--          Download gene list</button>-->
+
+        <!--        <button mat-flat-button class="app_button">-->
+        <!--          Perform Enrichment Analysis</button>-->
+        <!--      </div>-->
+
+
       </div>
 
-
-    </div>
+    </ng-container>
 
     <div *ngIf="!(isEdgeNodeSelected$ | async)" style="padding: 0 17px" class="as-card">
       <div class="hint-with-badges" style="height: 56px">

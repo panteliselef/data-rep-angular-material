@@ -13,11 +13,14 @@
     @include b.outline_button;
     background: map-get(v.$light-green,5);
     color: map-get(v.$green-sec,100);
-    height: auto;
+    font-size: u.toRem(13);
+    height: 32px;
+    font-weight: normal;
     border-radius: 16px;
 
     &.app-chip-selected {
       @include b.outline_button_pressed;
+      font-weight: 500;
       &:hover {
         background: map-get(v.$light-green,30)
       }
@@ -28,8 +31,13 @@
       background: map-get(v.$light-green,20);
     }
 
+    &.no-events {
+      pointer-events: none;
+    }
+
     &:active {
       @include b.outline_button_pressed;
+      font-weight: 500;
     }
   }
 
