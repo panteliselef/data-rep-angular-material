@@ -7,9 +7,9 @@ import {
   ViewChild
 } from '@angular/core';
 import {DataSet, Edge, Node, Options, VisNetworkService} from 'ngx-vis';
-import { gplConfig, gplEdgeColor} from 'src/util/utils';
+import {gplConfig, gplEdgeColor} from 'src/util/utils';
 import {GPLEDGE, GPLNODE} from 'src/app/models/gplGraph.model';
-import {Observable, pipe, Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import groupsGPL570 from 'src/assets/groupColors/GPL570.json';
 import groupsGPL96 from 'src/assets/groupColors/GPL96.json';
 import {GraphComponentComponent} from '../../graph-component/graph-component.component';
@@ -42,7 +42,7 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
   }
 
-  ngAfterViewInit(): void{
+  ngAfterViewInit(): void {
     this.canvas = this.canvasContainer.nativeElement.children[0].children[0] as HTMLCanvasElement;
   }
 
@@ -51,10 +51,16 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
     this.visNetworkOptions = gplConfig;
 
     this.platformService.technology$.subscribe((technology) => {
-      if (!technology) { return; }
+      if (!technology) {
+        return;
+      }
       switch (technology) {
-        case 'GPL96': gplConfig.groups = groupsGPL96; break;
-        case 'GPL570': gplConfig.groups = groupsGPL570; break;
+        case 'GPL96':
+          gplConfig.groups = groupsGPL96;
+          break;
+        case 'GPL570':
+          gplConfig.groups = groupsGPL570;
+          break;
         default:
           this.visNetworkOptions = gplConfig;
           return;
@@ -62,16 +68,24 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
 
     });
 
+    this.platformService.edgeToBeHighlighted$.subscribe((edge) => {
+      this.highlightEdge(edge);
+    });
+
     this.filteredGraphSub = this.platformService.filteredGraph$.subscribe(this.setGraphData.bind(this));
     this.diseaseToBeHighlighted$ = this.platformService.diseaseToBeHighlighted$;
     this.diseaseToBeHighlightedSub = this.diseaseToBeHighlighted$.subscribe((diseaseToBeHighlighted: string) => {
-      if (!diseaseToBeHighlighted) { return; }
+      if (!diseaseToBeHighlighted) {
+        return;
+      }
       this._highlightByDisease(diseaseToBeHighlighted);
       console.log('Disease Highlighted: ', diseaseToBeHighlighted);
     });
 
     this.selectedNodeSub = this.platformService.selectedNode$.subscribe((selectedNode: GPLNODE) => {
-      if (!selectedNode) { return; }
+      if (!selectedNode) {
+        return;
+      }
       setTimeout(() => this._focusNode(selectedNode.id), 300);
     });
 
@@ -86,7 +100,7 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
     this.platformService.savePNG$.subscribe(this.savePNG.bind(this));
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     super.ngOnDestroy();
     this.diseaseToBeHighlightedSub.unsubscribe();
     this.filteredGraphSub.unsubscribe();
@@ -144,7 +158,7 @@ export class DatasetNetworkGraphComponent extends GraphComponentComponent implem
 
     const allDiseaseNodes = Object.values(allNodes)
       .filter(({group}: { group: string }) => group.toLowerCase() === diseaseName.toLowerCase())
-      .map(({id}: {id: string}) => id) as string[];
+      .map(({id}: { id: string }) => id) as string[];
 
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < allDiseaseNodes.length; i++) {

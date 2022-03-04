@@ -227,7 +227,6 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // checking we need to display an existing edge between two nodes
       if (selectedNode && this.secondStudyId) {
-
         // checking both combinations while searching
         let selectedEdge = edges.find(edge => edge.to === this.studyId && edge.from === this.secondStudyId
           || edge.from === this.studyId && edge.to === this.secondStudyId);
@@ -240,7 +239,16 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
             from: selectedNode,
             to: nodes.find(node => node.id === this.secondStudyId) as GPLNODE
           };
+
+          console.log(selectedEdge);
           this.platformService.updateSelectedEdge(selectedEdge);
+          setTimeout(() => {
+            this.platformService.updateEdgeToBeHighlighted({
+              ...selectedEdge,
+              from: this.studyId,
+              to: this.secondStudyId
+            });
+          }, 100);
         } else {
           // redirect user because there is not a valid edge between those edges
           // use the following to replace url and show warning message instead of redirecting
@@ -299,7 +307,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // TODO: uncomment this for later
     // this.findWhenEdgeIsVisibleBetween('GSE5327', 'GSE1456');
-    this.findWhenEdgeIsVisibleBetween();
+    // this.findWhenEdgeIsVisibleBetween();
   }
 
   ngOnDestroy(): void {

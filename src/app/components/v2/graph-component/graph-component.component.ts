@@ -12,10 +12,13 @@ import {ImageSaver} from '../../../../util/ImageSaver';
   templateUrl: './graph-component.component.html',
   styleUrls: ['./graph-component.component.scss']
 })
-export class GraphComponentComponent implements OnInit, OnDestroy{
+export class GraphComponentComponent implements OnInit, OnDestroy {
   public visNetwork = 'override_this';
 
-  public visNetworkData: Data;
+  public visNetworkData: {
+    nodes: DataSet<Node>;
+    edges: DataSet<Edge>;
+  };
   public nodes: DataSet<Node>;
   public edges: DataSet<Edge>;
 
@@ -31,6 +34,25 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
   private clickSub: Subscription;
 
   constructor(public visNetworkService: VisNetworkService) {
+  }
+
+  highlightEdge(edge: GPLEDGE): void {
+    const l = this.visNetworkData.edges.get()
+      .find(dEdge =>
+        (dEdge.from === edge.from && dEdge.to === edge.to)
+        || (dEdge.from === edge.to && dEdge.to === edge.from));
+
+    if (!l) {
+      return;
+    }
+
+    this.visNetworkService.setSelection(this.visNetwork, {
+      nodes: [],
+      edges: [l.id]
+    });
+
+    this._onNetworkSelectEdge([this.visNetwork, {edges: [l.id]}]);
+
   }
 
   ngOnInit(): void {
@@ -68,11 +90,15 @@ export class GraphComponentComponent implements OnInit, OnDestroy{
 
 
   setGraphData(graph: GplData | GRAPH): void {
-    if (!graph) { return; }
+    if (!graph) {
+      return;
+    }
     this.nodes.clear();
     this.nodes.add(graph.nodes);
     this.edges.clear();
     this.edges.add(graph.edges);
+
+    console.log(this.edges.get());
   }
 
   fitAllNodes(): void {

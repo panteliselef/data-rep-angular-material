@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
-import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
+import {debounceTime, tap} from 'rxjs/operators';
 
 /**
  * A service for managing the state of dataset-network page
@@ -22,6 +22,7 @@ export class PlatformPageService {
   private maxSliderValue = new BehaviorSubject<number>(10);
   private currSliderValue = new BehaviorSubject<number>(10);
   private diseaseToBeHighlighted = new BehaviorSubject<string>('');
+  private edgeToBeHighlighted = new BehaviorSubject<GPLEDGE>(undefined);
   private selectedNode = new BehaviorSubject<GPLNODE>(undefined);
   private selectedEdge = new BehaviorSubject<GPLEDGE>(undefined);
   private technology = new BehaviorSubject<Technology>(undefined);
@@ -38,6 +39,7 @@ export class PlatformPageService {
   readonly maxSliderValue$ = this.maxSliderValue.asObservable();
   readonly currSliderValue$ = this.currSliderValue.asObservable();
   readonly diseaseToBeHighlighted$ = this.diseaseToBeHighlighted.asObservable();
+  readonly edgeToBeHighlighted$ = this.edgeToBeHighlighted.asObservable();
   readonly selectedNode$ = this.selectedNode.asObservable();
   readonly selectedEdge$ = this.selectedEdge.asObservable();
   readonly technology$ = this.technology.asObservable();
@@ -169,6 +171,13 @@ export class PlatformPageService {
     this.diseaseToBeHighlighted.next(disease);
   }
 
+
+  /**
+   * @param edge
+   */
+  updateEdgeToBeHighlighted(edge: GPLEDGE): void {
+    this.edgeToBeHighlighted.next(edge);
+  }
 
 
   /**
