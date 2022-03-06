@@ -45,7 +45,7 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
     this.visNetworkData = {nodes: this.nodes, edges: this.edges};
   }
 
-  ngAfterViewInit(): void{
+  ngAfterViewInit(): void {
     this.canvas = this.canvasContainer.nativeElement.children[0].children[0] as HTMLCanvasElement;
   }
 
@@ -53,7 +53,9 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
     this.filteredGraphSub = this.phenonetService.filteredGraph$.subscribe(this.setGraphData.bind(this));
     this.diseaseToBeHighlighted$ = this.phenonetService.diseaseToBeHighlighted$;
     this.diseaseToBeHighlightedSub = this.diseaseToBeHighlighted$.subscribe((diseaseToBeHighlighted: string) => {
-      if (!diseaseToBeHighlighted) { return; }
+      if (!diseaseToBeHighlighted) {
+        return;
+      }
       this._focusNode(diseaseToBeHighlighted);
       console.log('Disease Highlighted: ', diseaseToBeHighlighted);
     });
@@ -69,9 +71,9 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
      */
     this.selectedNode$.pipe(
       tap(node => !node && this.phenonetService.updateDiseaseToBeHighlighted('')),
-      filter(node => typeof node !== 'undefined')
+      filter(node => !!node),
     )
-    .subscribe(node => this.phenonetService.updateSelectedNode((node as NODE).id));
+      .subscribe(node => this.phenonetService.updateSelectedNode((node as NODE).id));
 
 
     this.phenonetService.onZoomIn$.subscribe(this.zoomIn.bind(this));
@@ -87,7 +89,9 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
 
   ngOnChanges(changes: SimpleChanges): void {
     const {disease} = changes;
-    if (disease?.currentValue) {this._onChangeDisease(disease.currentValue); }
+    if (disease?.currentValue) {
+      this._onChangeDisease(disease.currentValue);
+    }
   }
 
   // private _onNetworkBlurNode(eventData: any[]): void {
