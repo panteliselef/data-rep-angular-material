@@ -16,6 +16,7 @@ import {PlatformsPageComponent} from './platforms-page/platforms-page.component'
 import {PlatformPageComponent} from './platforms-page/platform-page/platform-page.component';
 import {PlatformBreadcrumbComponent} from './platforms-page/platform-page/platform-breadcrumb/platform-breadcrumb.component';
 import {PlatformGraphFiltersComponent} from './platforms-page/platform-page/platform-graph-filters/platform-graph-filters.component';
+import { OrdinalPipe } from '../../pipes/ordinal.pipe';
 
 @NgModule({
   imports: [
@@ -38,7 +39,9 @@ import {PlatformGraphFiltersComponent} from './platforms-page/platform-page/plat
     LoadingSpinnerComponent,
     FilterSearchPageComponent,
     PhenonetBreadcrumbComponent,
-    PGraphFiltersComponent
+    PGraphFiltersComponent,
+    // Pipes
+    OrdinalPipe
   ]
 })
 export class V3Module {

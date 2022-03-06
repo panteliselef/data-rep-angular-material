@@ -42,7 +42,7 @@
       <div style="height: 24px; border-radius: 2px; width: 1px;background: rgba(0,0,0, .12)"></div>
 
       <mat-chip color="primary" class="app-chip no-events" selected style="text-transform: unset;">
-        1087th significant edge
+        {{selectedEdgeSignificance$ | async | ordinal}} significant edge
       </mat-chip>
 
     </ng-container>
