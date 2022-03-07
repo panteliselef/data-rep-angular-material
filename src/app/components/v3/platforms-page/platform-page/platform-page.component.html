@@ -68,10 +68,10 @@
             <p class="dataset-name">{{selectedEdge.from.label}}</p>
             <p class="dataset-disease">{{selectedEdge.from.group}}</p>
           </div>
-          <button class="outline_button">
+          <a class="outline_button" [href]="[selectedEdge.from.label] | downloadUrl:'data'" target="_blank">
             <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
             Download Data & Annotation
-          </button>
+          </a>
         </div>
 
         <!--   Divider     -->
@@ -82,10 +82,10 @@
             <p class="dataset-name">{{selectedEdge.to.label}}</p>
             <p class="dataset-disease">{{selectedEdge.to.group}}</p>
           </div>
-          <button class="outline_button">
+          <a class="outline_button" [href]="[selectedEdge.to.label] | downloadUrl:'data'" target="_blank">
             <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
             Download Data & Annotation
-          </button>
+          </a>
         </div>
       </div>
 

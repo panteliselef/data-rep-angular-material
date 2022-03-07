@@ -57,7 +57,6 @@ export class NetworkGraphComponent extends GraphComponentComponent implements On
         return;
       }
       this._focusNode(diseaseToBeHighlighted);
-      console.log('Disease Highlighted: ', diseaseToBeHighlighted);
     });
 
     this.selectedEdge$

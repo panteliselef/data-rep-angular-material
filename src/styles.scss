@@ -109,12 +109,12 @@ app-dataset-network2{
   align-items: center;
 }
 
-a:not(.mat-button) {
+a:not(.mat-button):not(.outline_button):not(.solid_button):not(.icon_button) {
   text-decoration: none;
   color: black;
-  &:hover {
-    text-decoration: underline;
-  }
+  //&:hover {
+  //  text-decoration: underline;
+  //}
 }
 
 a.title, a .title {

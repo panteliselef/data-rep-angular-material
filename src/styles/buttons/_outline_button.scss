@@ -24,12 +24,14 @@
 
 .outline_button {
   @include outline_button;
-
   &:hover {
     @include outline_button_hovered;
   }
-
   &:active {
     @include outline_button_pressed;
   }
+}
+
+a.outline_button {
+  text-decoration: unset;
 }
