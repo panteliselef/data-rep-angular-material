@@ -111,13 +111,15 @@ main.search-page-container {
         font-size: u.toRem(13);
       }
 
-      button {
+      .outline_button,
+      .solid_button{
         opacity: 0;
         visibility: hidden;
       }
 
       &:hover {
-        button {
+        .outline_button,
+        .solid_button {
           opacity: 1;
           visibility: visible;
         }
