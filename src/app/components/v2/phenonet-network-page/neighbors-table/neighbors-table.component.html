@@ -15,11 +15,15 @@
   <ng-container matColumnDef="connected_node">
     <th mat-header-cell *matHeaderCellDef> Name</th>
     <td mat-cell *matCellDef="let element">
-      <div class="h-flex align-center" style="flex-wrap: nowrap">
-        <p>{{element.node}}</p>
+      <div class="h-flex align-center"
+           style="flex-wrap: nowrap">
+        <p matTooltipClass="app-tooltip"
+           matTooltip="Open in New Tab">{{element.node}}</p>
         <button style="margin-right: auto" mat-icon-button
                 (click)="openNewTab(element.node)"
-                aria-label="See more details">
+                matTooltipClass="app-tooltip"
+                matTooltip="Open in New Tab"
+                aria-label="Open in New Tab">
           <mat-icon fontSet="material-icons-round">open_in_new</mat-icon>
         </button>
       </div>
@@ -84,11 +88,13 @@
   <div class="h-flex align-center">
     <div> {{pageItemIndexFirst}} - {{pageItemIndexLast}} of {{connectedNodes.filteredData.length}} </div>
 
-    <button (click)="prevPage()" [disabled]="!hasPrevious" mat-icon-button aria-label="Example icon button with a menu icon">
+    <button (click)="prevPage()" [disabled]="!hasPrevious" mat-icon-button
+            aria-label="Example icon button with a menu icon">
       <mat-icon fontSet="material-icons-round">navigate_before</mat-icon>
     </button>
 
-    <button (click)="nextPage()" [disabled]="!hasNext" mat-icon-button aria-label="Example icon button with a menu icon">
+    <button (click)="nextPage()" [disabled]="!hasNext" mat-icon-button
+            aria-label="Example icon button with a menu icon">
       <mat-icon fontSet="material-icons-round">navigate_next</mat-icon>
     </button>
   </div>

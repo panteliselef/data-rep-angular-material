@@ -17,7 +17,9 @@
         <div class="graph-filter-menu-item v-flex">
           <div class="h-flex align-center space-between">
             <p class="filter-label">Number of similar studies</p>
-            <mat-icon fontSet="material-icons-round" matTooltip="Info about the action"
+            <mat-icon fontSet="material-icons-round"
+                      matTooltipClass="app-tooltip"
+                      matTooltip="Info about the action"
                       aria-label="Button that displays a tooltip when focused or hovered over">info
             </mat-icon>
           </div>
@@ -83,7 +85,7 @@
 
       <div class="graph-filter-value-item">
         <span [@openClose3]="isGraphFilterMenuOpen" class="graph-filter-value-item_divider"></span>
-        <div [@openClose2]="isGraphFilterMenuOpen"> w/ {{currEdgeFreq$ | async}} similar studies</div>
+        <div [@openClose2]="isGraphFilterMenuOpen"> at least {{currEdgeFreq$ | async}} similar studies</div>
       </div>
     </div>
   </div>

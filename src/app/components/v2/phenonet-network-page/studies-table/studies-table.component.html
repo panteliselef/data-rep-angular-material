@@ -8,7 +8,9 @@
     <th mat-header-cell *matHeaderCellDef> Accession ID</th>
     <td mat-cell *matCellDef="let element">
       <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={{element.GSE}}" target="_blank"
-         rel="noopener">
+         rel="noopener"
+         matTooltipClass="app-tooltip"
+         [matTooltip]="'Details in GEO'">
         {{element.GSE}}
       </a></td>
   </ng-container>

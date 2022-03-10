@@ -120,7 +120,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
 
 
     this.filteredGraph$ = this.phenonetService.filteredGraph$;
-    this.connectedNodes$ = this.phenonetService.graph$.pipe(
+    this.connectedNodes$ = this.phenonetService.filteredGraph$.pipe(
       map(graph => graph.edges
         .filter(({from, to}) => {
           return from === this.mainDisease || to === this.mainDisease;
