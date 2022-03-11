@@ -128,6 +128,12 @@ export class PlatformPageService {
     return this.graph.getValue();
   }
 
+
+  get selectedEdgeSnapshot(): GPLEDGE {
+    return this.selectedEdge.getValue();
+  }
+
+
   get sliderValues(): {min: number, max: number, current: number} {
     return {
       min: this.minSliderValue.getValue(),

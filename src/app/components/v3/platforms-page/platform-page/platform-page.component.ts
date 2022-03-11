@@ -350,7 +350,9 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
   downloadGenes(): void {
     this.waitingForGeneFile = true;
-    this.apiService.downloadGenesAsFile(this.genesArray).subscribe(() => this.waitingForGeneFile = false);
+    const s = this.platformService.selectedEdgeSnapshot;
+    const d = `${(s.from as GPLNODE).id}-${(s.to as GPLNODE).id}-${this.limitGenes}genes.txt`;
+    this.apiService.downloadGenesAsFile(this.genesArray, d).subscribe(() => this.waitingForGeneFile = false);
   }
 
   nextPage(): void {

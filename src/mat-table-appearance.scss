@@ -13,7 +13,7 @@ tr {
     position: relative;
   }
 
-  a {
+  a:not(.outline_button):not(.solid_button):not(.app-button) {
     text-decoration: none;
     color: inherit;
   }
@@ -30,10 +30,12 @@ tr {
   &.mat-header-row {
     height: 48px;
   }
+
   &.mat-row:hover {
     //background: whitesmoke;
     background-color: v.$green-transparent-2;
-    a {
+
+    a:not(.outline_button):not(.solid_button):not(.app-button) {
       text-decoration: underline;
     }
   }
@@ -58,6 +60,7 @@ tr {
     align-items: center;
     visibility: hidden;
   }
+
   &:hover {
     > td > .gmail_like {
       visibility: visible;
@@ -66,13 +69,15 @@ tr {
 }
 
 /* @Used at table in Studies Tab */
-.mat-column-id  {
+.mat-column-id {
   min-width: 120px;
 }
-.mat-column-samples  {
+
+.mat-column-samples {
   min-width: 70px;
 }
-.mat-column-entity  {
+
+.mat-column-entity {
   min-width: 125px;
 }
 
@@ -116,6 +121,7 @@ tr.example-element-row:not(.example-expanded-row):active {
     border-top: 1px solid v.$grey-light-1;
   }
 }
+
 //
 //.example-element-detail-header {
 //  @extend .h-flex, .space-between, .align-center;

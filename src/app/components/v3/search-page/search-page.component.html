@@ -117,11 +117,13 @@
             </div>
             <div class="h-flex" style="gap: 10px">
 
-              <a class="outline_button" [href]="[r.name] | downloadUrl:'data'" target="_blank">
+              <a class="outline_button outline_button_icon_left"
+                 [href]="[r.name] | downloadUrl:'data'" target="_blank">
                 <mat-icon fontSet="material-icons-round">play_for_work</mat-icon>
                 Download Study
               </a>
-              <button [routerLink]="'../platforms/'+ r.foundIn + '/' +r.name" class="solid_button">View in Graph</button>
+              <button [routerLink]="'../platforms/'+ r.foundIn + '/' +r.name" class="solid_button">View in Graph
+              </button>
             </div>
           </div>
         </div>
@@ -144,7 +146,7 @@
               </div>
             </div>
             <div class="h-flex">
-              <button class="solid_button">View Graph</button>
+              <button [routerLink]="'../platforms/'+r.name" class="solid_button">View Graph</button>
             </div>
           </div>
         </div>

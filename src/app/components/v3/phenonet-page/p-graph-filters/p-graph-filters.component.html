@@ -19,8 +19,8 @@
             <p class="filter-label">Number of similar studies</p>
             <mat-icon fontSet="material-icons-round"
                       matTooltipClass="app-tooltip"
-                      matTooltip="Info about the action"
-                      aria-label="Button that displays a tooltip when focused or hovered over">info
+                      matTooltip="Threshold for study pairs of edges"
+                      aria-label="info icon about number of similar studies">info
             </mat-icon>
           </div>
           <div class="h-flex align-center" style="gap: 6px">
@@ -80,7 +80,8 @@
     <div [@queryShake]="isGraphFilterMenuOpen" class="graph-filter-selected-values-inner">
       <div class="graph-filter-value-item">
         <span [@openClose3]="isGraphFilterMenuOpen" class="graph-filter-value-item_divider"></span>
-        <div [@openClose2]="isGraphFilterMenuOpen" >{{(displayAll$ | async) ? 'Full graph' : '1st degree neighbour graph'}}</div>
+        <div
+          [@openClose2]="isGraphFilterMenuOpen">{{(displayAll$ | async) ? 'Full graph' : '1st degree neighbour graph'}}</div>
       </div>
 
       <div class="graph-filter-value-item">

@@ -6,7 +6,7 @@ import {GRAPH} from 'src/app/models/graph.model';
 import {DEPTH_DEGREE} from 'src/app/services/graph-filter-bar.service';
 import {SEARCH_FILTER, SearchResult} from 'src/app/models/search.model';
 import {GplData, GPLEDGE, GPLNODE, PlatformMetadata, Technology} from 'src/app/models/gplGraph.model';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 
 export interface StudyMetadata {
   id: string;
@@ -51,13 +51,15 @@ export class ApiService {
     return `${environment.apiUrl}files?${params.toString()}`;
   }
 
-  public downloadGenesAsFile(genes: string[]): Observable<any> {
+  public downloadGenesAsFile(genes: string[], filename: string): Observable<any> {
     return this.http.post(`${environment.apiUrl}genes`, {
       genes
     }, {
       responseType: 'blob',
+      observe: 'response'
     }).pipe(
-      tap(ApiService.invokeBlobDownload)
+      map(resp => [resp.body, resp.headers.get('content-disposition').split('"')[1]]),
+      tap(([blob]) => ApiService.invokeBlobDownload(blob, filename))
     );
   }
 

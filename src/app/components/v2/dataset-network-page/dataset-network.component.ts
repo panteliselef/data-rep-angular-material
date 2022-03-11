@@ -269,7 +269,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
           const area = Math.floor((original - left) / 2);
           if (area === 0) {
             console.log('finally found at', left, original);
-            return ;
+            return;
           }
           const fGraph = this.datasetNetworkService.filterGraph(filteredGraph, left);
 
@@ -281,7 +281,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
 
           if (found) {
             return binarySearch(left, left - area, filteredGraph);
-          }else {
+          } else {
             console.log('sum', left, area, left + area);
             // debugger;
             return binarySearch(original, left + area, filteredGraph);
@@ -290,7 +290,6 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
         };
 
         binarySearch(max, 0, graphSnapShot); // 85
-
 
 
       });
@@ -327,6 +326,6 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
   }
 
   downloadGenes(): void {
-    this.apiService.downloadGenesAsFile(this.genesArray).subscribe();
+    this.apiService.downloadGenesAsFile(this.genesArray, '').subscribe();
   }
 }

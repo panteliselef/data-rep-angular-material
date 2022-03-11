@@ -31,4 +31,21 @@
   &:active {
     @include solid_button_pressed;
   }
+
+  &_alt {
+    background-color: map-get(v.$orange, 20);
+    color: map-get(v.$orange, 100);
+
+    &:hover {
+      background-color: map-get(v.$orange, 30);
+    }
+
+    &:active {
+      background-color: map-get(v.$orange, 40);
+    }
+  }
+}
+
+a.solid_button {
+  text-decoration: unset;
 }
