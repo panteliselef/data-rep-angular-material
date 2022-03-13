@@ -104,9 +104,16 @@
               <mat-spinner *ngIf="waitingForGeneFile" diameter="20"></mat-spinner>
             </button>
 
-            <button disabled class="solid_button">
-              Perform Enrichment Analysis
-            </button>
+            <div
+              matTooltipPosition="above"
+              matTooltipClass="app-tooltip"
+              matTooltip="Available soon"
+            >
+              <button disabled
+                      class="solid_button">
+                Perform Enrichment Analysis
+              </button>
+            </div>
           </div>
         </div>
 
@@ -124,7 +131,11 @@
             </mat-radio-button>
           </mat-radio-group>
 
-          <mat-icon fontSet="material-icons-round">search</mat-icon>
+          <mat-icon matTooltipPosition="left"
+                    matTooltipClass="app-tooltip"
+                    matTooltip="Available soon"
+                    fontSet="material-icons-round">search
+          </mat-icon>
         </div>
 
         <table mat-table multiTemplateDataRows [dataSource]="bestExplainingGene"
