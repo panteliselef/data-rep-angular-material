@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {ConnectedNode, EDGE, GRAPH} from '../../../models/graph.model';
 import {ApiService} from '../../../services/api.service';
-import {tap} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
+import {bfsAsync, loadGraphAsAdjacencyList} from './bfs';
 
 @Injectable()
 export class PhenonetPageService {
@@ -23,6 +24,8 @@ export class PhenonetPageService {
   private isDisplayAllNodesDisabled = new BehaviorSubject<boolean>(false);
   private selectedNode = new BehaviorSubject<string>(undefined);
   private selectedEdge = new BehaviorSubject<ConnectedNode>(undefined);
+
+  private connectedNodes = new BehaviorSubject<ConnectedNode[]>([]);
   private connectedNodeFilter = new BehaviorSubject<string>('');
 
   private onZoomIn = new Subject();
@@ -47,11 +50,69 @@ export class PhenonetPageService {
   readonly onZoomOut$ = this.onZoomOut.asObservable();
   readonly resetGraph$ = this.resetGraph.asObservable();
   readonly savePNG$ = this.savePNG.asObservable();
+
+  readonly connectedNodes$ = this.connectedNodes.asObservable();
   readonly connectedNodeFilter$ = this.connectedNodeFilter.asObservable();
 
   constructor(
     private apiService: ApiService,
   ) {
+
+    this.filteredGraph$.pipe(
+      map(graph => graph.edges
+        .filter(({from, to}) => {
+          return from === this.disease.value || to === this.disease.value;
+        })
+        .map(({from, to, ...rest}) => {
+          return {
+            ...rest,
+            from,
+            to,
+            node: (from === this.disease.value ? to : from) as string,
+          };
+        })
+        .sort((a, b) => b.weight - a.weight))).subscribe((edgesOfConnectedNodes) => {
+      this.connectedNodes.next(edgesOfConnectedNodes);
+    });
+
+    this.graph$.pipe(
+      map(graph => graph.edges
+        .filter(({from, to}) => {
+          return from === this.disease.value || to === this.disease.value;
+        })
+        .map(({from, to, ...rest}) => {
+          return {
+            ...rest,
+            from,
+            to,
+            node: (from === this.disease.value ? to : from) as string,
+          };
+        })
+        .sort((a, b) => b.weight - a.weight)))
+      .subscribe((edgesOfConnectedNodes) => {
+
+        console.log('wpwpw', edgesOfConnectedNodes);
+        if (edgesOfConnectedNodes.length === 0) {
+          return;
+        }
+        const min = Number(edgesOfConnectedNodes[edgesOfConnectedNodes.length - 1].weight);
+        const max = Number(edgesOfConnectedNodes[0].weight);
+        // const min = Number(graph.edges[graph.edges.length - 1].weight);
+        // const max = Number(graph.edges[0].weight);
+
+        let currVal = this.currEdgeFreq.getValue();
+        if (this.currEdgeFreq.value > max) {
+          currVal = max;
+        } else if (this.currEdgeFreq.value < min) {
+          currVal = min;
+        }
+
+        this.currEdgeFreq.next(currVal);
+
+
+        this.minEdgeFreq.next(min);
+        this.maxEdgeFreq.next(max);
+      });
   }
 
   /**
@@ -62,20 +123,9 @@ export class PhenonetPageService {
   private _setGraph(graph: GRAPH): void {
     this.graph.next(graph);
 
-    const min = Number(graph.edges[graph.edges.length - 1].weight);
-    const max = Number(graph.edges[0].weight);
 
-    let currVal = this.currEdgeFreq.getValue();
-    if (this.currEdgeFreq.value > max) {
-      currVal = max;
-    } else if (this.currEdgeFreq.value < min) {
-      currVal = min;
-    }
+    this._filterOriginalGraph(this.currEdgeFreq.getValue()).then(fg => this.filteredGraph.next(fg));
 
-    this.currEdgeFreq.next(currVal);
-
-    const fg = this._filterOriginalGraph(currVal);
-    this.filteredGraph.next(fg);
 
     // persist highlighting
     // TODO: not sure why i need this here, seems if statement always to be false
@@ -84,8 +134,8 @@ export class PhenonetPageService {
     //     this.updateDiseaseToBeHighlighted(this.diseaseToBeHighlighted.value);
     //   }, 400);
     // }
-    this.minEdgeFreq.next(min);
-    this.maxEdgeFreq.next(max);
+    // this.minEdgeFreq.next(min);
+    // this.maxEdgeFreq.next(max);
   }
 
   private _setDisplayAllNodes(degree: boolean): void {
@@ -105,20 +155,55 @@ export class PhenonetPageService {
     this.isDisplayAllNodesDisabled.next(disabled);
   }
 
-  private _filterOriginalGraph(sliderLimit: number): GRAPH {
+  private async _filterOriginalGraph(sliderLimit: number): Promise<GRAPH> {
+    console.log('ww', this.disease.value);
     const graphInstance = this.graph.getValue();
-    const finalNodesSet = new Set<string>();
-    const finalEdges = graphInstance.edges.slice().filter((edge: EDGE) => edge.weight >= sliderLimit);
+    let finalNodesSet = new Set<string>();
+
+
+    let finalEdges: EDGE[];
+    let finalNodes;
+    finalEdges = graphInstance.edges.slice().filter((edge: EDGE) => edge.weight >= sliderLimit);
     for (const edge of finalEdges) {
       finalNodesSet.add(edge.from as string);
       finalNodesSet.add(edge.to as string);
     }
-    const finalNodes = Array.from(finalNodesSet).map(nodeId => graphInstance.nodes.find(node => node.id === nodeId));
-    return {
-      nodes: finalNodes,
-      edges: finalEdges,
-      diseases: Array.from(finalNodesSet)
-    };
+    finalNodes = Array.from(finalNodesSet).map(nodeId => graphInstance.nodes.find(node => node.id === nodeId));
+
+    if (this.disease.value) {
+
+      const adjacencyList = loadGraphAsAdjacencyList({
+        nodes: graphInstance.nodes.map(node => node.disease),
+        edges: graphInstance.edges.map(({from, to, weight}) => ({
+          from: from as string,
+          to: to as string,
+          value: +weight
+        }))
+      });
+
+      const arrayOfSets = await bfsAsync(adjacencyList, this.disease.value, 1, this.currEdgeFreq.value);
+      finalNodesSet = arrayOfSets[arrayOfSets.length - 1];
+      const nodeArr = [...finalNodesSet];
+
+
+      // Override finalNodes & finalEdges
+      finalNodes = nodeArr.map(nodeId => graphInstance.nodes.find(node => node.id === nodeId));
+      finalEdges = graphInstance.edges
+        .filter(({
+                   from,
+                   to,
+                   weight
+                 }) => weight >= sliderLimit && (finalNodesSet.has(from as string) && finalNodesSet.has(to as string)));
+      console.log('aw', finalEdges);
+    }
+
+    return new Promise(resolve => {
+      resolve({
+        nodes: finalNodes,
+        edges: finalEdges,
+        diseases: Array.from(finalNodesSet)
+      });
+    });
   }
 
   fetchNetwork(diseaseId?: string): Observable<GRAPH> {
@@ -127,7 +212,7 @@ export class PhenonetPageService {
         .pipe(tap(graph => this._setGraph(graph)));
     }
     return this.apiService.getPhenonetDiseaseNeighborsAtDepth(diseaseId, 1)
-      .pipe(tap(graph => this._setGraph(graph)));
+      .pipe(tap(() => this.updateDisease(diseaseId)), tap(graph => this._setGraph(graph)));
   }
 
 
@@ -191,8 +276,9 @@ export class PhenonetPageService {
   updateCurrEdgeFreq(sliderLimit: number): void {
     this.updateDiseaseToBeHighlighted('');
     this._setSlider(sliderLimit);
-    const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
-    this.filteredGraph.next(filteredOriginalGraph);
+    this._filterOriginalGraph(sliderLimit).then(filteredOriginalGraph => this.filteredGraph.next(filteredOriginalGraph));
+    // const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
+    // this.filteredGraph.next(filteredOriginalGraph);
   }
 
   resetGraphFilters(): void {
