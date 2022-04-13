@@ -60,39 +60,9 @@ export class PlatformBreadcrumbComponent implements OnInit {
           return;
         }
 
-        const getPos = (node1: string, node2: string): number => {
-          const isConnected = areTheyConnected(graphSnapShot, node1, node2);
-          if (!isConnected) {
-            return -1;
-          }
-
-
-          const binarySearch = (original: number, left: number, filteredGraph: GplData): number => {
-            // console.log('searching in', left, original);
-            const area = Math.floor((original + 1 - left) / 2);
-            if (area === 0) {
-              // console.log('finally found at', left, original);
-              return left;
-            }
-            const fGraph = this.platformService.filterGraph(filteredGraph, left);
-
-            const found = areTheyConnected(fGraph, node1, node2);
-            // console.log('area', area, found);
-
-            if (found) {
-              return binarySearch(left, left - area, filteredGraph);
-            } else {
-              // console.log('sum', left, area, left + area);
-              // debugger;
-              return binarySearch(original, left + area, filteredGraph);
-            }
-
-          };
-          return binarySearch(max, 0, graphSnapShot);
-        };
 
         if (edge) {
-          return getPos((edge.from as GPLNODE).id, (edge.to as GPLNODE).id);
+          return getPos((edge.from as GPLNODE).id, (edge.to as GPLNODE).id, max, graphSnapShot, this.platformService.filterGraph);
         }
 
         return 0;
@@ -105,3 +75,39 @@ export class PlatformBreadcrumbComponent implements OnInit {
   }
 
 }
+
+
+export const getPos = (node1: string,
+                       node2: string,
+                       max: number,
+                       graphSnapShot: GplData,
+                       filterGraph: (graph: GplData, limit: number) => GplData): number => {
+  const isConnected = areTheyConnected(graphSnapShot, node1, node2);
+  if (!isConnected) {
+    return -1;
+  }
+
+
+  const binarySearch = (original: number, left: number, filteredGraph: GplData): number => {
+    // console.log('searching in', left, original);
+    const area = Math.floor((original + 1 - left) / 2);
+    if (area === 0) {
+      // console.log('finally found at', left, original);
+      return left;
+    }
+    const fGraph = filterGraph(filteredGraph, left);
+
+    const found = areTheyConnected(fGraph, node1, node2);
+    // console.log('area', area, found);
+
+    if (found) {
+      return binarySearch(left, left - area, filteredGraph);
+    } else {
+      // console.log('sum', left, area, left + area);
+      // debugger;
+      return binarySearch(original, left + area, filteredGraph);
+    }
+
+  };
+  return binarySearch(max, 0, graphSnapShot);
+};
