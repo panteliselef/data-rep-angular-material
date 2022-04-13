@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {GPLCATEGORY, GplData, GPLEDGE, GPLNODE, Technology} from 'src/app/models/gplGraph.model';
 import {ApiService} from 'src/app/services/api.service';
 import {debounceTime, tap} from 'rxjs/operators';
+import {getPos} from './platform-breadcrumb/platform-breadcrumb.component';
 
 /**
  * A service for managing the state of dataset-network page
@@ -26,6 +27,8 @@ export class PlatformPageService {
   private selectedNode = new BehaviorSubject<GPLNODE>(undefined);
   private selectedEdge = new BehaviorSubject<GPLEDGE>(undefined);
   private technology = new BehaviorSubject<Technology>(undefined);
+  public urlStudyId = '';
+  public urlStudyIdEdgeWith = '';
 
   private onZoomIn = new Subject();
   private onZoomOut = new Subject();
@@ -102,6 +105,23 @@ export class PlatformPageService {
     this.graph.next(graph);
     this.minSliderValue.next(10);
     this.currSliderValue.next(10);
+    let sliderValue = 10;
+    this.currSliderValue.next(10);
+
+
+    // TODO: write comments about how this works
+    // TODO: check if they exist
+    setTimeout(() => {
+      if (this.urlStudyId && this.urlStudyIdEdgeWith) {
+        sliderValue = getPos(this.urlStudyId,
+          this.urlStudyIdEdgeWith, this.maxSliderValue.getValue(), graph, this.filterGraph);
+      } else if (this.urlStudyId) {
+        sliderValue = (graph.edges.findIndex(edge => edge.from === this.urlStudyId || edge.to === this.urlStudyId)) + 1;
+      }
+      sliderValue = sliderValue > 10 ? sliderValue : 10;
+      this.currSliderValue.next(sliderValue);
+    }, 0);
+
     this.maxSliderValue.next(graph.edges.length);
   }
 
@@ -134,7 +154,7 @@ export class PlatformPageService {
   }
 
 
-  get sliderValues(): {min: number, max: number, current: number} {
+  get sliderValues(): { min: number, max: number, current: number } {
     return {
       min: this.minSliderValue.getValue(),
       max: this.maxSliderValue.getValue(),

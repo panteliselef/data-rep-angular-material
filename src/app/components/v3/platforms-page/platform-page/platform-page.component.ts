@@ -128,7 +128,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Based of an node get the edges for its immediate neighbors
+   * Based of a node get the edges for its immediate neighbors
    * @param ofNode
    * @private
    */
@@ -171,10 +171,16 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
           );
       });
 
-    this.routeSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => this.studyId = id);
+    this.routeSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('study')?.toUpperCase())).subscribe(id => {
+      this.platformService.urlStudyId = id;
+      this.studyId = id;
+    });
     this.queryUrlSub = this.route.queryParamMap
       .pipe(map(queryParamMap => queryParamMap.get('edgeWith')?.toUpperCase()))
-      .subscribe(id => this.secondStudyId = id);
+      .subscribe(id => {
+        this.platformService.urlStudyIdEdgeWith = id;
+        this.secondStudyId = id;
+      });
     this.loadingGraphData$ = this.loadingService.loading$;
     this.gplGraph$ = this.platformService.filteredGraph$;
     this.selectedEdge$ = this.platformService.selectedEdge$;
