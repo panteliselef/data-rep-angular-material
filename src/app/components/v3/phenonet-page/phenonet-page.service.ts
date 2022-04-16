@@ -90,13 +90,13 @@ export class PhenonetPageService {
         })
         .sort((a, b) => b.weight - a.weight)))
       .subscribe((edgesOfConnectedNodes) => {
-
-        console.log('wpwpw', edgesOfConnectedNodes);
         if (edgesOfConnectedNodes.length === 0) {
           return;
         }
         const min = Number(edgesOfConnectedNodes[edgesOfConnectedNodes.length - 1].weight);
         const max = Number(edgesOfConnectedNodes[0].weight);
+
+        console.log('min max', min, max)
         // const min = Number(graph.edges[graph.edges.length - 1].weight);
         // const max = Number(graph.edges[0].weight);
 
@@ -122,7 +122,7 @@ export class PhenonetPageService {
    */
   private _setGraph(graph: GRAPH): void {
     this.graph.next(graph);
-
+    this.maxEdgeFreq.next(Number(graph.edges[0].weight));
 
     this._filterOriginalGraph(this.currEdgeFreq.getValue()).then(fg => this.filteredGraph.next(fg));
 
