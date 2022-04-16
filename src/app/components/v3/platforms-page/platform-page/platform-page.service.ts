@@ -108,16 +108,28 @@ export class PlatformPageService {
     let sliderValue = 10;
     this.currSliderValue.next(10);
 
-
-    // TODO: write comments about how this works
-    // TODO: check if they exist
+    /**
+     * Run async in order for this.urlStudyId &  this.urlStudyIdEdgeWith to be populated
+     */
     setTimeout(() => {
-      if (this.urlStudyId && this.urlStudyIdEdgeWith) {
+
+      // check if they exist as nodes inside graph
+      const urlStudyIdExists = !!(graph.nodes.find(node => node.id === this.urlStudyId) as GPLNODE);
+      const urlStudyIdEdgeWithExists = !!(graph.nodes.find(node => node.id === this.urlStudyIdEdgeWith) as GPLNODE);
+
+
+      if (urlStudyIdExists && urlStudyIdEdgeWithExists) {
+
+        // find out the threshold for slider inorder the selected nodes to be visible
         sliderValue = getPos(this.urlStudyId,
           this.urlStudyIdEdgeWith, this.maxSliderValue.getValue(), graph, this.filterGraph);
-      } else if (this.urlStudyId) {
+      } else if (urlStudyIdExists) {
+        // this works because edges array is sorted
+        // find out the threshold for slider inorder the selected node
         sliderValue = (graph.edges.findIndex(edge => edge.from === this.urlStudyId || edge.to === this.urlStudyId)) + 1;
       }
+
+      // always fallback to minimum 10 as value
       sliderValue = sliderValue > 10 ? sliderValue : 10;
       this.currSliderValue.next(sliderValue);
     }, 0);
@@ -244,9 +256,6 @@ export class PlatformPageService {
    */
   updateCurrEdgeFreq(sliderLimit: number): void {
     this._setSlider(sliderLimit);
-    // this.updateDiseaseToBeHighlighted('');
-    // const filteredOriginalGraph = this._filterOriginalGraph(sliderLimit);
-    // this.filteredGraph.next(filteredOriginalGraph);
   }
 
 

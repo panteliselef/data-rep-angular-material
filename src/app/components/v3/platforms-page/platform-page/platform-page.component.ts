@@ -150,7 +150,6 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
    * Subscribe to Observables on Init
    */
   ngOnInit(): void {
-    // TODO: use switchMap
     this.networkNameSub = this.route.paramMap.pipe(map(paramMap => paramMap.get('technology')?.toUpperCase()))
       .subscribe(async (technology) => {
         this.platformService.fetchNetwork(technology.toUpperCase() as Technology)
@@ -216,6 +215,9 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isShown = !isIncluded;
     });
 
+    /**
+     * Handling selected edge or node from url
+     */
     this.gplGraphSub = this.gplGraph$.subscribe((graph) => {
       if (!graph) {
         return;
@@ -246,7 +248,6 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
             to: nodes.find(node => node.id === this.secondStudyId) as GPLNODE
           };
 
-          console.log(selectedEdge);
           this.platformService.updateSelectedEdge(selectedEdge);
           setTimeout(() => {
             this.platformService.updateEdgeToBeHighlighted({
@@ -259,7 +260,8 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
           // redirect user because there is not a valid edge between those edges
           // use the following to replace url and show warning message instead of redirecting
           // TODO: https://stackoverflow.com/questions/35618463/change-route-params-without-reloading-in-angular-2
-          this.router.navigate(['.'], {relativeTo: this.route}).then();
+          // this.router.navigate(['.'], {relativeTo: this.route}).then();
+          this.platformService.updateSelectedNode(selectedNode);
         }
       } else {
         this.platformService.updateSelectedNode(selectedNode);
