@@ -248,7 +248,7 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
 
 
     this.datasetNetworkService.maxSliderValue$.pipe(withLatestFrom(this.datasetNetworkService.minSliderValue$))
-      .subscribe(([max, min]) => {
+      .subscribe(([max, ]) => {
 
 
         const graphSnapShot = this.datasetNetworkService.graphSnapshot;
@@ -274,10 +274,6 @@ export class DatasetNetworkPageComponent implements OnInit, OnDestroy {
           const fGraph = this.datasetNetworkService.filterGraph(filteredGraph, left);
 
           const found = areTheyConnected(fGraph);
-          // if (right <= left) {
-          //   return ;
-          // }
-
 
           if (found) {
             return binarySearch(left, left - area, filteredGraph);
