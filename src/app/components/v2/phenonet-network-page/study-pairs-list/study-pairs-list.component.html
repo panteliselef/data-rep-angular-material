@@ -12,6 +12,7 @@
   <li *ngFor="let studyPair of studyPairs">
     <div [matTooltip]="primaryDisease +' - ' + secondaryDisease"
          matTooltipClass="app-tooltip"
+         (click)="navigateToPlatform(studyPair)"
          style="width:100%;gap: 25px" class="h-flex align-center">
       <span>{{studyPair.dA}}</span>
       <img src="assets/double-arrow.svg" alt="similarity-icon"/>

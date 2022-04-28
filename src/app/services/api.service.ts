@@ -139,6 +139,13 @@ export class ApiService {
     return this.getSearchResults(`${environment.apiUrl}search/quick`, query, filters);
   }
 
+  public getPlatformOfEdge(studyId1: string, studyId2: string): Observable<{ platform?: Technology, error: string }> {
+    let params = new HttpParams();
+    params = params.append('studyId1', studyId1);
+    params = params.append('studyId2', studyId2);
+    return this.http.get<{ platform?: Technology, error: string }>(`${environment.apiUrl}search/whichPlatform`, {params});
+  }
+
 
   /**
    * Request dataset networks with all nodes and edges

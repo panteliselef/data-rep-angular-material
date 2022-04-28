@@ -7,7 +7,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {PhenonetPageService} from './phenonet-page.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {ConnectedNode, GRAPH} from '../../../models/graph.model';
-import {catchError, delay, filter, map, switchMap} from 'rxjs/operators';
+import {catchError, debounceTime, delay, filter, map, switchMap} from 'rxjs/operators';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {toastSliding} from '../../../shared/animations';
 
@@ -121,6 +121,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
 
     this.filteredGraph$ = this.phenonetService.filteredGraph$;
     this.connectedNodes$ = this.phenonetService.filteredGraph$.pipe(
+      debounceTime(200),
       map(graph => graph.edges
         .filter(({from, to}) => {
           return from === this.mainDisease || to === this.mainDisease;
