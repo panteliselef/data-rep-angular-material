@@ -270,6 +270,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.unselectNodeOrEdgeSub = combineLatest([this.selectedEdge$, this.selectedNode$])
       .pipe(
+        debounceTime(1000),
         filter(([edge, node]) => !edge && !node),
         tap(() => {
           this.location.go(this.router.url.replace(/(\/GSE).*/, ''));

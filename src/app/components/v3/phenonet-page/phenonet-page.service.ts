@@ -58,6 +58,9 @@ export class PhenonetPageService {
     private apiService: ApiService,
   ) {
 
+    /**
+     * Runs every time we filter the graph
+     */
     this.filteredGraph$.pipe(
       map(graph => graph.edges
         .filter(({from, to}) => {
@@ -75,6 +78,9 @@ export class PhenonetPageService {
       this.connectedNodes.next(edgesOfConnectedNodes);
     });
 
+    /**
+     * First time graph if available after fetching
+     */
     this.graph$.pipe(
       map(graph => graph.edges
         .filter(({from, to}) => {
@@ -96,9 +102,7 @@ export class PhenonetPageService {
         const min = Number(edgesOfConnectedNodes[edgesOfConnectedNodes.length - 1].weight);
         const max = Number(edgesOfConnectedNodes[0].weight);
 
-        console.log('min max', min, max)
-        // const min = Number(graph.edges[graph.edges.length - 1].weight);
-        // const max = Number(graph.edges[0].weight);
+        console.log('min max', min, max);
 
         let currVal = this.currEdgeFreq.getValue();
         if (this.currEdgeFreq.value > max) {
@@ -124,8 +128,13 @@ export class PhenonetPageService {
     this.graph.next(graph);
     this.maxEdgeFreq.next(Number(graph.edges[0].weight));
 
+    // if (this.disease.value) {
+
     this._filterOriginalGraph(this.currEdgeFreq.getValue()).then(fg => this.filteredGraph.next(fg));
 
+    // } else {
+    //   this.filteredGraph.next(graph);
+    // }
 
     // persist highlighting
     // TODO: not sure why i need this here, seems if statement always to be false
@@ -156,10 +165,8 @@ export class PhenonetPageService {
   }
 
   private async _filterOriginalGraph(sliderLimit: number): Promise<GRAPH> {
-    console.log('ww', this.disease.value);
     const graphInstance = this.graph.getValue();
     let finalNodesSet = new Set<string>();
-
 
     let finalEdges: EDGE[];
     let finalNodes;
@@ -171,7 +178,6 @@ export class PhenonetPageService {
     finalNodes = Array.from(finalNodesSet).map(nodeId => graphInstance.nodes.find(node => node.id === nodeId));
 
     if (this.disease.value) {
-
       const adjacencyList = loadGraphAsAdjacencyList({
         nodes: graphInstance.nodes.map(node => node.disease),
         edges: graphInstance.edges.map(({from, to, weight}) => ({
@@ -207,12 +213,13 @@ export class PhenonetPageService {
   }
 
   fetchNetwork(diseaseId?: string): Observable<GRAPH> {
+    this.updateDisease(diseaseId);
     if (!diseaseId) {
       return this.apiService.getPhenonet()
         .pipe(tap(graph => this._setGraph(graph)));
     }
     return this.apiService.getPhenonetDiseaseNeighborsAtDepth(diseaseId, 1)
-      .pipe(tap(() => this.updateDisease(diseaseId)), tap(graph => this._setGraph(graph)));
+      .pipe(tap(graph => this._setGraph(graph)));
   }
 
 

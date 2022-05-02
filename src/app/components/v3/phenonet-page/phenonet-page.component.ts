@@ -87,7 +87,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
       this.phenonetService.fetchNetwork(display ? '' : this.mainDisease)
         .subscribe(_ => {
           // this.titleService.setTitle(`${this.mainDisease.capitalize()} | Phenonet`);
-          this.phenonetService.updateDisease(this.mainDisease);
+          this.phenonetService.updateDisease(display ? '' : this.mainDisease);
         }, (err: HttpErrorResponse) => {
           if (err.status === 400) {
             this.router.navigate(['/v3/error'], {
@@ -112,7 +112,7 @@ export class PhenonetPageComponent implements OnInit, OnDestroy {
 
     // Get diseases that exist in the displayed graph
     this.phenonetService.filteredGraph$.pipe(
-      map((graph) => graph?.diseases),
+      map((graph) => graph?.diseases || []),
       map(diseases => diseases.length === 0 ? true : diseases.includes(this.mainDisease))
     ).subscribe((hasWarning) => {
       this.isShown = !(!!this.mainDisease ? !hasWarning : false);
