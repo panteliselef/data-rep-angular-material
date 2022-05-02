@@ -77,6 +77,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
   private networkNameSub: Subscription;
   private edgeOrGenesSub: Subscription;
   private selectedNodeSub: Subscription;
+  private unselectNodeOrEdgeSub: Subscription;
 
   loadingGraphData$: Observable<boolean>;
   gplGraph$: Observable<GplData>;
@@ -117,33 +118,6 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
   get isEdgeNodeSelected$(): Observable<boolean> {
     return combineLatest([this.selectedNode$, this.selectedEdge$])
       .pipe(map(([a$, b$]) => typeof (a$ || b$) !== 'undefined'));
-  }
-
-  /**
-   * Create url for requesting many files at once
-   */
-  public requestDataFiles(): string {
-    return ApiService
-      .getStudiesFilesURL(this.similarDatasets.data.map<string>(edge => edge.to as string), 'annotation');
-  }
-
-  /**
-   * Based of a node get the edges for its immediate neighbors
-   * @param ofNode
-   * @private
-   */
-  private _filterNeighbors(ofNode: GPLNODE): Observable<GPLEDGE[]> {
-    return this.platformService.graph$
-      .pipe(
-        map(graph => graph.edges
-          .filter(edge => edge.from === ofNode.id || edge.to === ofNode.id)
-          .map(({from, to, value}) => ({
-            to: to === ofNode.id ? from : to,
-            from: ofNode.id,
-            value
-          }))
-        ),
-      );
   }
 
   /**
@@ -294,8 +268,25 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
+    this.unselectNodeOrEdgeSub = combineLatest([this.selectedEdge$, this.selectedNode$])
+      .pipe(
+        filter(([edge, node]) => !edge && !node),
+        tap(() => {
+          this.location.go(this.router.url.replace(/(\/GSE).*/, ''));
+        })
+      ).subscribe();
+
+    this.selectedEdge$.pipe(
+      filter(edge => !!edge)
+    )
+      .subscribe(edge => {
+        this.location.go(
+          this.router.url.replace(/(\/GSE).*/, '') + '/' + (edge.from as GPLNODE).id + `?edgeWith=${(edge.to as GPLNODE).id}`);
+      });
+
     // Update url on node select without triggering a route event
-    this.selectedNode$.pipe(filter(node => !!node))
+    this.selectedNode$.pipe(
+      filter(node => !!node))
       .subscribe(node => {
         this.location.go(this.router.url.replace(/(\/GSE).*/, '') + '/' + node.id);
       });
@@ -318,6 +309,33 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.findWhenEdgeIsVisibleBetween();
   }
 
+  /**
+   * Create url for requesting many files at once
+   */
+  public requestDataFiles(): string {
+    return ApiService
+      .getStudiesFilesURL(this.similarDatasets.data.map<string>(edge => edge.to as string), 'annotation');
+  }
+
+  /**
+   * Based of a node get the edges for its immediate neighbors
+   * @param ofNode
+   * @private
+   */
+  private _filterNeighbors(ofNode: GPLNODE): Observable<GPLEDGE[]> {
+    return this.platformService.graph$
+      .pipe(
+        map(graph => graph.edges
+          .filter(edge => edge.from === ofNode.id || edge.to === ofNode.id)
+          .map(({from, to, value}) => ({
+            to: to === ofNode.id ? from : to,
+            from: ofNode.id,
+            value
+          }))
+        ),
+      );
+  }
+
   ngOnDestroy(): void {
     // this.networkNameSub.unsubscribe();
     // this.selectedNodeSub.unsubscribe();
@@ -326,6 +344,7 @@ export class PlatformPageComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.routeSub.unsubscribe();
     // this.technologySub.unsubscribe();
     // this.limitGenesSubject.unsubscribe();
+    this.unselectNodeOrEdgeSub.unsubscribe();
   }
 
   /**
