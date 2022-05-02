@@ -264,7 +264,6 @@ export class PlatformPageService {
    * @param node selected node
    */
   updateSelectedNode(node: GPLNODE): void {
-    console.warn('setting node', node);
     this.selectedNode.next(node);
   }
 
